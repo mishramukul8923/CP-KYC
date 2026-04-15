@@ -196,12 +196,18 @@ const FinancialHighlights = ({
     return number < 0;
   };
 
+  
+
   const formatValue = (obj) => {
     if (!obj || (obj.value === undefined && obj.unit === undefined)) return "-";
     const value = obj.value ?? "";
     const unit = obj.unit === "-" ? "" : (obj.unit ?? "");
+    if (unit === "INR") {
+      return value !== "" ? `₹${value}` : "-";
+    }
     return (value !== "" || unit !== "") ? `${value}${unit}` : "-";
   };
+
 
   const topCards = [
     {
@@ -299,6 +305,25 @@ const FinancialHighlights = ({
       change: financialHighlightsData?.equity_multiplier?.change_pct || "-",
       isNegative: parseChange(financialHighlightsData?.equity_multiplier?.change_pct),
     },
+    {
+      label:"PE Ratio",
+      value:formatValue(financialHighlightsData?.pe_ratio),
+      change:financialHighlightsData?.pe_ratio?.change_pct || "-",
+      isNegative:parseChange(financialHighlightsData?.pe_ratio?.change_pct),
+    },
+    {
+      label:"Book Value",
+      value:formatValue(financialHighlightsData?.book_value),
+      change:financialHighlightsData?.book_value?.change_pct || "-",
+      isNegative:parseChange(financialHighlightsData?.book_value?.change_pct),
+    },
+    {
+      label:"Reserves",
+      value:formatValue(financialHighlightsData?.reserves),
+      change:financialHighlightsData?.reserves?.change_pct || "-",
+      isNegative:parseChange(financialHighlightsData?.reserves?.change_pct),
+    }
+
   ];
 
   // const chartData = [
