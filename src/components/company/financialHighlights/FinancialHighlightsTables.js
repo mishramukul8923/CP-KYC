@@ -91,70 +91,14 @@ const FinancialHighlightsTables = ({
 
   const ratioRows = buildRatioRows();
 
-  const CASH_FLOW_MAPPING = {
-    "Prot Before tax": "operating_activities.profit_before_tax",
-    "Adjustments For Finance Costs": "operating_activities.finance_costs",
-    "Adjustments For Depreciation And Amortisation": "operating_activities.depreciation",
-    "Adjustments For Other Non-Cash Items": "operating_activities.other_adjustments",
-    "Changes in Working Capital": "operating_activities.changes_in_working_capital",
-    "Income Taxes Paid (Net)": "operating_activities.income_tax_paid",
-    "Net Cash Flows From Operating Activities": "operating_activities.net_cash_from_operating_activities",
-    "Purchase Of Property Plant And Equipment (Net)": "investing_activities.purchase_of_fixed_assets",
-    "Proceeds From Disposal Of Property Plant And Equipment": "investing_activities.proceeds_from_sale_of_assets",
-    "Interest Received": "investing_activities.interest_received",
-    "Other Income Received": "investing_activities.other_income_received",
-    "Net Cash Flows From/(Used In) Investing Activities": "investing_activities.net_cash_from_investing_activities",
-    "Proceeds From Long-term Borrowings": "financing_activities.proceeds_from_borrowings",
-    "Repayment Of Long-term Borrowings": "financing_activities.repayment_of_borrowings",
-    "Dividend Paid": "financing_activities.dividend_paid",
-    "Interest Paid": "financing_activities.finance_costs_paid",
-    "Other Financing Activities (Net)": "financing_activities.other_financing_activities",
-    "Net Cash Flows From/(Used In) Financing Activities": "financing_activities.net_cash_from_financing_activities",
-    "Net Increase/(Decrease) In Cash And Cash Equivalents": "net_change_in_cash",
-    "Cash And Cash Equivalents At The Beginning Of The Period": "opening_cash_balance",
-    "Cash And Cash Equivalents At The End Of The Period": "closing_cash_balance"
-  };
+
 
   const cfRows = [
-    { type: "header", label: "Operating Activities" },
-    { label: "Prot Before tax", path: "operating_activities.profit_before_tax" },
-    { label: "Adjustments For Finance Costs", path: "operating_activities.finance_costs" },
-    { label: "Adjustments For Other Non-Cash Items", path: "operating_activities.other_adjustments" },
-    { label: "Adjustments For Depreciation And Amortisation", path: "operating_activities.depreciation" },
-    { label: "Adjustments For Other Non-Operating Non-Cash Items", path: "operating_activities.other_non_operating" },
-    { label: "Adjustments For (Gain)/Loss On Disposal Of Property Plant And Equipment (Net)", path: "operating_activities.gain_loss_assets" },
-    { label: "Operating Prot Before Working Capital Changes", path: "operating_activities.op_profit_before_wc" },
-    { label: "(Increase)/Decrease In Trade And Other Receivables", path: "operating_activities.receivables" },
-    { label: "(Increase)/Decrease In Inventories", path: "operating_activities.inventories" },
-    { label: "(Increase)/Decrease In Other Assets", path: "operating_activities.other_assets" },
-    { label: "Increase/(Decrease) In Trade And Other Payables", path: "operating_activities.payables" },
-    { label: "Increase/(Decrease) In Other Liabilities", path: "operating_activities.other_liabilities" },
-    { label: "Cash Generated From Operations", path: "operating_activities.cash_from_ops" },
-    { label: "Income Taxes Paid (Net)", path: "operating_activities.income_tax_paid" },
-    { type: "total", label: "Net Cash Flows From Operating Activities", path: "operating_activities.net_cash_from_operating_activities" },
-
-    { type: "header", label: "Investing Activities" },
-    { label: "Purchase Of Property Plant And Equipment (Net)", path: "investing_activities.purchase_of_fixed_assets" },
-    { label: "Proceeds From Disposal Of Property Plant And Equipment", path: "investing_activities.proceeds_from_sale_of_assets" },
-    { label: "(Purchase)/Proceeds From Sale Of Investments (Net)", path: "investing_activities.purchase_of_investments" },
-    { label: "Interest Received", path: "investing_activities.interest_received" },
-    { label: "Dividend Received", path: "investing_activities.dividend_received" },
-    { label: "(Purchase)/Proceeds From Other Investing Activities (Net)", path: "investing_activities.other_income_received" },
-    { type: "total", label: "Net Cash Flows From/(Used In) Investing Activities", path: "investing_activities.net_cash_from_investing_activities" },
-
-    { type: "header", label: "Financing Activities" },
-    { label: "Proceeds From Issue Of Share Capital", path: "financing_activities.proceeds_from_shares" },
-    { label: "Proceeds From Long-term Borrowings", path: "financing_activities.proceeds_from_borrowings" },
-    { label: "Repayment Of Long-term Borrowings", path: "financing_activities.repayment_of_borrowings" },
-    { label: "Short-term Borrowings (Net)", path: "financing_activities.short_term_borrowings" },
-    { label: "Interest Paid", path: "financing_activities.finance_costs_paid" },
-    { label: "Dividend Paid", path: "financing_activities.dividend_paid" },
-    { label: "Other Financing Activities (Net)", path: "financing_activities.other_financing_activities" },
-    { type: "total", label: "Net Cash Flows From/(Used In) Financing Activities", path: "financing_activities.net_cash_from_financing_activities" },
-
-    { type: "grand-total", label: "Net Increase/(Decrease) In Cash And Cash Equivalents", path: "net_change_in_cash" },
-    { label: "Cash And Cash Equivalents At The Beginning Of The Period", path: "opening_cash_balance" },
-    { label: "Cash And Cash Equivalents At The End Of The Period", path: "closing_cash_balance" },
+    { label: "Cash from Operating Activity", path: "summary.cash_from_operating_activity" },
+    { label: "Cash from Investing Activity", path: "summary.cash_from_investing_activity" },
+    { label: "Cash from Financing Activity", path: "summary.cash_from_financing_activity" },
+    { type: "total", label: "Net Cash Flow", path: "summary.net_cash_flow" },
+    { label: "Free Cash Flow", path: "summary.free_cash_flow" },
   ].map(row => {
     if (row.type === "header") return row;
     const dataObj = row.path ? getNestedValue(cashFlowData, row.path) : null;
