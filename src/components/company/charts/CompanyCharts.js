@@ -233,7 +233,7 @@ const CompanyCharts = ({ businessActivity, peerComparisonData, peerComparisonLoa
                     {barData.map((entry, index) => (
                       <Cell 
                         key={`cell-${index}`} 
-                        fill={entry.is_selected ? 'rgba(59, 130, 246, 1)' : 'rgba(191, 219, 254, 1)'} 
+                        fill={entry.is_selected ? 'rgba(59, 130, 246, 1)' : '#3B82F6'} 
                       />
                     ))}
                   </Bar>

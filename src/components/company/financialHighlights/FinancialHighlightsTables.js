@@ -67,12 +67,12 @@ const FinancialHighlightsTables = ({
   const buildRatioRows = () => {
     if (!ratiosData) return [];
     const sections = [
-      { label: "Liquidity", data: ratiosData.liquidity },
-      { label: "Turnover", data: ratiosData.turnover },
-      { label: "Profitability", data: ratiosData.profitability },
-      { label: "Earning/Growth", data: ratiosData.earning_growth },
-      { label: "Leverage", data: ratiosData.leverage },
-      { label: "Solvency", data: ratiosData.solvency },
+      { label: "Profitability Ratios", data: ratiosData.profitability },
+      { label: "Efficiency Ratios", data: ratiosData.efficiency },
+      { label: "Leverage/Solvency Ratios", data: ratiosData.leverage_solvency },
+      { label: "Liquidity Ratios", data: ratiosData.liquidity },
+      { label: "Valuation Ratios", data: ratiosData.valuation },
+      { label: "Growth Metrics", data: ratiosData.growth_metrics },
     ];
     const rows = [];
     sections.forEach(({ label, data }) => {

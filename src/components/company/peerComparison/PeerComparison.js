@@ -28,13 +28,13 @@ export default function PeerComparison({
             <thead>
               <tr>
                 <th>Company Name</th>
-                <th>CIN</th>
-                <th>Incorporation Date</th>
-                <th>Paid Up Capital</th>
-                <th>Authorised Capital</th>
-                <th>Sum of Charges</th>
-                <th>Turnover</th>
-                <th>Net Worth</th>
+                <th>CMP</th>
+                <th>Market Cap</th>
+                <th>P/E Ratio</th>
+                <th>Industry P/E</th>
+                <th>Revenue Growth</th>
+                <th>Profit Growth</th>
+                <th>ROCE</th>
               </tr>
             </thead>
             <tbody>
@@ -100,13 +100,13 @@ export default function PeerComparison({
           <thead>
             <tr>
               <th>Company Name</th>
-              <th>CIN</th>
-              <th>Incorporation Date</th>
-              <th>Paid Up Capital</th>
-              <th>Authorised Capital</th>
-              <th>Sum of Charges</th>
-              <th>Turnover</th>
-              <th>Net Worth</th>
+              <th>CMP</th>
+              <th>Market Cap</th>
+              <th>P/E Ratio</th>
+              <th>Industry P/E</th>
+              <th>Revenue Growth</th>
+              <th>Profit Growth</th>
+              <th>ROCE</th>
             </tr>
           </thead>
           <tbody>
@@ -131,13 +131,13 @@ export default function PeerComparison({
                   </span>
                 </td>
 
-                <td>{row.cin || "-"}</td>
-                <td>{row.incorporation_date || "-"}</td>
-                <td>{row.paid_up_capital || "-"}</td>
-                <td>{row.authorised_capital || "-"}</td>
-                <td>{row.sum_of_charges || "-"}</td>
-                <td>{row.turnover || "-"}</td>
-                <td>{row.net_worth || "-"}</td>
+                <td>{row.cmp || "-"}</td>
+                <td>{row.market_cap || "-"}</td>
+                <td>{row.pe || "-"}</td>
+                <td>{row.industry_pe || "-"}</td>
+                <td>{row.sales_growth || "-"}</td>
+                <td>{row.profit_growth || "-"}</td>
+                <td>{row.roce || "-"}</td>
               </tr>
             ))}
           </tbody>
