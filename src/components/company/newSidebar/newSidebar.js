@@ -91,9 +91,9 @@ const CompanyNewSidebar = () => {
       items: [
         "Auditors' Remarks",
         "CARO",
-        "Goods & Service Tax (GST)",
-        "EPFO",
-        "CSR Credit Rating",
+        // "Goods & Service Tax (GST)",
+        // "EPFO",
+        // "CSR Credit Rating",
       ],
     },
     {

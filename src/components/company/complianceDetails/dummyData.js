@@ -13,7 +13,7 @@ export const auditorsRemarksStandalone = {
 export const complianceKpis = [
   {
     label: "Total GSTIN",
-    value: "-",
+    value: "1",
     variant: "blue",
   },
   {

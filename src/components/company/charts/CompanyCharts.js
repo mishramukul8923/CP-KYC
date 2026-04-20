@@ -102,7 +102,13 @@ const CompanyCharts = ({ businessActivity, peerComparisonData, peerComparisonLoa
                         content={({ active, payload }) => {
                           if (active && payload && payload.length) {
                             return (
-                              <div style={{ backgroundColor: "#fff", padding: "10px", border: "1px solid #ccc", borderRadius: "8px", boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}>
+                              <div style={{ 
+                                backgroundColor: "#fff", 
+                                padding: "10px", 
+                                border: "1px solid #ccc", 
+                                borderRadius: "8px", 
+                                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' 
+                              }}>
                                 <p style={{ margin: 0, fontWeight: "600", color: '#111827' }}>{payload[0].name}</p>
                                 <p style={{ margin: '4px 0 0', color: '#4B5563' }}>{payload[0].value.toFixed(2)}%</p>
                               </div>
@@ -131,7 +137,7 @@ const CompanyCharts = ({ businessActivity, peerComparisonData, peerComparisonLoa
 
               <div className={styles.pieLegend}>
                 {pieData.map((item, idx) => (
-                  <React.Fragment key={idx}>
+                  <div key={idx} className={styles.legendContainer}>
                     <div className={styles.legendRow}>
                       <div className={styles.legendIndicator}>
                         <div className={styles.dot} style={{ backgroundColor: item.color }}></div>
@@ -140,7 +146,7 @@ const CompanyCharts = ({ businessActivity, peerComparisonData, peerComparisonLoa
                       <span className={styles.legendValue}>{item.value.toFixed(2)}</span>
                     </div>
                     {idx < pieData.length - 1 && <div className={styles.legendDivider}></div>}
-                  </React.Fragment>
+                  </div>
                 ))}
               </div>
             </div>
@@ -208,7 +214,7 @@ const CompanyCharts = ({ businessActivity, peerComparisonData, peerComparisonLoa
                     tickLine={false}
                     tick={{ fontSize: 12, fill: "rgba(55, 65, 81, 1)" }}
                     tickFormatter={(val) => `${val} ${peerComparisonData.peer_turnover_chart?.metric_unit || ""}`}
-                    width={80}
+                    width={90}
                   />
                   <Tooltip 
                     cursor={{ fill: "transparent" }}
