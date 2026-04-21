@@ -9,6 +9,27 @@ const styles = StyleSheet.create({
     fontFamily: 'Helvetica',
     color: '#333',
   },
+  letterheadContainer: {
+    alignItems: 'center',
+    width: '200px',
+    marginBottom: 20,
+    marginTop: -10,
+  },
+  watermarkContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+  },
+  watermarkImage: {
+    width: 600,
+    opacity: 0.2,
+    transform: 'rotate(-45deg)',
+  },
   section: {
     marginBottom: 20,
     width: '100%',
@@ -1561,6 +1582,9 @@ export const ReportDocument = ({
     <Document>
       {/* Premium First Page */}
       <Page size="A4" style={styles.page}>
+        <View style={styles.letterheadContainer}>
+          <Image src="/icons/pdfLogocompanyWiki.png" style={{ width: 150 }} />
+        </View>
         {renderPremiumHeader()}
 
         {/* About Section */}
@@ -1648,6 +1672,9 @@ export const ReportDocument = ({
       {/* Alerts Page (Moved to BEFORE Directors) */}
       {alerts.length > 0 && (
         <Page size="A4" style={styles.page}>
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
           <View style={styles.section}>
             <Text style={styles.heading2}>Regulatory Alerts</Text>
             <View style={styles.table}>
@@ -1675,6 +1702,9 @@ export const ReportDocument = ({
       {/* Directors Overview Page */}
       {allDirectors.length > 0 && (
         <Page size="A4" style={styles.page}>
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
           <Text style={styles.heading2}>Directors & KMP Details</Text>
           {renderDirectorTable(currentDirectors, "Current Directors & KMP")}
           {renderDirectorTable(pastDirectors, "Past Directors & KMP")}
@@ -1684,6 +1714,9 @@ export const ReportDocument = ({
       {/* Individual Director Data Page(s) */}
       {allDirectors.length > 0 && allDirectors.map((d, index) => (
         <Page size="A4" style={styles.page} key={`dir-detail-${index}`}>
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
           <View style={styles.header}>
             <View style={styles.titleContainer}>
               <Text style={styles.title}>{d.name}</Text>
@@ -1739,6 +1772,9 @@ export const ReportDocument = ({
       {/* Phase 3: Control & Ownership - Shareholding (Moved to after directors) */}
       {shareholdingData && (
         <Page size="A4" style={styles.page}>
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
           <Text style={[styles.title, { marginBottom: 15 }]}>Control & Ownership - Shareholding</Text>
 
           {/* Shareholding Overview Stats */}
@@ -1768,17 +1804,17 @@ export const ReportDocument = ({
 
             <View style={styles.progressContainer}>
               <View style={styles.progressBar}>
-                <View 
+                <View
                   style={[
-                    styles.progressPromoter, 
+                    styles.progressPromoter,
                     { width: `${parseFloat(shareholdingData?.summary?.promoter_percentage || 0)}%` }
-                  ]} 
+                  ]}
                 />
-                <View 
+                <View
                   style={[
-                    styles.progressNonPromoter, 
+                    styles.progressNonPromoter,
                     { width: `${parseFloat(shareholdingData?.summary?.public_percentage || 0)}%` }
-                  ]} 
+                  ]}
                 />
               </View>
             </View>
@@ -2035,6 +2071,9 @@ export const ReportDocument = ({
       {/* Phase 5: Landscape Balance Sheets */}
       {(bsStandalone || bsConsolidated) && (
         <Page size="A4" orientation="landscape" style={styles.page}>
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
           {bsStandalone && renderBalanceSheetTable(bsStandalone, "Standalone")}
           {bsConsolidated && (
             <View break>
@@ -2095,6 +2134,9 @@ export const ReportDocument = ({
       {/* Phase 6: Charges Information (Portrait) */}
       {chargesData && (
         <Page size="A4" orientation="portrait" style={styles.page}>
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
           {renderChargesSection(chargesData)}
         </Page>
       )}
@@ -2102,18 +2144,27 @@ export const ReportDocument = ({
       {/* Phase 7: Peer Comparison & Business Activity (Portrait) */}
       {peerComparisonData && (
         <Page size="A4" orientation="portrait" style={styles.page}>
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
           {renderPeerComparisonSection(peerComparisonData)}
         </Page>
       )}
 
       {/* Phase 8: Compliance Details (Portrait) */}
       <Page size="A4" orientation="portrait" style={styles.page}>
+        <View style={styles.watermarkContainer} fixed>
+          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+        </View>
         {renderComplianceSection(auditorRemarksData)}
       </Page>
 
       {/* Phase 9: Litigation (Portrait) */}
       {litigationData && (
         <Page size="A4" orientation="portrait" style={styles.page}>
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
           {renderLitigationSection(litigationData)}
         </Page>
       )}

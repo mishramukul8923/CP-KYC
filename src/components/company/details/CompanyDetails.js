@@ -29,7 +29,7 @@ const CompanyDetails = ({ companyData, loading, error }) => {
 
   const data = [
     { label: 'CIN/LLPIN', value: info.cin ?? '-' },
-    { label: 'PAN', value: info.pan ?? '-' },
+    { label: 'PAN', value: info.pan ?? 'PDF Parsing(MCA Documents)' },
     { label: 'LEI Number', value: info.lei_number ?? '-' },
     { label: 'Company Legal Name', value: info.legal_name ?? '-' },
     { label: 'ROC Code', value: info.roc_code ?? '-' },
@@ -44,8 +44,8 @@ const CompanyDetails = ({ companyData, loading, error }) => {
     { label: 'Listing Status', value: info.listing_status ?? '-' },
     { label: 'Stock Symbol', value: info.stock_symbol ?? '-' },
     { label: 'Industry', value: info.industry ?? '-' },
-    { label: 'Segment', value: info.segment ?? '-'},
-    { label: 'Market Cap.', value: info.market_cap ?? '-'},
+    { label: 'Segment', value: info.segment ?? '-' },
+    { label: 'Market Cap.', value: info.market_cap ?? 'PDF Parsing(MCA Documents)' },
   ];
 
   return (

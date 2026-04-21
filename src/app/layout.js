@@ -39,7 +39,7 @@ export default function RootLayout({ children }) {
   useEffect(() => {
     const fetchCompanies = async () => {
       if (isAuthPage) return;
-      
+
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
@@ -118,12 +118,12 @@ export default function RootLayout({ children }) {
     window.fetch = async (...args) => {
       try {
         const response = await originalFetch(...args);
-        
+
         if (response.status === 401 && !isRedirecting) {
           const url = args[0] instanceof Request ? args[0].url : args[0];
           const isInternalApi = typeof url === 'string' && (url.includes(process.env.NEXT_PUBLIC_API_BASE_URL) || url.startsWith("/"));
           const isAuthPage = ["/login", "/signup", "/forgot-password"].includes(window.location.pathname);
-          
+
           if (isInternalApi && !isAuthPage) {
             isRedirecting = true;
             handleLogout();
@@ -338,7 +338,7 @@ export default function RootLayout({ children }) {
                   <div className={styles.headerLeft}>
                     <Link href="/">
                       <img
-                        src="/icons/logo2.svg"
+                        src="/companyWikiLogo.svg"
                         alt="Corporate Professionals"
                         className={styles.logo}
                       />
