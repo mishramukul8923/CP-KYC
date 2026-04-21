@@ -4,9 +4,11 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "./CompanyStickyHeader.module.css";
 import { useRouter } from "next/navigation";
 import { useCompanySection } from "../context/CompanySectionContext";
+import DownloadModal from "../modals/DownloadModal";
+
 
 export default function CompanyStickyHeader({ visible, companyData }) {
-    const { isVersionHistoryOpen, setVersionHistoryOpen, alertsData } = useCompanySection() || {};
+  const { isVersionHistoryOpen, setVersionHistoryOpen, alertsData, isGeneratingPdf, setPdfDownloadTrigger } = useCompanySection() || {};
   const actionsRef = useRef(null);
   const router = useRouter();
 
@@ -111,15 +113,15 @@ export default function CompanyStickyHeader({ visible, companyData }) {
 
 
             </div>
-            
+
           </div>
         </div>
 
         {/* RIGHT */}
         <div className={styles.actionSection}>
           <div className={styles.buttonGroup}>
-            <button 
-              className={styles.saveButton} 
+            <button
+              className={styles.saveButton}
               onClick={() => setVersionHistoryOpen(true)}
             >
               <img
@@ -130,7 +132,7 @@ export default function CompanyStickyHeader({ visible, companyData }) {
               />
               Version History
             </button>
-            
+
             <button className={`${styles.saveButton} ${isVersionHistoryOpen ? styles.hideOn1200 : ""}`} onClick={() => { window.location.reload(); }}>
               <img
                 src="/icons/refresh.svg"
@@ -174,8 +176,12 @@ export default function CompanyStickyHeader({ visible, companyData }) {
                     </>
                   )}
                   <button className={styles.dropdownItem}>View Company</button>
-                  <button className={styles.dropdownItem}>
-                    Download Report
+                  <button
+                    className={styles.dropdownItem}
+                    onClick={() => setPdfDownloadTrigger(prev => prev + 1)}
+                    disabled={isGeneratingPdf}
+                  >
+                    {isGeneratingPdf ? "Generating PDF..." : "Download Report"}
                   </button>
                   <button className={styles.dropdownItem}>Share</button>
                 </div>
