@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import styles from "./newHeader.module.css";
 import { useRouter } from "next/navigation";
 import { formatDateToIST } from "@/utils/dateFormatter";
+import { useCompanySection } from "../context/CompanySectionContext";
+import DownloadModal from "../modals/DownloadModal";
 
 /* -------------------- REUSABLE RISK CARD -------------------- */
 const RiskCard = ({
@@ -125,10 +127,8 @@ const RISK_DATA = [
   // },
 ];
 
-import { useCompanySection } from "../context/CompanySectionContext";
-
 const CompanyNewHeader = ({ companyData }) => {
-  const { isVersionHistoryOpen, setVersionHistoryOpen, alertsData } = useCompanySection();
+  const { isVersionHistoryOpen, setVersionHistoryOpen, alertsData, setPdfDownloadTrigger, isGeneratingPdf, setIsGeneratingPdf } = useCompanySection();
   const [isExpanded, setIsExpanded] = useState(false); // State to track expansion
   const router = useRouter();
 
@@ -267,8 +267,12 @@ const CompanyNewHeader = ({ companyData }) => {
                     <button className={styles.dropdownItem}>
                       View Company
                     </button>
-                    <button className={styles.dropdownItem}>
-                      Download Report
+                    <button 
+                      className={styles.dropdownItem}
+                      onClick={() => setPdfDownloadTrigger(prev => prev + 1)}
+                      disabled={isGeneratingPdf}
+                    >
+                      {isGeneratingPdf ? "Generating PDF..." : "Download Report"}
                     </button>
                     <button className={styles.dropdownItem}>Share</button>
                   </div>
@@ -485,6 +489,8 @@ const CompanyNewHeader = ({ companyData }) => {
           </div>
         </div>
       )}
+      {/* Download Progress Modal */}
+      <DownloadModal isOpen={isGeneratingPdf} onClose={() => setIsGeneratingPdf(false)} />
     </div>
   );
 };

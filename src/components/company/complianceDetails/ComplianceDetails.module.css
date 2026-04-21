@@ -406,6 +406,12 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
+.firstCol {
+  width: 320px;
+  min-width: 320px;
+  background-color: #fafafa;
+}
+
 .litigationTable tr {
   height: 56px;
 }

@@ -9,7 +9,7 @@
 }
 
 .logoContainer {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .logo {
@@ -21,7 +21,7 @@
   max-width: 350px;
   height: 370px;
   background: #ffffff;
-  border: 1px solid  #E2E8F0;
+  border: 1px solid #E2E8F0;
   border-radius: 12px;
   padding: 24px;
 }
@@ -103,9 +103,9 @@
   opacity: 1;
 }
 
-  
 
-.input::placeholder{
+
+.input::placeholder {
   font-size: 14px;
   line-height: 20px;
   color: #64748B;
@@ -174,7 +174,8 @@
   color: #64748b;
 }
 
-.footerText a, .footerText button {
+.footerText a,
+.footerText button {
   color: #001c3d;
   font-weight: 600;
   text-decoration: none;
@@ -185,7 +186,8 @@
   margin-left: 4px;
 }
 
-.footerText a:hover, .footerText button:hover {
+.footerText a:hover,
+.footerText button:hover {
   text-decoration: underline;
 }
 

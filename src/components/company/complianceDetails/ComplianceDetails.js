@@ -220,9 +220,9 @@ const ComplianceDetails = () => {
     const sectionMap = {
       "Auditors' Remarks": "auditors-remarks",
       CARO: "caro",
-      "Goods & Service Tax (GST)": "gst",
-      EPFO: "epfo",
-      "CSR Credit Rating": "csr",
+      // "Goods & Service Tax (GST)": "gst",
+      // EPFO: "epfo",
+      // "CSR Credit Rating": "csr",
     };
 
     const targetId = sectionMap[activeSubSection];
@@ -247,12 +247,20 @@ const ComplianceDetails = () => {
   const [auditorsRemarksStandaloneAPI, setAuditorsRemarksStandaloneAPI] = useState(null);
   const [auditorsRemarksConsolidatedAPI, setAuditorsRemarksConsolidatedAPI] = useState(null);
 
+  // Future API states for CARO
+  const [caroStandaloneAPI, setCaroStandaloneAPI] = useState(null);
+  const [caroConsolidatedAPI, setCaroConsolidatedAPI] = useState(null);
+
+  // Phase 2 states (Commented out)
+  /*
   const [activeGstParams, setActiveGstParams] = useState({ page: 1, size: 10 });
   const [inactiveGstParams, setInactiveGstParams] = useState({ page: 1, size: 10 });
   const [gstData, setGstData] = useState(null);
   const [loadingActiveGst, setLoadingActiveGst] = useState(false);
   const [loadingInactiveGst, setLoadingInactiveGst] = useState(false);
+  */
 
+  /*
   useEffect(() => {
     if (!companySlug) return;
     const fetchGstData = async () => {
@@ -277,6 +285,7 @@ const ComplianceDetails = () => {
     };
     fetchGstData();
   }, [companyName, activeGstParams.page, activeGstParams.size, inactiveGstParams.page, inactiveGstParams.size]);
+  */
 
   useEffect(() => {
     if (!companyName) return;
@@ -292,11 +301,21 @@ const ComplianceDetails = () => {
         setAuditorRemarksData(data);
 
         if (data.auditors_remarks_standalone_table) {
-           setAuditorsRemarksStandaloneAPI(data.auditors_remarks_standalone_table);
+          setAuditorsRemarksStandaloneAPI(data.auditors_remarks_standalone_table);
         }
         if (data.auditors_remarks_consolidated_table) {
-           setAuditorsRemarksConsolidatedAPI(data.auditors_remarks_consolidated_table);
+          setAuditorsRemarksConsolidatedAPI(data.auditors_remarks_consolidated_table);
         }
+
+        // 📝 COMMENT: Once CARO tables are added to the API response, uncomment and map them here
+        /*
+        if (data.caro_standalone_table) {
+           setCaroStandaloneAPI(data.caro_standalone_table);
+        }
+        if (data.caro_consolidated_table) {
+           setCaroConsolidatedAPI(data.caro_consolidated_table);
+        }
+        */
       } catch (err) {
         console.error("Failed to fetch auditor remarks:", err);
       }
@@ -306,12 +325,16 @@ const ComplianceDetails = () => {
 
 
   // ── EPFO API State ──
+  // Phase 2 states (Commented out)
+  /*
   const [epfoData, setEpfoData] = useState(null);
   const [activeEpfoParams, setActiveEpfoParams] = useState({ page: 1, size: 10 });
   const [inactiveEpfoParams, setInactiveEpfoParams] = useState({ page: 1, size: 10 });
   const [loadingActiveEpfo, setLoadingActiveEpfo] = useState(false);
   const [loadingInactiveEpfo, setLoadingInactiveEpfo] = useState(false);
+  */
 
+  /*
   useEffect(() => {
     if (!companySlug) return;
     const fetchEpfoData = async () => {
@@ -336,15 +359,20 @@ const ComplianceDetails = () => {
     };
     fetchEpfoData();
   }, [companyName, activeEpfoParams.page, activeEpfoParams.size, inactiveEpfoParams.page, inactiveEpfoParams.size]);
+  */
 
   // ── CSR + Credit Rating API State ──
+  // Phase 2 states (Commented out)
+  /*
   const [csrCreditData, setCsrCreditData] = useState(null);
   const [csrTableParams, setCsrTableParams] = useState({ page: 1, size: 10 });
   const [creditRatingParams, setCreditRatingParams] = useState({ page: 1, size: 10 });
   const [loadingCsrTable, setLoadingCsrTable] = useState(false);
   const [loadingCreditRating, setLoadingCreditRating] = useState(false);
   const [ratingAgency, setRatingAgency] = useState("crisil");
+  */
 
+  /*
   useEffect(() => {
     if (!companySlug) return;
     const fetchCsrCreditData = async () => {
@@ -369,10 +397,12 @@ const ComplianceDetails = () => {
     };
     fetchCsrCreditData();
   }, [companyName, csrTableParams.page, csrTableParams.size, creditRatingParams.page, creditRatingParams.size, ratingAgency]);
+  */
 
   const [agency, setAgency] = useState("CRISIL");
   const [selectedDate, setSelectedDate] = useState("2023-11-24");
 
+  /*
   const gstTablesConfig = [
     {
       id: "active-gst",
@@ -397,6 +427,7 @@ const ComplianceDetails = () => {
       fallbackRows: inactiveGstTable
     }
   ];
+  */
 
   const sectionRefs = React.useRef({});
 
@@ -515,28 +546,47 @@ const ComplianceDetails = () => {
 
         {/* CARO Standalone table*/}
         <div id="caro" className={styles.tableSection}>
-          {" "}
-          <h6 className={styles.tableTitle}>{`CARO Standalone`}</h6>
+          <h6 className={styles.tableTitle}>{caroStandaloneAPI?.table_title || `CARO Standalone`}</h6>
           <div className={styles.tableContainer}>
             <table className={styles.litigationTable}>
               <thead>
                 <tr>
                   <th className={styles.firstCol}>Financial Year</th>
-                  {auditorsRemarksStandalone.years.map((year) => (
-                    <th key={year}>{year}</th>
-                  ))}
+                  {caroStandaloneAPI ? (
+                    caroStandaloneAPI.financial_year_columns?.map((col, i) => (
+                      <th key={i}>{col.label}</th>
+                    ))
+                  ) : (
+                    auditorsRemarksStandalone.years.map((year) => (
+                      <th key={year}>{year}</th>
+                    ))
+                  )}
                 </tr>
               </thead>
 
               <tbody>
-                {auditorsRemarksStandalone.rows.map((row, idx) => (
-                  <tr key={idx}>
-                    <td className={styles.firstCol}>{row.label}</td>
-                    {row.values.map((val, i) => (
-                      <td key={i}>{val}</td>
-                    ))}
-                  </tr>
-                ))}
+                {caroStandaloneAPI ? (
+                  caroStandaloneAPI.rows?.map((row, idx) => (
+                    <tr key={idx}>
+                      <td className={styles.firstCol}>{row.row_label}</td>
+                      {caroStandaloneAPI.financial_year_columns?.map((col, i) => {
+                        const cell = row.financial_year_cells?.[col.key];
+                        return (
+                          <td key={i}>{cell?.value || "-"}</td>
+                        );
+                      })}
+                    </tr>
+                  ))
+                ) : (
+                  auditorsRemarksStandalone.rows.map((row, idx) => (
+                    <tr key={idx}>
+                      <td className={styles.firstCol}>{row.label}</td>
+                      {row.values.map((val, i) => (
+                        <td key={i}>{val}</td>
+                      ))}
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -544,34 +594,54 @@ const ComplianceDetails = () => {
 
         {/* CARO Consolidated table*/}
         <div className={styles.tableSection}>
-          {" "}
-          <h6 className={styles.tableTitle}>{`CARO Consolidated`}</h6>
+          <h6 className={styles.tableTitle}>{caroConsolidatedAPI?.table_title || `CARO Consolidated`}</h6>
           <div className={styles.tableContainer}>
             <table className={styles.litigationTable}>
               <thead>
                 <tr>
                   <th className={styles.firstCol}>Financial Year</th>
-                  {auditorsRemarksStandalone.years.map((year) => (
-                    <th key={year}>{year}</th>
-                  ))}
+                  {caroConsolidatedAPI ? (
+                    caroConsolidatedAPI.financial_year_columns?.map((col, i) => (
+                      <th key={i}>{col.label}</th>
+                    ))
+                  ) : (
+                    auditorsRemarksStandalone.years.map((year) => (
+                      <th key={year}>{year}</th>
+                    ))
+                  )}
                 </tr>
               </thead>
 
               <tbody>
-                {auditorsRemarksStandalone.rows.map((row, idx) => (
-                  <tr key={idx}>
-                    <td className={styles.firstCol}>{row.label}</td>
-                    {row.values.map((val, i) => (
-                      <td key={i}>{val}</td>
-                    ))}
-                  </tr>
-                ))}
+                {caroConsolidatedAPI ? (
+                  caroConsolidatedAPI.rows?.map((row, idx) => (
+                    <tr key={idx}>
+                      <td className={styles.firstCol}>{row.row_label}</td>
+                      {caroConsolidatedAPI.financial_year_columns?.map((col, i) => {
+                        const cell = row.financial_year_cells?.[col.key];
+                        return (
+                          <td key={i}>{cell?.value || "-"}</td>
+                        );
+                      })}
+                    </tr>
+                  ))
+                ) : (
+                  auditorsRemarksStandalone.rows.map((row, idx) => (
+                    <tr key={idx}>
+                      <td className={styles.firstCol}>{row.label}</td>
+                      {row.values.map((val, i) => (
+                        <td key={i}>{val}</td>
+                      ))}
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
         </div>
-        {/* KPI SECTION */}
-        <div id="gst" className={styles.kpiSectionContainer}>
+        {/* KPI SECTION */}.
+        {/* phase 2  */}
+        {/* <div id="gst" className={styles.kpiSectionContainer}>
           <h6 className={styles.tableTitle}>{gstData?.gstin_details_cards_section?.section_title || `Gstin Details`}</h6>
           <div className={styles.kpiSection}>
             {gstData?.gstin_details_cards_section ? (
@@ -593,8 +663,18 @@ const ComplianceDetails = () => {
               ))
             )}
           </div>
-        </div>
+        </div> */}
 
+        {/* phase 2 */}
+        {/* 
+          ==============================================================================
+          PHASE 2 SECTIONS (GST, EPFO, CSR, CREDIT RATING)
+          The following sections are moved to Phase 2. Uncomment and map to APIs 
+          once the backend endpoints are ready.
+          ==============================================================================
+        */}
+
+        {/* 
         {gstTablesConfig.map((section, index) => {
           const rowsToRender = section.data?.rows || section.fallbackRows;
           const totalRows = section.data?.total || section.fallbackRows.length;
@@ -632,17 +712,15 @@ const ComplianceDetails = () => {
                       <tr key={idx}>
                         <td className={styles.caseNumber}>{row.gstin}</td>
                         <td>{row.state}</td>
-                        {/* Handle both API snake_case and dummy camelCase fields */}
                         <td>{row.last_filing || row.lastFiling}</td>
                         <td>{row.due_date || row.dueDate}</td>
                         <td>{row.delay_in_12_months || row.delay}</td>
                         <td className={styles.statusCol}>
                           <span
-                            className={`${styles.statusPill} ${
-                              row.status === "Active"
+                            className={`${styles.statusPill} ${row.status === "Active"
                                 ? styles.statusActive
                                 : styles.inactiveNormalText
-                            }`}
+                              }`}
                           >
                             <span className={styles.statusText}>
                               {row.status}
@@ -679,7 +757,6 @@ const ComplianceDetails = () => {
           );
         })}
 
-        {/* EPFO graph */}
         <div id="epfo" className={styles.epfoGrapgAndTitleContainer}>
           <h6 className={styles.tableTitle}>
             {epfoData?.epfo_summary_chart_section?.section_title || `EPFO Summary`}
@@ -690,17 +767,16 @@ const ComplianceDetails = () => {
               epfoSummaryData={
                 epfoData?.epfo_summary_chart_section?.data_points
                   ? epfoData.epfo_summary_chart_section.data_points.map((pt) => ({
-                      period: pt.financial_year,
-                      employees: pt.employees,
-                      amount: pt.amount,
-                    }))
+                    period: pt.financial_year,
+                    employees: pt.employees,
+                    amount: pt.amount,
+                  }))
                   : epfoSummaryGraphData
               }
             />
           </div>
         </div>
 
-        {/* EPFO Year-wise Summary Table */}
         <div className={styles.tableSection}>
           <h6 className={styles.tableTitle}>
             {epfoData?.epfo_summary_table?.table_title || `EPFO Year-wise Summary`}
@@ -738,7 +814,6 @@ const ComplianceDetails = () => {
           </div>
         </div>
 
-        {/* EPFO Active & Inactive Establishment Tables */}
         {[
           {
             id: "active-stablishment",
@@ -806,11 +881,10 @@ const ComplianceDetails = () => {
                         <td>{row.delay_in_12_months || row.delay}</td>
                         <td>
                           <span
-                            className={`${styles.statusPill} ${
-                              row.status === "Active"
+                            className={`${styles.statusPill} ${row.status === "Active"
                                 ? styles.statusActive
                                 : styles.statusInactive
-                            }`}
+                              }`}
                           >
                             {row.status}
                           </span>
@@ -846,8 +920,6 @@ const ComplianceDetails = () => {
           );
         })}
 
-        {/* CSR Details */}
-
         <div id="csr" className={styles.epfoGrapgAndTitleContainer}>
           <h6 className={styles.tableTitle}>
             {csrCreditData?.csr_financial_year_spend_chart_section?.section_title || `CSR Details`}
@@ -858,9 +930,9 @@ const ComplianceDetails = () => {
               data={
                 csrCreditData?.csr_financial_year_spend_chart_section?.data_points
                   ? csrCreditData.csr_financial_year_spend_chart_section.data_points.map((pt) => ({
-                      year: pt.financial_year,
-                      value: parseFloat(pt.amount_spent) || 0,
-                    }))
+                    year: pt.financial_year,
+                    value: parseFloat(pt.amount_spent) || 0,
+                  }))
                   : defaultYearWiseData
               }
               styles={styles}
@@ -874,13 +946,13 @@ const ComplianceDetails = () => {
               data={
                 csrCreditData?.csr_sector_spend_chart_section?.data_points
                   ? csrCreditData.csr_sector_spend_chart_section.data_points.map((pt, i) => {
-                      const colors = ["#0EA5E9", "#041E42", "#F59E0B", "#EAB308", "#22C55E", "#8B5CF6", "#EC4899", "#14B8A6"];
-                      return {
-                        name: pt.sector,
-                        value: parseFloat(pt.amount_spent) || 0,
-                        color: colors[i % colors.length],
-                      };
-                    })
+                    const colors = ["#0EA5E9", "#041E42", "#F59E0B", "#EAB308", "#22C55E", "#8B5CF6", "#EC4899", "#14B8A6"];
+                    return {
+                      name: pt.sector,
+                      value: parseFloat(pt.amount_spent) || 0,
+                      color: colors[i % colors.length],
+                    };
+                  })
                   : defaultSectorWiseData
               }
               styles={styles}
@@ -892,7 +964,6 @@ const ComplianceDetails = () => {
           </div>
         </div>
 
-        {/* Financial year CSR table */}
         {(() => {
           const csrTable = csrCreditData?.financial_year_2021_22_table;
           const csrRows = csrTable?.rows || csrDetails2021_22;
@@ -962,7 +1033,6 @@ const ComplianceDetails = () => {
           );
         })()}
 
-        {/* Credit Rating section */}
         {(() => {
           const creditSection = csrCreditData?.credit_rating_section;
           const agencyFilters = creditSection?.agency_filters || [];
@@ -973,26 +1043,22 @@ const ComplianceDetails = () => {
           const creditStart = creditTotal > 0 ? (creditRatingParams.page - 1) * creditRatingParams.size + 1 : 0;
           const creditEnd = Math.min(creditRatingParams.page * creditRatingParams.size, creditTotal);
 
-          // Use API agency filters if available, else fallback to dummy
           const hasApiData = agencyFilters.length > 0;
 
           return (
             <div className={styles.tableSection} style={{ position: "relative" }}>
-              {/* Header */}
               <div className={styles.creditHeader}>
                 <h6 className={styles.tableTitle}>
                   {creditSection?.section_title || "Credit Rating"}
                 </h6>
 
-                {/* Toggle tabs */}
                 <div className={styles.togglletabs}>
                   {hasApiData ? (
                     agencyFilters.map((filter) => (
                       <button
                         key={filter.agency_key}
-                        className={`${styles.toggleTab} ${
-                          ratingAgency === filter.agency_key ? styles.activeTab : ""
-                        }`}
+                        className={`${styles.toggleTab} ${ratingAgency === filter.agency_key ? styles.activeTab : ""
+                          }`}
                         onClick={() => {
                           setRatingAgency(filter.agency_key);
                           setCreditRatingParams(p => ({ ...p, page: 1 }));
@@ -1004,17 +1070,15 @@ const ComplianceDetails = () => {
                   ) : (
                     <>
                       <button
-                        className={`${styles.toggleTab} ${
-                          agency === "CRISIL" ? styles.activeTab : ""
-                        }`}
+                        className={`${styles.toggleTab} ${agency === "CRISIL" ? styles.activeTab : ""
+                          }`}
                         onClick={() => setAgency("CRISIL")}
                       >
                         CRISIL
                       </button>
                       <button
-                        className={`${styles.toggleTab} ${
-                          agency === "ICRA" ? styles.activeTab : ""
-                        }`}
+                        className={`${styles.toggleTab} ${agency === "ICRA" ? styles.activeTab : ""
+                          }`}
                         onClick={() => setAgency("ICRA")}
                       >
                         ICRA
@@ -1024,14 +1088,12 @@ const ComplianceDetails = () => {
                 </div>
               </div>
 
-              {/* Date tabs */}
               <div className={styles.dateTabs}>
                 {(hasApiData ? apiRatingDates : creditRatingDates).map((date) => (
                   <button
                     key={date}
-                    className={`${styles.dateTab} ${
-                      selectedDate === date ? styles.activeDateTab : ""
-                    }`}
+                    className={`${styles.dateTab} ${selectedDate === date ? styles.activeDateTab : ""
+                      }`}
                     onClick={() => setSelectedDate(date)}
                   >
                     {date}
@@ -1039,7 +1101,6 @@ const ComplianceDetails = () => {
                 ))}
               </div>
 
-              {/* Table */}
               <div className={styles.tableContainer}>
                 {loadingCreditRating && (
                   <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(255,255,255,0.5)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 10 }}>
@@ -1059,27 +1120,26 @@ const ComplianceDetails = () => {
                   <tbody>
                     {hasApiData
                       ? creditRows.map((row, idx) => (
-                          <tr key={idx}>
-                            <td className={styles.ellipsis}>{row.category_sub_category_tenor}</td>
-                            <td>{row.amount_rs_crore}</td>
-                            <td>{row.rating_outlook}</td>
-                            <td>{row.rating_action}</td>
-                          </tr>
-                        ))
+                        <tr key={idx}>
+                          <td className={styles.ellipsis}>{row.category_sub_category_tenor}</td>
+                          <td>{row.amount_rs_crore}</td>
+                          <td>{row.rating_outlook}</td>
+                          <td>{row.rating_action}</td>
+                        </tr>
+                      ))
                       : creditRatings?.[agency]?.[selectedDate]?.map((row, idx) => (
-                          <tr key={idx}>
-                            <td className={styles.ellipsis}>{row.category}</td>
-                            <td>{row.amount}</td>
-                            <td>{row.rating}</td>
-                            <td>{row.action}</td>
-                          </tr>
-                        ))
+                        <tr key={idx}>
+                          <td className={styles.ellipsis}>{row.category}</td>
+                          <td>{row.amount}</td>
+                          <td>{row.rating}</td>
+                          <td>{row.action}</td>
+                        </tr>
+                      ))
                     }
                   </tbody>
                 </table>
               </div>
 
-              {/* Pagination for credit rating (API mode only) */}
               {hasApiData && (
                 <div className={styles.tableFooter}>
                   <span className={styles.entriesInfo}>
@@ -1106,6 +1166,7 @@ const ComplianceDetails = () => {
             </div>
           );
         })()}
+        */}
       </div>
     </div>
   );

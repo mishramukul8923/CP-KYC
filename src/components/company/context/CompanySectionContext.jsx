@@ -18,6 +18,8 @@ export function CompanySectionProvider({ children }) {
   const [alertsData, setAlertsData] = useState(null);
   const [alertsLoading, setAlertsLoading] = useState(false);
   const [alertsError, setAlertsError] = useState(null);
+  const [pdfDownloadTrigger, setPdfDownloadTrigger] = useState(0);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 
   useEffect(() => {
     setActiveSection(sectionFromUrl);
@@ -50,6 +52,10 @@ export function CompanySectionProvider({ children }) {
         setAlertsLoading,
         alertsError,
         setAlertsError,
+        pdfDownloadTrigger,
+        setPdfDownloadTrigger,
+        isGeneratingPdf,
+        setIsGeneratingPdf,
       }}
     >
       {children}

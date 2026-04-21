@@ -41,24 +41,24 @@
 }
 
 .card {
-border: 1px solid rgba(228, 228, 231, 1);
+  border: 1px solid rgba(228, 228, 231, 1);
   border-radius: 20px;
   gap: 20px;
   border-radius: 20px;
   /* max-width: 525px; */
   width: 100%;
-  flex:1;
+  flex: 1;
   background-color: #ffffff;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 /* Pie Chart Layout */
 .pieChartContainer {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Equal columns after removing external labels */
+  grid-template-columns: 1fr 1fr;
   padding: 24px;
-  gap: 20px;
-  align-items: flex-start; /* Align legend to top */
+  gap: 40px;
+  align-items: center;
 }
 
 .pieWrapper {
@@ -91,28 +91,40 @@ border: 1px solid rgba(228, 228, 231, 1);
 }
 
 .dot {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 4px;
+  flex-shrink: 0;
 }
 
 .legendText {
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
-  color: #71717A;
+  color: #6B7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .legendValue {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  color: #27272A;
+  color: #111827;
+  flex-shrink: 0;
 }
 
 .legendDivider {
   height: 1px;
-  background-color: rgba(228, 228, 231, 1);
+  background-color: #F3F4F6;
   width: 100%;
+  margin: 4px 0;
+}
+
+.legendContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* Business Table Layout */
@@ -153,7 +165,8 @@ border: 1px solid rgba(228, 228, 231, 1);
 }
 
 .greenText {
-  color: #16A34A; /* Exact green from screenshot */
+  color: #16A34A;
+  /* Exact green from screenshot */
   font-weight: 600;
 }
 
@@ -191,35 +204,38 @@ border: 1px solid rgba(228, 228, 231, 1);
   width: 100%;
 }
 
-.textCenter { 
+.textCenter {
   text-align: center;
   width: 110px;
 }
 
-.textRight { 
-  text-align: right; 
+.textRight {
+  text-align: right;
   width: 110px;
 }
 
 /* Tablet Responsiveness */
 
-@media (max-width: 1550px){
-  .pieChartContainer{
+@media (max-width: 1550px) {
+  .pieChartContainer {
     grid-template-columns: 2fr 1fr;
 
   }
 }
-@media (max-width: 1350px){
-  .pieChartContainer{
+
+@media (max-width: 1350px) {
+  .pieChartContainer {
     grid-template-columns: initial;
   }
 }
+
 @media (max-width: 1024px) {
   .pieChartContainer {
     grid-template-columns: 1fr;
     gap: 32px;
     padding: 24px;
   }
+
   .pieLegend {
     margin: 0 auto;
     width: 100%;
@@ -227,11 +243,12 @@ border: 1px solid rgba(228, 228, 231, 1);
 }
 
 /* Mobile Responsiveness */
-@media(max-width: 1350px){
+@media(max-width: 1350px) {
   .activityTable th {
-  min-width: 120px;
+    min-width: 120px;
   }
 }
+
 @media (max-width: 768px) {
   .corporateHeader {
     flex-direction: column;
@@ -240,26 +257,35 @@ border: 1px solid rgba(228, 228, 231, 1);
     border-radius: 16px;
     padding: 16px;
   }
+
   .headerMeta {
     flex-wrap: wrap;
     gap: 8px;
   }
+
   .shareholdingLegend {
     grid-template-columns: 1fr;
   }
-  .pieLabelPrimary, .pieLabelSecondary {
+
+  .pieLabelPrimary,
+  .pieLabelSecondary {
     font-size: 12px;
   }
 }
 
 @media (max-width: 480px) {
-  .headerLeft, .headerRight {
+
+  .headerLeft,
+  .headerRight {
     font-size: 14px;
   }
-  .activityTable th, .activityTable td {
+
+  .activityTable th,
+  .activityTable td {
     padding: 10px;
     font-size: 12px;
   }
+
   .shareValue {
     font-size: 16px;
   }

@@ -46,9 +46,13 @@ export default function CompanyPage() {
 
   // Profit & Loss
   const [pnlViewType, setPnlViewType] = useState("Standalone");
-  const [pnlApiData, setPnlApiData] = useState(null);
+  const [pnlStandalone, setPnlStandalone] = useState(null);
+  const [pnlConsolidated, setPnlConsolidated] = useState(null);
   const [pnlLoading, setPnlLoading] = useState(false);
   const [pnlError, setPnlError] = useState(null);
+
+  // Derived state for existing components
+  const pnlApiData = pnlViewType === "Standalone" ? pnlStandalone : pnlConsolidated;
 
   // Financial Highlights
   const [financialHighlights, setFinancialHighlights] = useState(null);
@@ -85,33 +89,49 @@ export default function CompanyPage() {
   const [directorsLoading, setDirectorsLoading] = useState(false);
   const [directorsError, setDirectorsError] = useState(null);
 
-  // Consume Alerts from shared context
-  const { alertsData, alertsLoading, alertsError } = useCompanySection();
+  // Consume Alerts and PDF trigggers from shared context
+  const { alertsData, alertsLoading, alertsError, pdfDownloadTrigger, setIsGeneratingPdf } = useCompanySection();
 
-  
+
   // Auditors Details
-  const [auditorsData, setAuditorsData] = useState([]);
   const [auditorsLoading, setAuditorsLoading] = useState(false);
   const [auditorsError, setAuditorsError] = useState(null);
   const [audType, setAudType] = useState("Standalone");
+  const [audStandalone, setAudStandalone] = useState([]);
+  const [audConsolidated, setAudConsolidated] = useState([]);
+
+  // Derived state for existing components
+  const auditorsData = audType === "Standalone" ? audStandalone : audConsolidated;
 
   // Balance Sheet Details
-  const [balanceSheetData, setBalanceSheetData] = useState(null);
   const [balanceSheetLoading, setBalanceSheetLoading] = useState(false);
   const [balanceSheetError, setBalanceSheetError] = useState(null);
   const [bsType, setBsType] = useState("Standalone");
-  
+  const [bsStandalone, setBsStandalone] = useState(null);
+  const [bsConsolidated, setBsConsolidated] = useState(null);
+
+  // Derived state for existing components
+  const balanceSheetData = bsType === "Standalone" ? bsStandalone : bsConsolidated;
+
   // Cash Flow Details
-  const [cashFlowData, setCashFlowData] = useState(null);
   const [cashFlowLoading, setCashFlowLoading] = useState(false);
   const [cashFlowError, setCashFlowError] = useState(null);
   const [cfType, setCfType] = useState("Standalone");
-  
+  const [cfStandalone, setCfStandalone] = useState(null);
+  const [cfConsolidated, setCfConsolidated] = useState(null);
+
+  // Derived state for existing components
+  const cashFlowData = cfType === "Standalone" ? cfStandalone : cfConsolidated;
+
   // Ratios Details
-  const [ratiosData, setRatiosData] = useState(null);
   const [ratiosLoading, setRatiosLoading] = useState(false);
   const [ratiosError, setRatiosError] = useState(null);
   const [ratiosType, setRatiosType] = useState("Standalone");
+  const [ratioStandalone, setRatioStandalone] = useState(null);
+  const [ratioConsolidated, setRatioConsolidated] = useState(null);
+
+  // Derived state for existing components
+  const ratiosData = ratiosType === "Standalone" ? ratioStandalone : ratioConsolidated;
 
   // Shareholding Details
   const [shareholdingData, setShareholdingData] = useState(null);
@@ -141,7 +161,7 @@ export default function CompanyPage() {
   const [litigationData, setLitigationData] = useState(null);
   const [litigationLoading, setLitigationLoading] = useState(false);
   const [litigationError, setLitigationError] = useState(null);
-  
+
   const [paPage, setPaPage] = useState(1);
   const [paSize, setPaSize] = useState(10);
   const [pbPage, setPbPage] = useState(1);
@@ -150,6 +170,9 @@ export default function CompanyPage() {
   const [daSize, setDaSize] = useState(10);
   const [dbPage, setDbPage] = useState(1);
   const [dbSize, setDbSize] = useState(10);
+
+  // Auditor Remarks
+  const [auditorRemarksData, setAuditorRemarksData] = useState(null);
 
 
   const overviewRef = useRef(null);
@@ -164,6 +187,282 @@ export default function CompanyPage() {
     const companyNamee = decodeURIComponent(rawCompanyName);
     setCompanyName(companyNamee);
   }, [rawCompanyName]);
+
+
+  /* ================= PDF GENERATION LISTENER ================= */
+
+  useEffect(() => {
+    if (pdfDownloadTrigger > 0) {
+      const generateAndDownloadPdf = async () => {
+        try {
+          setIsGeneratingPdf(true);
+
+          const token = localStorage.getItem("token");
+          const companyNameEncoded = encodeURIComponent(companyName);
+
+          // Fetch Standalone and Consolidated balance sheets if not already present
+          let standalone = bsStandalone;
+          let consolidated = bsConsolidated;
+
+          const fetchBS = async (type) => {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/balance-sheet?type=${type}`,
+              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+            );
+            return await response.json();
+          };
+
+          if (!standalone) {
+            try { standalone = await fetchBS("Standalone"); setBsStandalone(standalone); } catch (e) { console.error(e); }
+          }
+          if (!consolidated) {
+            try { consolidated = await fetchBS("Consolidated"); setBsConsolidated(consolidated); } catch (e) { console.error(e); }
+          }
+
+          // Fetch Standalone and Consolidated P&L if not already present
+          let pnlStan = pnlStandalone;
+          let pnlCons = pnlConsolidated;
+
+          const fetchPNL = async (type) => {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/screener/profit-loss?result_type=${type}`,
+              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+            );
+            return await response.json();
+          };
+
+          if (!pnlStan) {
+            try { pnlStan = await fetchPNL("Standalone"); setPnlStandalone(pnlStan); } catch (e) { console.error(e); }
+          }
+          if (!pnlCons) {
+            try { pnlCons = await fetchPNL("Consolidated"); setPnlConsolidated(pnlCons); } catch (e) { console.error(e); }
+          }
+
+          // Fetch Standalone and Consolidated Cash Flow if not already present
+          let cfStan = cfStandalone;
+          let cfCons = cfConsolidated;
+
+          const fetchCF = async (type) => {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/cash-flow?type=${type}`,
+              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+            );
+            return await response.json();
+          };
+
+          if (!cfStan) {
+            try { cfStan = await fetchCF("Standalone"); setCfStandalone(cfStan); } catch (e) { console.error(e); }
+          }
+          if (!cfCons) {
+            try { cfCons = await fetchCF("Consolidated"); setCfConsolidated(cfCons); } catch (e) { console.error(e); }
+          }
+
+          // Fetch Standalone and Consolidated Ratios if not already present
+          let ratioStan = ratioStandalone;
+          let ratioCons = ratioConsolidated;
+
+          const fetchRatio = async (type) => {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/ratios?type=${type}`,
+              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+            );
+            return await response.json();
+          };
+
+          if (!ratioStan) {
+            try { ratioStan = await fetchRatio("Standalone"); setRatioStandalone(ratioStan); } catch (e) { console.error(e); }
+          }
+          if (!ratioCons) {
+            try { ratioCons = await fetchRatio("Consolidated"); setRatioConsolidated(ratioCons); } catch (e) { console.error(e); }
+          }
+
+          // Fetch Standalone and Consolidated Auditors if not already present
+          let audStan = audStandalone;
+          let audCons = audConsolidated;
+
+          const fetchAud = async (type) => {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/auditors?type=${type}&limit=1000`,
+              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+            );
+            return await response.json();
+          };
+
+          try {
+            const standData = await fetchAud("Standalone");
+            audStan = standData?.auditors || [];
+            setAudStandalone(audStan);
+          } catch (e) { console.error("Error fetching standalone auditors for PDF:", e); }
+
+          try {
+            const consData = await fetchAud("Consolidated");
+            audCons = consData?.auditors || [];
+            setAudConsolidated(audCons);
+          } catch (e) { console.error("Error fetching consolidated auditors for PDF:", e); }
+
+          // Fetch Directors with limit 1000
+          let directors = directorsData;
+          const fetchDirectors = async () => {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/directors-detailed?limit=1000`,
+              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+            );
+            return await response.json();
+          };
+          try { directors = await fetchDirectors(); setDirectorsData(directors); } catch (e) { console.error(e); }
+
+          // Fetch Shareholding with limit 1000
+          let shareholding = shareholdingData;
+          const fetchShareholding = async () => {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/shareholding?limit=1000`,
+              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+            );
+            return await response.json();
+          };
+          try { shareholding = await fetchShareholding(); setShareholdingData(shareholding); } catch (e) { console.error(e); }
+
+          // Fetch Security Allotment with limit 1000
+          let securityAllotment = securityAllotmentData;
+          const fetchSecurityAllotment = async () => {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/security-allotment?limit=1000`,
+              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+            );
+            return await response.json();
+          };
+          try { securityAllotment = await fetchSecurityAllotment(); setSecurityAllotmentData(securityAllotment); } catch (e) { console.error(e); }
+
+          // Fetch Group Structure with limit 1000
+          let groupStructure = groupStructureData;
+          const fetchGroupStructure = async () => {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/group-structure?limit=1000`,
+              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+            );
+            return await response.json();
+          };
+          try { groupStructure = await fetchGroupStructure(); setGroupStructureData(groupStructure); } catch (e) { console.error(e); }
+
+          // Fetch Overseas Investment with limit 1000
+          let overseasInvestment = overseasInvestmentData;
+          const fetchOverseasInvestment = async () => {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/overseas-direct-investment?limit=1000`,
+              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+            );
+            return await response.json();
+          };
+          try { overseasInvestment = await fetchOverseasInvestment(); setOverseasInvestmentData(overseasInvestment); } catch (e) { console.error(e); }
+
+          // Fetch Charges with limit 1000 for the report
+          let charges = chargesData;
+          const fetchChargesLimit = 1000;
+
+          const fetchCharges = async () => {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/charges?open_page=1&closed_page=1&limit=${fetchChargesLimit}`,
+              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+            );
+            return await response.json();
+          };
+
+          try {
+            charges = await fetchCharges();
+            setChargesData(charges);
+          } catch (e) { console.error("Error fetching charges for PDF:", e); }
+
+          // Fetch Peer Comparison with per_page 1000 for the report
+          let peerComparison = peerComparisonData;
+          const fetchPeers = async () => {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/peer-comparison?page=1&per_page=100`,
+              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+            );
+            return await response.json();
+          };
+          try {
+            peerComparison = await fetchPeers();
+            setPeerComparisonData(peerComparison);
+          } catch (e) { console.error("Error fetching peer comparison for PDF:", e); }
+
+          // Fetch Auditor Remarks for the report
+          let auditorRemarks = null;
+          const fetchAuditorRemarksRepo = async () => {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/compliance-details/auditors-remark`,
+              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+            );
+            return await response.json();
+          };
+          try {
+            auditorRemarks = await fetchAuditorRemarksRepo();
+            setAuditorRemarksData(auditorRemarks);
+          } catch (e) { console.error("Error fetching auditor remarks for PDF:", e); }
+
+          // Fetch Litigation data for the report
+          let litigation = litigationData;
+          const fetchLitigation = async () => {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/litigation?pending_against_page=1&pending_against_size=200&pending_by_page=1&pending_by_size=200&disposed_against_page=1&disposed_against_size=200&disposed_by_page=1&disposed_by_size=200`,
+              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+            );
+            return await response.json();
+          };
+          try {
+            litigation = await fetchLitigation();
+            setLitigationData(litigation);
+          } catch (e) { console.error("Error fetching litigation for PDF:", e); }
+
+          // Small delay to allow state and UI to settle
+          await new Promise(resolve => setTimeout(resolve, 800));
+
+          const { pdf } = await import("@react-pdf/renderer");
+          const { default: ReportDocument } = await import("@/components/company/pdf/ReportDocument");
+
+          const blob = await pdf(<ReportDocument
+            companyData={companyData}
+            alertsData={alertsData}
+            directorsData={directors}
+            shareholdingData={shareholding}
+            securityAllotmentData={securityAllotment}
+            groupStructureData={groupStructure}
+            overseasInvestmentData={overseasInvestment}
+            financialHighlights={financialHighlights}
+            revenueProfitTrend={revenueProfitTrend}
+            bsStandalone={standalone}
+            bsConsolidated={consolidated}
+            pnlStandalone={pnlStan}
+            pnlConsolidated={pnlCons}
+            cfStandalone={cfStan}
+            cfConsolidated={cfCons}
+            ratioStandalone={ratioStan}
+            ratioConsolidated={ratioCons}
+            audStandalone={audStan}
+            audConsolidated={audCons}
+            chargesData={charges}
+            peerComparisonData={peerComparison}
+            auditorRemarksData={auditorRemarks}
+            litigationData={litigation}
+          />).toBlob();
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `${companyName || "Company"}_Report.pdf`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        } catch (error) {
+          console.error("Error generating PDF:", error);
+        } finally {
+          setIsGeneratingPdf(false);
+        }
+      };
+
+      generateAndDownloadPdf();
+    }
+  }, [pdfDownloadTrigger]);
 
 
   /* ================= GET COMPANY DETAILS ================= */
@@ -221,7 +520,7 @@ export default function CompanyPage() {
 
     const fetchPnlData = async () => {
       const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${encodeURIComponent(companyName)}/screener/profit-loss?result_type=${pnlViewType}`;
-      
+
       setPnlLoading(true);
       setPnlError(null);
       try {
@@ -238,11 +537,13 @@ export default function CompanyPage() {
         }
 
         const data = await response.json();
-        setPnlApiData(data);
+        if (pnlViewType === "Standalone") setPnlStandalone(data);
+        else setPnlConsolidated(data);
       } catch (error) {
         console.error("Error fetching P&L data:", error);
         setPnlError(error.message);
-        setPnlApiData(null);
+        if (pnlViewType === "Standalone") setPnlStandalone(null);
+        else setPnlConsolidated(null);
       } finally {
         setPnlLoading(false);
       }
@@ -417,10 +718,13 @@ export default function CompanyPage() {
         }
 
         const data = await response.json();
-        setCashFlowData(data);
+        if (cfType === "Standalone") setCfStandalone(data);
+        else setCfConsolidated(data);
       } catch (error) {
         console.error("Error in cash flow fetch:", error);
         setCashFlowError(error.message);
+        if (cfType === "Standalone") setCfStandalone(null);
+        else setCfConsolidated(null);
       } finally {
         setCashFlowLoading(false);
       }
@@ -763,11 +1067,14 @@ export default function CompanyPage() {
         );
 
         const data = await response.json();
-        setAuditorsData(data?.auditors || []);
-
+        const auds = data?.auditors || [];
+        if (audType === "Standalone") setAudStandalone(auds);
+        else setAudConsolidated(auds);
       } catch (error) {
         console.log("Error in auditors fetch:", error);
         setAuditorsError(error.message);
+        if (audType === "Standalone") setAudStandalone([]);
+        else setAudConsolidated([]);
       } finally {
         setAuditorsLoading(false);
       }
@@ -892,8 +1199,8 @@ export default function CompanyPage() {
         );
 
         const data = await response.json();
-        setBalanceSheetData(data);
-
+        if (bsType === "Standalone") setBsStandalone(data);
+        else setBsConsolidated(data);
       } catch (error) {
         console.log("Error in balance sheet fetch:", error);
         setBalanceSheetError(error.message);
@@ -929,11 +1236,13 @@ export default function CompanyPage() {
         }
 
         const data = await response.json();
-        setRatiosData(data);
-
+        if (ratiosType === "Standalone") setRatioStandalone(data);
+        else setRatioConsolidated(data);
       } catch (error) {
-        console.log("Error in ratios fetch:", error);
+        console.error("Error in ratios fetch:", error);
         setRatiosError(error.message);
+        if (ratiosType === "Standalone") setRatioStandalone(null);
+        else setRatioConsolidated(null);
       } finally {
         setRatiosLoading(false);
       }
@@ -987,7 +1296,7 @@ export default function CompanyPage() {
       {/* Company Highlights */}
       {activeSection === "companyHighlights" && (
         <>
-          <CompanyHighlights 
+          <CompanyHighlights
             companyHighlights={companyHighlights}
             page={highlightsPage}
             limit={highlightsLimit}
@@ -996,7 +1305,7 @@ export default function CompanyPage() {
             setPage={setHighlightsPage}
             setLimit={setLimit}
           />
-          <FinancialHighlightsDetails 
+          <FinancialHighlightsDetails
             financialHighlights={financialHighlights}
             revenueProfitTrend={revenueProfitTrend}
             financialLoading={financialLoading}
@@ -1029,7 +1338,7 @@ export default function CompanyPage() {
             ratiosType={ratiosType}
             setRatiosType={setRatiosType}
           />
-          <CompanyCharts 
+          <CompanyCharts
             businessActivity={peerComparisonData?.business_activity}
             layout="column"
           />
@@ -1039,7 +1348,7 @@ export default function CompanyPage() {
 
       {/* Financials */}
       {activeSection === "financials" && (
-        <FinancialHighlights 
+        <FinancialHighlights
           financialHighlights={financialHighlights}
           revenueProfitTrend={revenueProfitTrend}
           financialLoading={financialLoading}
@@ -1080,9 +1389,9 @@ export default function CompanyPage() {
       {/* Control & Ownership */}
 
       {activeSection === "controlOwnership" && (
-        <OwnershipSection 
-          companyHighlights={companyHighlights} 
-          highlightsLoading={highlightsLoading} 
+        <OwnershipSection
+          companyHighlights={companyHighlights}
+          highlightsLoading={highlightsLoading}
           highlightsError={highlightsError}
           shareholdingData={shareholdingData}
           shareholdingLoading={shareholdingLoading}
@@ -1110,7 +1419,7 @@ export default function CompanyPage() {
 
       {/* Peer Comparison */}
       {activeSection === "peerComparison" && (
-        <PeerComparison 
+        <PeerComparison
           data={peerComparisonData}
           loading={peerComparisonLoading}
           error={peerComparisonError}
@@ -1131,7 +1440,7 @@ export default function CompanyPage() {
       {activeSection === "alerts" && <AlertsContainer alertsData={alertsData} alertsLoading={alertsLoading} alertsError={alertsError} />}
 
       {activeSection === "litigation" && (
-        <LigilationDetails 
+        <LigilationDetails
           data={litigationData}
           loading={litigationLoading}
           error={litigationError}

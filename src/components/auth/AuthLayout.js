@@ -7,7 +7,7 @@ export default function AuthLayout({ children }) {
     <div className={styles.authWrapper}>
       <div className={styles.logoContainer}>
         <Link href="/">
-          <img src="/icons/loginpage.svg" alt="Corporate Professionals" className={styles.logo} />
+          <img src="/icons/pdfLogocompanyWiki.png" alt="Corporate Professionals" className={styles.logo} />
         </Link>
       </div>
       <div className={styles.authCard}>
