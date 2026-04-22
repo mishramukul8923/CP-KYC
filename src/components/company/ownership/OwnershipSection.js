@@ -319,17 +319,19 @@ const OwnershipSection = ({
           <section ref={groupStructureRef} className={styles.section} id="group-structure">
             <div className={styles.sectionWrapper}>
               <h2 className={styles.sectionTitle}>Group Structure</h2>
-              <div className={styles.statsGrid}>
-                {groupStats.map((stat, idx) => (
-                  <div
-                    key={idx}
-                    className={`${styles.statCard} ${styles[stat.type + "Stat"]}`}
-                  >
-                    <p className={styles.statLabel}>{stat.label}</p>
-                    <p className={styles.statValue}>{stat.value}</p>
-                  </div>
-                ))}
-              </div>
+              {!groupStats.every(stat => !stat.value || stat.value === "-") && (
+                <div className={styles.statsGrid}>
+                  {groupStats.map((stat, idx) => (
+                    <div
+                      key={idx}
+                      className={`${styles.statCard} ${styles[stat.type + "Stat"]}`}
+                    >
+                      <p className={styles.statLabel}>{stat.label}</p>
+                      <p className={styles.statValue}>{stat.value}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
           <SubsidiaryAccordion groupStructureData={groupStructureData} />

@@ -29,7 +29,7 @@ const CompanyDetails = ({ companyData, loading, error }) => {
 
   const data = [
     { label: 'CIN/LLPIN', value: info.cin ?? '-' },
-    { label: 'PAN', value: info.pan ?? 'PDF Parsing(MCA Documents)' },
+    { label: 'PAN', value: (!info.pan || String(info.pan).trim() === '' || String(info.pan).trim() === '-') ? <span style={{ fontStyle: 'italic', fontWeight: 300, color: "#80858fff" }}>Download MCA document</span> : info.pan },
     { label: 'LEI Number', value: info.lei_number ?? '-' },
     { label: 'Company Legal Name', value: info.legal_name ?? '-' },
     { label: 'ROC Code', value: info.roc_code ?? '-' },

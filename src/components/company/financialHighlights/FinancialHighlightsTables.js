@@ -600,38 +600,50 @@ const FinancialHighlightsTables = ({
         <div style={{ padding: "24px 16px", color: "#EF4444", fontSize: "14px" }}>
           Error: {auditorsError}
         </div>
-      ) : auditorsData && auditorsData.length > 0 ? (
-        <div className={`${styles.tableWrapper} ${styles.auditorTable}`}>
-          <table className={styles.table}>
-            <thead>
-              <tr className={styles.headerRow}>
-                <th className={styles.dateCell}>Particulars</th>
-                <th className={styles.dateCell}>Membership Number</th>
-                <th className={styles.dateCell}>Firm Registration number</th>
-                <th className={styles.dateCell}>Name of auditor firm</th>
-                <th className={styles.dateCell}>PAN</th>
-                <th className={styles.dateCell}>Period</th>
-              </tr>
-            </thead>
-            <tbody>
-              {auditorsData?.map((row, index) => (
-                <tr key={index}>
-                  <td className={styles.labelCell}>{row?.auditor_type || "-"}</td>
-                  <td className={styles.valueCell}>{row?.membership || "-"}</td>
-                  <td className={styles.valueCell}>{row?.registration_no || "-"}</td>
-                  <td className={styles.valueCell}>{row?.firm_name || "-"}</td>
-                  <td className={styles.valueCell}>{row?.pan || "-"}</td>
-                  <td className={styles.valueCell}>{row?.period || "-"}</td>
+      ) : (() => {
+        const hasValidData = auditorsData && auditorsData.length > 0 && auditorsData.some(row => 
+          Object.values(row).some(val => val !== "-" && val !== null && val !== undefined && val !== "")
+        );
+
+        return (
+          <div className={`${styles.tableWrapper} ${styles.auditorTable}`}>
+            <table className={styles.table}>
+              <thead>
+                <tr className={styles.headerRow}>
+                  <th className={styles.dateCell}>Particulars</th>
+                  <th className={styles.dateCell}>Membership Number</th>
+                  <th className={styles.dateCell}>Firm Registration number</th>
+                  <th className={styles.dateCell}>Name of auditor firm</th>
+                  <th className={styles.dateCell}>PAN</th>
+                  <th className={styles.dateCell}>Period</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div style={{ padding: "24px 16px", color: "#71717A", fontSize: "14px" }}>
-          No Auditors data available.
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {!hasValidData ? (
+                  <tr>
+                    <td colSpan="6" style={{ padding: "20px", textAlign: "center" }}>
+                      <p style={{ fontStyle: 'italic', fontWeight: 300, color: "#80858fff", margin: 0 }}>
+                        Download MCA document
+                      </p>
+                    </td>
+                  </tr>
+                ) : (
+                  auditorsData?.map((row, index) => (
+                    <tr key={index}>
+                      <td className={styles.labelCell}>{row?.auditor_type || "-"}</td>
+                      <td className={styles.valueCell}>{row?.membership || "-"}</td>
+                      <td className={styles.valueCell}>{row?.registration_no || "-"}</td>
+                      <td className={styles.valueCell}>{row?.firm_name || "-"}</td>
+                      <td className={styles.valueCell}>{row?.pan || "-"}</td>
+                      <td className={styles.valueCell}>{row?.period || "-"}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        );
+      })()}
     </div>
   );
 };

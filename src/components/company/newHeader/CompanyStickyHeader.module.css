@@ -1,38 +1,42 @@
 .stickyHeader {
-  position: fixed;
-  top: 64px; 
-  left: 48px;
-  right: 0;
-  height: 72px;
+    position: fixed;
+    top: 64px;
+    left: 48px;
+    right: 0;
+    height: 72px;
 
-  background: #ffffff;
-  border-bottom: 1px solid rgba(228, 228, 231, 1);
-  z-index: 800;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(228, 228, 231, 1);
+    z-index: 800;
 
-  transform: translateY(-100%);
-  opacity: 0;
-  pointer-events: none;
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
 
-  transition:
-    right 0.3s ease,
-    transform 0.28s ease,
-    opacity 0.2s ease;
+    transition:
+        right 0.3s ease,
+        transform 0.28s ease,
+        opacity 0.2s ease;
 }
 
 .withSidebar {
-  right: 380px;
+    right: 380px;
 }
 
 .visible {
-  transform: translateY(0);
-  opacity: 1;
-  pointer-events: auto;
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .hidden {
-  transform: translateY(-100%);
-  opacity: 0;
-  pointer-events: none;
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.historyopen {
+    display: none;
 }
 
 
@@ -148,9 +152,9 @@
 }
 
 .divider {
-  width: 1px;
-  height: 24px;
-  background-color: #E4E4E7;
+    width: 1px;
+    height: 24px;
+    background-color: #E4E4E7;
 }
 
 .cinBadge {
@@ -192,7 +196,7 @@
 .saveButton {
     background: white;
     border: 1px solid var(--border, rgba(226, 232, 240, 1));
-    padding: 7px 15px;
+    padding: 6px 14px;
     border-radius: 8px;
     font-weight: 500;
     font-size: 14px;
@@ -221,7 +225,7 @@
 }
 
 .actionsButton:hover {
-    background-color: rgb(14, 160, 68);
+    /* background-color: rgba(4, 30, 66, 0.755); */
 }
 
 /* ===== ACTIONS DROPDOWN ===== */
@@ -269,77 +273,89 @@
     background-color: rgba(244, 244, 245, 1);
 }
 
-@media(max-width:1600px){
-    .inner{
+@media(max-width:1600px) {
+    .inner {
         gap: 16px;
     }
-    .statsContainer{
+
+    .statsContainer {
         gap: 8px;
     }
 }
 
-@media(max-width:1500px){
-    .inner{
+@media(max-width:1500px) {
+    .inner {
         gap: 16px;
     }
-    .statsContainer{
+
+    .statsContainer {
         gap: 5px;
     }
 }
 
-@media(max-width:1440px){
-    .inner{
+@media(max-width:1440px) {
+    .inner {
         gap: 16px;
     }
-    .statsContainer{
+
+    .statsContainer {
         gap: 8px;
     }
 }
 
-@media(max-width:1400px){
-    .inner{
+@media(max-width:1400px) {
+    .inner {
         gap: 5px;
     }
-    .statsContainer{
+
+    .statsContainer {
         gap: 5px;
     }
-    .titleRow{
+
+    .titleRow {
         gap: 5px;
     }
-    .buttonGroup{
+
+    .buttonGroup {
         gap: 5px;
     }
-    .saveButton{
+
+    .saveButton {
         padding: 7px 10px;
     }
-    .actionsButton{
+
+    .actionsButton {
         padding: 7px 10px;
     }
-    .statItem{
+
+    .statItem {
         gap: 4px;
     }
 }
 
-@media(max-width:1280px){
-    .companyName{
+@media(max-width:1280px) {
+    .companyName {
         font-size: 20px;
     }
-    .statLabel{
+
+    .statLabel {
         font-size: 12px;
     }
-    .saveButton{
+
+    .saveButton {
         font-size: 12px;
     }
-    .actionsButton{
+
+    .actionsButton {
         font-size: 12px;
     }
 }
 
 /* Sidebar Width Media Query */
 @media (max-width: 1750px) {
-  .withSidebar {
-    right: 340px;
-  }
+    .withSidebar {
+        right: 340px;
+    }
 }
 
 /* Responsive visibility classes for header buttons */
@@ -348,10 +364,17 @@
     display: none;
 }
 
+@media (max-width: 1920px) {
+    .hideOn1900 {
+        display: none !important;
+    }
+}
+
 @media (max-width: 1750px) {
     .hideOn1750 {
         display: none !important;
     }
+
     .showOn1750 {
         display: block;
     }
@@ -361,6 +384,7 @@
     .hideOn1200 {
         display: none !important;
     }
+
     .showOn1200 {
         display: block;
     }
@@ -424,4 +448,3 @@
     text-decoration: underline;
     padding: 4px 8px;
 }
-

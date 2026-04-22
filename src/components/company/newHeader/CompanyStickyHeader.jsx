@@ -5,6 +5,7 @@ import styles from "./CompanyStickyHeader.module.css";
 import { useRouter } from "next/navigation";
 import { useCompanySection } from "../context/CompanySectionContext";
 import DownloadModal from "../modals/DownloadModal";
+import ShareModal from "../modals/ShareModal";
 
 
 export default function CompanyStickyHeader({ visible, companyData }) {
@@ -14,6 +15,7 @@ export default function CompanyStickyHeader({ visible, companyData }) {
 
   const [actionsOpen, setActionsOpen] = useState(false);
   const [actionsDirection, setActionsDirection] = useState("down");
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const slug = companyData?.company_information?.legal_name
     ?.toLowerCase()
@@ -120,18 +122,20 @@ export default function CompanyStickyHeader({ visible, companyData }) {
         {/* RIGHT */}
         <div className={styles.actionSection}>
           <div className={styles.buttonGroup}>
-            <button
-              className={styles.saveButton}
-              onClick={() => setVersionHistoryOpen(true)}
-            >
-              <img
-                src="/version.svg"
-                alt=""
-                className={styles.buttonIcon}
-                style={{ width: '18px', height: '18px' }}
-              />
-              Version History
-            </button>
+            {!isVersionHistoryOpen && (
+              <button
+                className={`${styles.saveButton} ${isVersionHistoryOpen ? styles.hideOn1900 : ""}`}
+                onClick={() => setVersionHistoryOpen(true)}
+              >
+                <img
+                  src="/version.svg"
+                  alt=""
+                  className={styles.buttonIcon}
+                  style={{ width: '18px', height: '18px' }}
+                />
+                Version History
+              </button>
+            )}
 
             <button className={`${styles.saveButton} ${isVersionHistoryOpen ? styles.hideOn1200 : ""}`} onClick={() => { window.location.reload(); }}>
               <img
@@ -142,14 +146,14 @@ export default function CompanyStickyHeader({ visible, companyData }) {
               Refresh Company
             </button>
 
-            <button className={`${styles.saveButton} ${isVersionHistoryOpen ? styles.hideOn1750 : ""}`}>
+            {/* <button className={`${styles.saveButton} ${isVersionHistoryOpen ? styles.hideOn1750 : ""}`}>
               <img
                 src="/icons/bookmark.svg"
                 alt=""
                 className={styles.buttonIcon}
               />
               Save
-            </button>
+            </button> */}
 
             <div ref={actionsRef} className={styles.actionsWrapper}>
               <button className={styles.actionsButton} onClick={toggleActions}>
@@ -167,9 +171,9 @@ export default function CompanyStickyHeader({ visible, companyData }) {
                 >
                   {isVersionHistoryOpen && (
                     <>
-                      <button className={`${styles.dropdownItem} ${styles.showOn1750}`}>
+                      {/* <button className={`${styles.dropdownItem} ${styles.showOn1750}`}>
                         Save
-                      </button>
+                      </button> */}
                       <button className={`${styles.dropdownItem} ${styles.showOn1200}`} onClick={() => window.location.reload()}>
                         Refresh Company
                       </button>
@@ -183,13 +187,26 @@ export default function CompanyStickyHeader({ visible, companyData }) {
                   >
                     {isGeneratingPdf ? "Generating PDF..." : "Download Report"}
                   </button>
-                  <button className={styles.dropdownItem}>Share</button>
+                  <button
+                    className={styles.dropdownItem}
+                    onClick={() => setIsShareModalOpen(true)}
+                  >
+                    Share
+                  </button>
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        shareLink={`${process.env.NEXT_PUBLIC_SHARE_BASE_URL || 'https://cp-kyc.vercel.app'}/company/${slug}`}
+        companyName={companyData?.company_information?.legal_name}
+        title="Share Company"
+        subtitle={`Share ${companyData?.company_information?.legal_name}'s company profile with your network`}
+      />
     </header>
   );
 }

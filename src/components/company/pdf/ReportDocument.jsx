@@ -11,7 +11,6 @@ const styles = StyleSheet.create({
   },
   letterheadContainer: {
     alignItems: 'center',
-    width: '200px',
     marginBottom: 20,
     marginTop: -10,
   },
@@ -27,7 +26,7 @@ const styles = StyleSheet.create({
   },
   watermarkImage: {
     width: 600,
-    opacity: 0.2,
+    opacity: 0.1,
     transform: 'rotate(-45deg)',
   },
   section: {
@@ -66,7 +65,7 @@ const styles = StyleSheet.create({
   },
   paragraph: {
     marginBottom: 5,
-    lineHeight: 1.4,
+    lineHeight: 1,
     textAlign: 'justify',
     width: '100%',
   },
@@ -150,13 +149,13 @@ const styles = StyleSheet.create({
   // Premium Header Styles
   premiumHeaderContainer: {
     flexDirection: 'row',
-    marginBottom: 20,
+    marginBottom: 10,
     alignItems: 'center',
-    paddingBottom: 25,
+    paddingBottom: 10,
   },
   logoCircle: {
-    width: 100,
-    height: 100,
+    width: 60,
+    height: 60,
     borderRadius: 50,
     backgroundColor: '#fff',
     borderWidth: 1,
@@ -167,18 +166,18 @@ const styles = StyleSheet.create({
   },
   headerInfoRight: {
     flex: 1,
-    marginLeft: 25,
+    marginLeft: 15,
   },
   companyNameLarge: {
-    fontSize: 22,
+    fontSize: 14,
     fontFamily: 'Helvetica-Bold',
     color: '#111827',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   industryListingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 6,
   },
   industryLabel: {
     fontSize: 9,
@@ -187,7 +186,7 @@ const styles = StyleSheet.create({
   },
   industryTag: {
     backgroundColor: '#f3f4f6',
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
     fontSize: 9,
@@ -215,21 +214,21 @@ const styles = StyleSheet.create({
   metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 18,
+    marginRight: 4,
   },
   metaText: {
-    fontSize: 10,
+    fontSize: 9,
     color: '#6b7280',
     marginLeft: 5,
   },
   websiteText: {
-    fontSize: 10,
+    fontSize: 9,
     color: '#2563eb',
     textDecoration: 'underline',
     marginLeft: 5,
   },
   alertBadgeContainer: {
-    marginTop: 15,
+    marginTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -240,7 +239,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    marginRight: 15,
+    marginRight: 2,
   },
   alertText: {
     fontSize: 9,
@@ -250,7 +249,7 @@ const styles = StyleSheet.create({
   socialIconsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 10,
+    marginLeft: 2,
   },
   socialIconCircle: {
     width: 20,
@@ -479,34 +478,34 @@ export const ReportDocument = ({
             <Text style={styles.industryLabel}>Industry :</Text>
             <View style={styles.industryTag}><Text>{formatValue(ci.industry)}</Text></View>
 
-            <Text style={[styles.industryLabel, { marginLeft: 15 }]}>Listing Status :</Text>
+            <Text style={[styles.industryLabel, { marginLeft: 7 }]}>Listing Status :</Text>
             <View style={styles.listingBadge}><Text style={styles.listingText}>{listingStatusText}</Text></View>
           </View>
 
           {/* Line 3: Founded, Classification, Pincode */}
-          <View style={[styles.metaIconRow, { marginTop: 7 }]}>
+          <View style={[styles.metaIconRow, { marginTop: 2 }]}>
             <View style={styles.metaItem}>
               <Svg width="12" height="12" viewBox="0 0 24 24"><Path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z" fill="#9ca3af" /></Svg>
               <Text style={styles.metaText}>Founded {foundedYear}</Text>
             </View>
-            <View style={[styles.metaItem, { marginLeft: 10 }]}>
+            <View style={[styles.metaItem, { marginLeft: 1 }]}>
               <Svg width="12" height="12" viewBox="0 0 24 24"><Path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z" fill="#9ca3af" /></Svg>
               <Text style={styles.metaText}>{formatValue(ci.classification)}</Text>
             </View>
-            <View style={[styles.metaItem, { marginLeft: 10 }]}>
+            <View style={[styles.metaItem, { marginLeft: 1 }]}>
               <Svg width="12" height="12" viewBox="0 0 24 24"><Path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#9ca3af" /></Svg>
               <Text style={styles.metaText}>{zipCode}</Text>
             </View>
           </View>
 
           {/* Line 4: Website and Social Media Icons */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
             <View style={styles.metaItem}>
               <Svg width="12" height="12" viewBox="0 0 24 24"><Path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" fill="#2563eb" /></Svg>
               <Link src={`https://${contact.website}`}><Text style={[styles.websiteText, { marginRight: 20 }]}>{formatValue(contact.website)}</Text></Link>
             </View>
 
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: -1 }}>
               {(contact.social_media || []).map((url, i) => {
                 let iconSrc = null;
                 if (url.includes('twitter.com') || url.includes('x.com')) iconSrc = "/twitterforpdf.png";
@@ -519,7 +518,7 @@ export const ReportDocument = ({
 
                 return (
                   <Link key={i} src={url}>
-                    <Image src={iconSrc} style={{ width: 14, height: 14, marginRight: 6 }} />
+                    <Image src={iconSrc} style={{ width: 14, height: 14, marginRight: 3 }} />
                   </Link>
                 );
               })}
@@ -561,7 +560,7 @@ export const ReportDocument = ({
       return maxLen;
     });
 
-    const totalWeight = colWeights.reduce((a, b) => a + b, 0);
+    const totalWeight = colWeights.reduce((a, b) => a + b, 0) || 1;
     const calculatedWidths = colWeights.map(w => {
       let percent = (w / totalWeight) * 100;
       if (percent < 12) percent = 12; // Minimum col width
@@ -570,7 +569,7 @@ export const ReportDocument = ({
     });
 
     // Normalize widths so they sum to exactly 100
-    const adjustedTotal = calculatedWidths.reduce((sum, w) => sum + w, 0);
+    const adjustedTotal = calculatedWidths.reduce((sum, w) => sum + w, 0) || 1;
     const colWidths = calculatedWidths.map(w => `${(w / adjustedTotal) * 100}%`);
 
     return (
@@ -623,6 +622,8 @@ export const ReportDocument = ({
 
     // Filter out metadata and "setAttributes"
     const years = bsData.periods.filter(p => p !== "setAttributes");
+    if (years.length === 0) return null;
+
     const sections = [
       { label: "Shareholder's Fund", data: bsData.shareholders_fund },
       { label: "Non Current Liabilities", data: bsData.non_current_liabilities },
@@ -702,6 +703,7 @@ export const ReportDocument = ({
     // Filter out metadata, setAttributes, TTM, and isExpandable
     const ignoreKeys = ["setAttributes", "TTM", "isExpandable"];
     const years = pnlData.periods.filter(p => !ignoreKeys.includes(p));
+    if (years.length === 0) return null;
 
     const sections = [
       { label: "Revenue", data: pnlData.revenue },
@@ -791,6 +793,7 @@ export const ReportDocument = ({
 
     const ignoreKeys = ["setAttributes"];
     const years = cfData.periods.filter(p => !ignoreKeys.includes(p));
+    if (years.length === 0) return null;
 
     const cfRows = [
       { label: "Cash from Operating Activity", path: "cash_from_operating_activity" },
@@ -856,6 +859,7 @@ export const ReportDocument = ({
 
     const ignoreKeys = ["setAttributes"];
     const years = ratiosData.periods.filter(p => !ignoreKeys.includes(p));
+    if (years.length === 0) return null;
 
     const sections = [
       { label: "Profitability Ratios", data: ratiosData.profitability },
@@ -1582,8 +1586,8 @@ export const ReportDocument = ({
     <Document>
       {/* Premium First Page */}
       <Page size="A4" style={styles.page}>
-        <View style={styles.letterheadContainer}>
-          <Image src="/icons/pdfLogocompanyWiki.png" style={{ width: 150 }} />
+        <View style={[styles.letterheadContainer, { borderBottomWidth: 1, borderBottomColor: '#f1f1f1', paddingBottom: 15, width: '100%' }]}>
+          <Image src="/icons/pdfLogocompanyWiki.png" style={{ width: 100 }} />
         </View>
         {renderPremiumHeader()}
 
@@ -1672,9 +1676,6 @@ export const ReportDocument = ({
       {/* Alerts Page (Moved to BEFORE Directors) */}
       {alerts.length > 0 && (
         <Page size="A4" style={styles.page}>
-          <View style={styles.watermarkContainer} fixed>
-            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-          </View>
           <View style={styles.section}>
             <Text style={styles.heading2}>Regulatory Alerts</Text>
             <View style={styles.table}>
@@ -1696,27 +1697,29 @@ export const ReportDocument = ({
               ))}
             </View>
           </View>
-        </Page>
+        
+        <View style={styles.watermarkContainer} fixed>
+          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+        </View>
+      </Page>
       )}
 
       {/* Directors Overview Page */}
       {allDirectors.length > 0 && (
         <Page size="A4" style={styles.page}>
-          <View style={styles.watermarkContainer} fixed>
-            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-          </View>
           <Text style={styles.heading2}>Directors & KMP Details</Text>
           {renderDirectorTable(currentDirectors, "Current Directors & KMP")}
           {renderDirectorTable(pastDirectors, "Past Directors & KMP")}
-        </Page>
+        
+        <View style={styles.watermarkContainer} fixed>
+          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+        </View>
+      </Page>
       )}
 
       {/* Individual Director Data Page(s) */}
       {allDirectors.length > 0 && allDirectors.map((d, index) => (
         <Page size="A4" style={styles.page} key={`dir-detail-${index}`}>
-          <View style={styles.watermarkContainer} fixed>
-            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-          </View>
           <View style={styles.header}>
             <View style={styles.titleContainer}>
               <Text style={styles.title}>{d.name}</Text>
@@ -1766,15 +1769,16 @@ export const ReportDocument = ({
           {renderDynamicTable(d.banking_default_declarations, "Banking Default Declarations")}
           {renderDynamicTable(d.regulatory_compliance_history, "Regulatory Compliance History")}
           {renderDynamicTable(d.pep_sanctions_checks, "PEP & Sanctions Checks")}
-        </Page>
+        
+        <View style={styles.watermarkContainer} fixed>
+          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+        </View>
+      </Page>
       ))}
 
       {/* Phase 3: Control & Ownership - Shareholding (Moved to after directors) */}
       {shareholdingData && (
         <Page size="A4" style={styles.page}>
-          <View style={styles.watermarkContainer} fixed>
-            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-          </View>
           <Text style={[styles.title, { marginBottom: 15 }]}>Control & Ownership - Shareholding</Text>
 
           {/* Shareholding Overview Stats */}
@@ -1807,13 +1811,13 @@ export const ReportDocument = ({
                 <View
                   style={[
                     styles.progressPromoter,
-                    { width: `${parseFloat(shareholdingData?.summary?.promoter_percentage || 0)}%` }
+                    { width: `${parseFloat(shareholdingData?.summary?.promoter_percentage) || 0}%` }
                   ]}
                 />
                 <View
                   style={[
                     styles.progressNonPromoter,
-                    { width: `${parseFloat(shareholdingData?.summary?.public_percentage || 0)}%` }
+                    { width: `${parseFloat(shareholdingData?.summary?.public_percentage) || 0}%` }
                   ]}
                 />
               </View>
@@ -2065,15 +2069,16 @@ export const ReportDocument = ({
             </View>
           )}
 
-        </Page>
+        
+        <View style={styles.watermarkContainer} fixed>
+          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+        </View>
+      </Page>
       )}
 
       {/* Phase 5: Landscape Balance Sheets */}
       {(bsStandalone || bsConsolidated) && (
         <Page size="A4" orientation="landscape" style={styles.page}>
-          <View style={styles.watermarkContainer} fixed>
-            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-          </View>
           {bsStandalone && renderBalanceSheetTable(bsStandalone, "Standalone")}
           {bsConsolidated && (
             <View break>
@@ -2128,45 +2133,53 @@ export const ReportDocument = ({
               {renderAuditorsTable(audConsolidated, "Consolidated")}
             </View>
           )}
-        </Page>
+        
+        <View style={styles.watermarkContainer} fixed>
+          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+        </View>
+      </Page>
       )}
 
       {/* Phase 6: Charges Information (Portrait) */}
       {chargesData && (
         <Page size="A4" orientation="portrait" style={styles.page}>
-          <View style={styles.watermarkContainer} fixed>
-            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-          </View>
           {renderChargesSection(chargesData)}
-        </Page>
+        
+        <View style={styles.watermarkContainer} fixed>
+          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+        </View>
+      </Page>
       )}
 
       {/* Phase 7: Peer Comparison & Business Activity (Portrait) */}
       {peerComparisonData && (
         <Page size="A4" orientation="portrait" style={styles.page}>
-          <View style={styles.watermarkContainer} fixed>
-            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-          </View>
           {renderPeerComparisonSection(peerComparisonData)}
-        </Page>
+        
+        <View style={styles.watermarkContainer} fixed>
+          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+        </View>
+      </Page>
       )}
 
       {/* Phase 8: Compliance Details (Portrait) */}
       <Page size="A4" orientation="portrait" style={styles.page}>
+        {renderComplianceSection(auditorRemarksData)}
+      
         <View style={styles.watermarkContainer} fixed>
           <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
         </View>
-        {renderComplianceSection(auditorRemarksData)}
       </Page>
 
       {/* Phase 9: Litigation (Portrait) */}
       {litigationData && (
         <Page size="A4" orientation="portrait" style={styles.page}>
-          <View style={styles.watermarkContainer} fixed>
-            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-          </View>
           {renderLitigationSection(litigationData)}
-        </Page>
+        
+        <View style={styles.watermarkContainer} fixed>
+          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+        </View>
+      </Page>
       )}
 
     </Document>

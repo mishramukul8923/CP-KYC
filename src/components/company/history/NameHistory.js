@@ -24,7 +24,7 @@ const NameHistory = (companyData, loading, error) => {
     return (
       <div className={styles.container}>
         <h2 className={styles.title}>Name History</h2>
-        <p>No name history available.</p>
+        <p style={{ fontStyle: 'italic', fontWeight: 300, color: "#80858fff" }}>Download MCA document</p>
       </div>
     );
   }

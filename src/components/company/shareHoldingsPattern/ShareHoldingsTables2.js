@@ -42,6 +42,10 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
   const [isFiiOpen, setIsFiiOpen] = useState(true);
   const [isAllotmentOpen, setIsAllotmentOpen] = useState(true);
 
+  const isAllotmentEmpty = !allotmentData || allotmentData.length === 0 || allotmentData.every(item => 
+    Object.values(item).every(val => !val || val === "-" || val === "null" || val === "undefined")
+  );
+
   return (
     <div className={styles.container}>
       {/* ... previous content preserved ... */}
@@ -250,7 +254,13 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
               </tr>
             </thead>
             <tbody>
-              {allotmentData.length > 0 ? (
+              {isAllotmentEmpty ? (
+                <tr>
+                  <td colSpan="7" className={styles.tdValue} style={{ textAlign: "center", padding: "20px" }}>
+                    <p style={{ fontStyle: 'italic', fontWeight: 300, color: "#80858fff" }}>Download MCA document</p>
+                  </td>
+                </tr>
+              ) : allotmentData.length > 0 ? (
                 allotmentData.slice((allotmentPage - 1) * rowsPerPage, allotmentPage * rowsPerPage).map((item, index) => (
                   <tr key={index}>
                     <td className={styles.tdName}>{item.date || "-"}</td>
@@ -271,7 +281,7 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
           </table>
         </div>
 
-      {allotmentData.length > 0 && (
+      {!isAllotmentEmpty && allotmentData.length > 0 && (
         <div className={styles.paginationRow}>
           <span className={styles.showingText}>
             Showing {Math.min((allotmentPage - 1) * rowsPerPage + 1, allotmentData.length)}-{Math.min(allotmentPage * rowsPerPage, allotmentData.length)} of {allotmentData.length}

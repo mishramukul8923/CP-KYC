@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./CompanyNews.module.css";
+import { ChevronRight } from "lucide-react";
 import CustomCalendar from "../../common/CustomCalendar";
+import ShareModal from "../modals/ShareModal";
+
 
 const CompanyNews = ({ companyName }) => {
     const [news, setNews] = useState([]);
@@ -11,7 +14,11 @@ const CompanyNews = ({ companyName }) => {
     const [apiInfo, setApiInfo] = useState({ source: "-", lastUpdated: "-" });
 
     const [expandedIds, setExpandedIds] = useState({});
+    const [overflowingIds, setOverflowingIds] = useState({});
+    const descriptionRefs = useRef([]);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [currentShareLink, setCurrentShareLink] = useState("");
     const calendarRef = useRef(null);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
@@ -22,6 +29,32 @@ const CompanyNews = ({ companyName }) => {
             [id]: !prev[id]
         }));
     };
+
+    function timeAgo(dateString) {
+        if (!dateString || dateString === "-") return "-";
+        const now = new Date();
+        const past = new Date(dateString);
+        
+        // Check if date is valid
+        if (isNaN(past.getTime())) return dateString;
+
+        const diff = now - past;
+        const seconds = Math.floor(diff / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        const weeks = Math.floor(days / 7);
+        const months = Math.floor(days / 30);  // Approximate
+        const years = Math.floor(days / 365); // Approximate
+
+        if (years > 0) return `${years} year${years > 1 ? 's' : ''} ago`;
+        if (months > 0) return `${months} month${months > 1 ? 's' : ''} ago`;
+        if (weeks > 0) return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+        if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+        if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+        if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+        return `${seconds} second${seconds !== 1 ? 's' : ''} ago`;
+    }
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -50,31 +83,31 @@ const CompanyNews = ({ companyName }) => {
 
             const dateFrom = formatDate(startDate);
             const dateTo = formatDate(endDate);
-            
+
             let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${encodeURIComponent(companyName)}/news?page=${pageNum}&size=5`;
-            
+
             if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
             if (dateFrom) url += `&date_from=${dateFrom}`;
             if (dateTo) url += `&date_to=${dateTo}`;
 
             const token = localStorage.getItem("token");
-            
+
             const response = await fetch(url, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
             if (!response.ok) throw new Error("Failed to fetch news");
-            
+
             const data = await response.json();
-            
+
             if (shouldAppend) {
                 setNews(prev => [...prev, ...(data.news || [])]);
             } else {
                 setNews(data.news || []);
                 setPage(1);
             }
-            
+
             setTotalNews(data.total || 0);
             // setApiInfo({
             //     source: data.source || "-",
@@ -102,26 +135,33 @@ const CompanyNews = ({ companyName }) => {
         fetchNews(nextPage, true);
     };
 
-    const handleShare = async (title, url) => {
-        if (!url) return;
-        
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: title || 'News Article',
-                    url: url
-                });
-            } catch (error) {
-                if (error.name !== 'AbortError') {
-                    console.error('Error sharing:', error);
-                    window.open(url, '_blank');
+    // Detect overflow for "Show More" button
+    useEffect(() => {
+        const detectOverflow = () => {
+            const newOverflowingIds = {};
+            descriptionRefs.current.forEach((el, index) => {
+                if (el) {
+                    // 40px is the height of 2 lines (20px line-height * 2)
+                    // We check if the scrollHeight is significantly larger than the clamped height
+                    const isOverflowing = el.scrollHeight > 40;
+                    if (isOverflowing) {
+                        newOverflowingIds[index] = true;
+                    }
                 }
-            }
-        } else {
-            // Fallback for browsers that don't support Web Share API
-            window.open(url, '_blank');
-        }
+            });
+            setOverflowingIds(newOverflowingIds);
+        };
+
+        // Small timeout to ensure DOM is rendered and styles applied
+        const timeoutId = setTimeout(detectOverflow, 100);
+        return () => clearTimeout(timeoutId);
+    }, [news]);
+
+    const handleShare = (link) => {
+        setCurrentShareLink(link || "");
+        setIsShareModalOpen(true);
     };
+
 
 
 
@@ -141,7 +181,7 @@ const CompanyNews = ({ companyName }) => {
                 </div>
                 <div className={styles.actions}>
                     <div className={styles.calendarContainer} ref={calendarRef}>
-                        <button 
+                        <button
                             className={styles.calendarBtn}
                             onClick={() => setIsCalendarOpen(!isCalendarOpen)}
                         >
@@ -160,7 +200,7 @@ const CompanyNews = ({ companyName }) => {
                                     : "Select Date"}
                             </span>
                             {startDate && (
-                                <div 
+                                <div
                                     className={styles.clearDateBtn}
                                     onClick={(e) => {
                                         e.stopPropagation();
@@ -175,7 +215,7 @@ const CompanyNews = ({ companyName }) => {
                         </button>
                         {isCalendarOpen && (
                             <div className={styles.popupCalendar}>
-                                <CustomCalendar 
+                                <CustomCalendar
                                     initialStartDate={startDate}
                                     initialEndDate={endDate}
                                     onSelect={(start, end) => {
@@ -191,9 +231,9 @@ const CompanyNews = ({ companyName }) => {
                     </div>
                     <div className={styles.searchContainer}>
                         <img src="/icons/search.svg" alt="search" className={styles.searchIcon} />
-                        <input 
-                            type="text" 
-                            placeholder="Search News..." 
+                        <input
+                            type="text"
+                            placeholder="Search News..."
                             className={styles.searchInput}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -207,29 +247,32 @@ const CompanyNews = ({ companyName }) => {
                     <div key={index} className={styles.newsCard}>
                         {/* <div className={`${styles.statusDot} ${styles[item.status]}`}></div> */}
                         <div className={styles.imageContainer}>
-                            <img 
-                                src={(item.image_url && item.image_url !== "-") ? item.image_url : '/icons/Image.svg'} 
-                                alt={item.title || "-"} 
-                                className={styles.newsImage} 
+                            <img
+                                src={(item.image_url && item.image_url !== "-") ? item.image_url : '/icons/Image.svg'}
+                                alt={item.title || "-"}
+                                className={styles.newsImage}
                             />
                         </div>
                         <div className={styles.content}>
                             <h3 className={styles.newsTitle}>{item.title || "-"}</h3>
                             <div className={styles.descriptionContainer}>
-                                <p className={`${styles.description} ${expandedIds[index] ? styles.expanded : styles.clamped}`}>
+                                <p
+                                    ref={el => descriptionRefs.current[index] = el}
+                                    className={`${styles.description} ${expandedIds[index] ? styles.expanded : styles.clamped}`}
+                                >
                                     {item.description || "-"}
                                 </p>
-                                {!expandedIds[index] && item.description?.length > 100 && (
-                                    <span 
-                                        className={styles.showMoreInline} 
+                                {!expandedIds[index] && overflowingIds[index] && (
+                                    <span
+                                        className={styles.showMoreInline}
                                         onClick={() => toggleExpand(index)}
                                     >
                                         ... Show More
                                     </span>
                                 )}
                                 {expandedIds[index] && (
-                                    <span 
-                                        className={styles.showLess} 
+                                    <span
+                                        className={styles.showLess}
                                         onClick={() => toggleExpand(index)}
                                     >
                                         Show Less
@@ -239,7 +282,7 @@ const CompanyNews = ({ companyName }) => {
                             <div className={styles.footer}>
                                 <div className={styles.footerItem}>
                                     <img src="/icons/footer_calender.svg" alt="date" className={styles.footerIcon} />
-                                    <span>{item.date || "-"}</span>
+                                    <span>{timeAgo(item.date)}</span>
                                 </div>
                                 <div className={styles.footerItem}>
                                     <img src="/globe.svg" alt="source" className={styles.footerIcon} />
@@ -258,34 +301,44 @@ const CompanyNews = ({ companyName }) => {
                                     <img src="/viewsourceIcon.svg" alt="view-source" className={styles.actionIcon} />
                                 </a>
                             )}
-                            {item.share_url && (
-                                <div 
-                                    onClick={() => handleShare(item.title, item.share_url)}
+                            {
+                                <div
+                                    onClick={() => handleShare(item.external_url || item.share_url)}
                                     className={styles.actionButton}
                                 >
                                     <img src="/iconShare.svg" alt="share" className={styles.actionIcon} />
                                 </div>
-                            )}
+                            }
                         </div>
                     </div>
                 ))}
 
                 {news.length < totalNews && (
                     <div className={styles.loadMoreWrapper}>
-                        <button 
+                        <button
                             className={styles.loadMoreBtn}
                             onClick={handleLoadMore}
                             disabled={isLoading}
                         >
+
                             {isLoading ? "Loading..." : "Load More"}
+                            <ChevronRight size={15} />
                         </button>
                     </div>
                 )}
-                
+
                 {news.length === 0 && !isLoading && (
                     <div className={styles.noResults}>No news articles found for this selection.</div>
                 )}
             </div>
+            <ShareModal 
+                isOpen={isShareModalOpen} 
+                onClose={() => setIsShareModalOpen(false)} 
+                shareLink={currentShareLink}
+                companyName={companyName}
+                title="Share News"
+                subtitle={`Share ${companyName}'s News with others`}
+            />
         </div>
     );
 };
