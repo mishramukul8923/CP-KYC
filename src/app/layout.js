@@ -23,7 +23,6 @@ export default function RootLayout({ children }) {
 
   const [activeTab, setActiveTab] = useState("home");
   const [companyName, setCompanyName] = useState("");
-  const [allCompanies, setAllCompanies] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -34,40 +33,36 @@ export default function RootLayout({ children }) {
   const suggestionBoxRef = useRef(null);
   const suggestionRefs = useRef([]);
 
-  /* FETCH COMPANIES */
-
+  /* DYNAMIC SUGGESTIONS FETCHING */
   useEffect(() => {
-    const fetchCompanies = async () => {
-      if (isAuthPage) return;
+    if (isAuthPage || !companyName.trim()) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
 
+    const timer = setTimeout(async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return;
-
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/companies?per_page=100`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const res = await fetch(`https://cpkycapi.webninjaz.com/api/search/suggestions?q=${encodeURIComponent(companyName)}&limit=40`, {
+          headers: {
+            "Authorization": token ? `Bearer ${token}` : ""
           }
-        );
-
+        });
         const result = await res.json();
-
-        if (Array.isArray(result?.items)) {
-          setAllCompanies(result.items);
+        if (Array.isArray(result?.suggestions)) {
+          setSuggestions(result.suggestions);
+          setShowSuggestions(true);
         } else {
-          setAllCompanies([]);
+          setSuggestions([]);
         }
-      } catch (error) {
-        console.log("Error fetching companies:", error);
-        setAllCompanies([]);
+      } catch (err) {
+        console.error("Suggestion fetch error:", err);
       }
-    };
+    }, 300);
 
-    fetchCompanies();
-  }, [isAuthPage]);
+    return () => clearTimeout(timer);
+  }, [companyName, isAuthPage]);
 
   /* ROUTE CHANGE LOGIC */
 
@@ -199,7 +194,7 @@ export default function RootLayout({ children }) {
     if (e.key === "Enter") {
       if (activeIndex >= 0 && suggestions[activeIndex]) {
         e.preventDefault();
-        handleSuggestionClick(suggestions[activeIndex].company_name);
+        handleSuggestionClick(suggestions[activeIndex].name);
       }
     }
   };
@@ -209,30 +204,6 @@ export default function RootLayout({ children }) {
   const handleInputChange = (value) => {
     setCompanyName(value);
     setActiveIndex(-1);
-
-    if (!value.trim()) {
-      setSuggestions([]);
-      setShowSuggestions(false);
-      return;
-    }
-
-    const searchTerm = value.toLowerCase();
-    const startsWith = [];
-    const contains = [];
-
-    allCompanies.forEach((company) => {
-      const name = company.company_name.toLowerCase();
-      if (name.startsWith(searchTerm)) {
-        startsWith.push(company);
-      } else if (name.includes(searchTerm)) {
-        contains.push(company);
-      }
-    });
-
-    const filtered = [...startsWith, ...contains];
-
-    setSuggestions(filtered);
-    setShowSuggestions(true);
   };
 
   /* CLICK SUGGESTION */
@@ -258,7 +229,7 @@ export default function RootLayout({ children }) {
 
     // If there are suggestions, select the first one automatically
     if (suggestions.length > 0) {
-      handleSuggestionClick(suggestions[0].company_name);
+      handleSuggestionClick(suggestions[0].name);
       return;
     }
 
@@ -376,10 +347,10 @@ export default function RootLayout({ children }) {
                               className={`${styles.suggestionItem} ${index === activeIndex ? styles.activeSuggestion : ""
                                 }`}
                               onClick={() =>
-                                handleSuggestionClick(item.company_name)
+                                handleSuggestionClick(item.name)
                               }
                             >
-                              {item.company_name}
+                              {item.name}
                             </div>
                           ))}
                         </div>

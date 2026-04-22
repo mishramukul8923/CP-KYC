@@ -125,14 +125,14 @@ const CompanyHeader = () => {
         {/* Right Section: Actions */}
         <div className={styles.actionSection}>
           <div className={styles.buttonGroup}>
-            <button className={styles.saveButton}>
+            {/* <button className={styles.saveButton}>
               <img
                 src="/icons/bookmark.svg"
                 alt="Save"
                 className={styles.buttonIcon}
               />
               Save
-            </button>
+            </button> */}
 
             <button className={styles.actionsButton}>
               Actions
@@ -145,7 +145,7 @@ const CompanyHeader = () => {
           </div>
           <div className={styles.lastUpdated}>
             <span>Last Updated:</span>{" "}
-            <strong>{formatDateToIST(companyData?.header?.last_updated)|| "-"}</strong>
+            <strong>{formatDateToIST(companyData?.header?.last_updated) || "-"}</strong>
           </div>
         </div>
       </div>

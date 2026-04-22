@@ -91,6 +91,7 @@ export default function CompanyPage() {
 
   // Consume Alerts and PDF trigggers from shared context
   const { alertsData, alertsLoading, alertsError, pdfDownloadTrigger, setIsGeneratingPdf } = useCompanySection();
+  const lastHandledTrigger = useRef(pdfDownloadTrigger);
 
 
   // Auditors Details
@@ -192,7 +193,8 @@ export default function CompanyPage() {
   /* ================= PDF GENERATION LISTENER ================= */
 
   useEffect(() => {
-    if (pdfDownloadTrigger > 0) {
+    if (pdfDownloadTrigger > lastHandledTrigger.current) {
+      lastHandledTrigger.current = pdfDownloadTrigger;
       const generateAndDownloadPdf = async () => {
         try {
           setIsGeneratingPdf(true);

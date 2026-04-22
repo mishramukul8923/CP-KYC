@@ -267,29 +267,35 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
 
   return (
     <div className={styles.container}>
-      {!hideSidebar && (
-        <div className={styles.containerHeader}>
-          <div className={styles.sidebarTabs}>
-            <div
-              className={`${styles.sidebarTab} ${directorTab === "current" ? styles.sidebarTabActive : ""
-                }`}
-              onClick={() => handleTabChange("current")}
-            >
-              Current Directors & KMP
-            </div>
+      {directors.length === 0 ? (
+        <p style={{ fontStyle: 'italic', fontWeight: 300, color: "#80858fff", padding: "20px" }}>
+          Download MCA document
+        </p>
+      ) : (
+        <>
+          {!hideSidebar && (
+            <div className={styles.containerHeader}>
+              <div className={styles.sidebarTabs}>
+                <div
+                  className={`${styles.sidebarTab} ${directorTab === "current" ? styles.sidebarTabActive : ""
+                    }`}
+                  onClick={() => handleTabChange("current")}
+                >
+                  Current Directors & KMP
+                </div>
 
-            <div
-              className={`${styles.sidebarTab} ${directorTab === "past" ? styles.sidebarTabActive : ""
-                }`}
-              onClick={() => handleTabChange("past")}
-            >
-              Past Directors & KMP
+                <div
+                  className={`${styles.sidebarTab} ${directorTab === "past" ? styles.sidebarTabActive : ""
+                    }`}
+                  onClick={() => handleTabChange("past")}
+                >
+                  Past Directors & KMP
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      <div className={styles.mainContainer}>
+          <div className={styles.mainContainer}>
         {!hideSidebar && (
           <aside className={styles.sidebar}>
             <div className={styles.searchWrapper}>
@@ -777,7 +783,9 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
           </section>
         </main>
       </div>
-    </div>
+    </>
+  )}
+</div>
   );
 }
 
