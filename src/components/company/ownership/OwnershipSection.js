@@ -15,14 +15,14 @@ import { formatDateToIST } from "@/utils/dateFormatter";
 
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
-const OwnershipSection = ({ 
-  companyHighlights, 
-  shareholdingData, 
-  shareholdingLoading, 
-  shareholdingError, 
-  securityAllotmentData, 
+const OwnershipSection = ({
+  companyHighlights,
+  shareholdingData,
+  shareholdingLoading,
+  shareholdingError,
+  securityAllotmentData,
   securityAllotmentLoading,
-  groupStructureData, 
+  groupStructureData,
   groupStructureLoading,
   overseasInvestmentData,
   overseasInvestmentLoading
@@ -31,10 +31,10 @@ const OwnershipSection = ({
   const shareholding = shareholdingData?.overview || companyHighlights?.shareholding;
 
   const { activeSubSection } = useCompanySection();
-  const mainWrapperRef = useRef(null); 
-  const shareholdingRef = useRef(null); 
-  const groupStructureRef = useRef(null); 
-  const odiRef = useRef(null); 
+  const mainWrapperRef = useRef(null);
+  const shareholdingRef = useRef(null);
+  const groupStructureRef = useRef(null);
+  const odiRef = useRef(null);
 
   useEffect(() => {
     if (!activeSubSection) return;
@@ -47,7 +47,7 @@ const OwnershipSection = ({
     };
 
     // Only skip if the specifically requested section is still loading
-    const isLoadingRequested = 
+    const isLoadingRequested =
       (activeSubSection === "Shareholding" && shareholdingLoading) ||
       (activeSubSection === "Securities Allotment" && securityAllotmentLoading) ||
       (activeSubSection === "Group Structure" && groupStructureLoading) ||
@@ -102,7 +102,7 @@ const OwnershipSection = ({
 
   const totalHolding = rawPromoterHoldingData.reduce((acc, curr) => acc + curr.value, 0);
   const promoterHoldingData = [...rawPromoterHoldingData];
-  
+
   if (totalHolding < 100 && totalHolding > 0) {
     promoterHoldingData.push({
       name: "Remaining",
@@ -132,7 +132,7 @@ const OwnershipSection = ({
           <span className={styles.infoDivider}></span>
           <span className={styles.infoGroup}>
             <span className={styles.infoLabel}>Last Updated:</span>
-            <span className={styles.infoValue}>{formatDateToIST(shareholdingData?.last_updated)||"-"}</span>
+            <span className={styles.infoValue}>{formatDateToIST(shareholdingData?.last_updated) || "-"}</span>
           </span>
         </div>
       </div>
@@ -235,12 +235,12 @@ const OwnershipSection = ({
                     <span className={styles.promoterBadgeValue}>
                       {shareholdingData?.promoter_holding_section?.promoter_holding_percentage_of_total_equity &&
                         shareholdingData?.promoter_holding_section?.promoter_holding_percentage_of_total_equity !== "-"
-                        ? `${shareholdingData?.promoter_holding_section?.promoter_holding_percentage_of_total_equity}%`
+                        ? `${shareholdingData?.promoter_holding_section?.promoter_holding_percentage_of_total_equity}`
                         : "-"}
                     </span>
                     <span className={styles.promoterBadgeLabel}>of total equity</span>
                   </div>
-                        
+
                   <p className={styles.promoterDescription}>
                     {shareholdingData?.promoter_holding_section?.detailed_classification_note || "Detailed classification not available in current filings."}
                   </p>
@@ -277,17 +277,17 @@ const OwnershipSection = ({
                       {promoterHoldingData
                         .filter(item => item.name !== "Remaining")
                         .map((item, idx) => (
-                        <div key={idx} className={styles.chartLegendItem}>
-                          <div className={styles.legendLeft}>
-                            <div
-                              className={styles.legendColor}
-                              style={{ backgroundColor: item.color }}
-                            ></div>
-                            <span className={styles.legendName}>{item.name}:</span>
+                          <div key={idx} className={styles.chartLegendItem}>
+                            <div className={styles.legendLeft}>
+                              <div
+                                className={styles.legendColor}
+                                style={{ backgroundColor: item.color }}
+                              ></div>
+                              <span className={styles.legendName}>{item.name}:</span>
+                            </div>
+                            <span className={styles.legendPercent}>{item.value}%</span>
                           </div>
-                          <span className={styles.legendPercent}>{item.value}%</span>
-                        </div>
-                      ))}
+                        ))}
                     </div>
                   </div>
                 </div>
@@ -295,8 +295,8 @@ const OwnershipSection = ({
             )}
           </div>
 
-          <ShareHoldingsTables 
-            shareholdingData={shareholdingData} 
+          <ShareHoldingsTables
+            shareholdingData={shareholdingData}
             promoters_table_totals={shareholdingData?.promoters_table_totals}
             public_table_totals={shareholdingData?.public_other_than_promoters_table_totals}
           />
@@ -306,8 +306,8 @@ const OwnershipSection = ({
       {securityAllotmentLoading ? (
         <div className={styles.loading}>Loading Security Allotment...</div>
       ) : (
-        <ShareHoldingsTables2 
-          shareholdingData={shareholdingData} 
+        <ShareHoldingsTables2
+          shareholdingData={shareholdingData}
           securityAllotmentData={securityAllotmentData}
         />
       )}

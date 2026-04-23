@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./newHeader.module.css";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { formatDateToIST } from "@/utils/dateFormatter";
 import { useCompanySection } from "../context/CompanySectionContext";
@@ -189,10 +190,14 @@ const CompanyNewHeader = ({ companyData }) => {
         <div className={styles.mainLayout}>
           <div className={styles.logoWrapper}>
             <div className={styles.logoCircle}>
-              <img
-                src="/icons/Image.svg"
-                alt={companyData?.company_information?.legal_name + "logo"}
-                className={styles.logoCircle}
+              <Image
+                src={companyData?.header?.logo_url || "/icons/Image.svg"}
+                alt={companyData?.company_information?.legal_name + " logo"}
+                className={companyData?.header?.logo_url ? styles.logoImage : styles.logoCircle}
+                width={100}
+                height={100}
+                priority
+                unoptimized
               />
             </div>
           </div>
