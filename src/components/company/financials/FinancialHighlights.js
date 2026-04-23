@@ -198,14 +198,23 @@ const FinancialHighlights = ({
 
   
 
+  const formatIndianNumber = (val) => {
+    if (val === undefined || val === null || val === "-") return val;
+    const num = typeof val === "string" ? parseFloat(val.replace(/,/g, "")) : val;
+    if (isNaN(num)) return val;
+    return new Intl.NumberFormat("en-IN").format(num);
+  };
+
   const formatValue = (obj) => {
     if (!obj || (obj.value === undefined && obj.unit === undefined)) return "-";
     const value = obj.value ?? "";
     const unit = obj.unit === "-" ? "" : (obj.unit ?? "");
+    const formattedValue = value !== "" ? formatIndianNumber(value) : "";
+
     if (unit === "INR") {
-      return value !== "" ? `₹${value}` : "-";
+      return formattedValue !== "" ? `₹${formattedValue}` : "-";
     }
-    return (value !== "" || unit !== "") ? `${value}${unit}` : "-";
+    return (formattedValue !== "" || unit !== "") ? `${formattedValue}${unit}` : "-";
   };
 
 
@@ -352,6 +361,12 @@ const FinancialHighlights = ({
   const step = Math.ceil(domainMax / 5 / 10) * 10 || 1000;
   const dynamicTicks = Array.from({ length: 6 }, (_, i) => i * step);
 
+  const longestLabelLength = dynamicTicks.reduce((max, tick) => {
+    const label = `${formatIndianNumber(tick)} cr`;
+    return label.length > max ? label.length : max;
+  }, 0);
+  const dynamicYAxisWidth = Math.max(80, longestLabelLength * 8.5 + 10);
+
   return (
     <div ref={containerRef} className={styles.container}>
       <div className={styles.header}>
@@ -470,7 +485,7 @@ const FinancialHighlights = ({
                   dy={6}
                 />
                 <YAxis
-                  width={80}
+                  width={dynamicYAxisWidth}
                   axisLine={{ stroke: "rgba(229, 231, 235, 1)" }}
                   tickLine={false}
                   tick={{
@@ -478,13 +493,13 @@ const FinancialHighlights = ({
                     fontSize: 14,
                     fontWeight: 500,
                   }}
-                  tickFormatter={(value) => `${value} cr`}
+                  tickFormatter={(value) => `${formatIndianNumber(value)} cr`}
                   domain={[0, domainMax]}
                   ticks={dynamicTicks}
                 />
                 <Tooltip
                   cursor={{ fill: "transparent" }}
-                  formatter={(value) => `${value} cr`}
+                  formatter={(value) => `${formatIndianNumber(value)} cr`}
                 />
                 {/* radius={[20, 20, 20, 20]} creates the pill shape seen in the image */}
                 <Bar

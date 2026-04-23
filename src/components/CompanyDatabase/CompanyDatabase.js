@@ -1,5 +1,6 @@
 "use client";
 import styles from "./CompanyDatabase.module.css";
+import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import RowsPerPage from "@/components/common/RowsPerPage";
 import Link from "next/link";
@@ -508,10 +509,13 @@ export default function CompanyDatabase() {
                   </td>
 
                   <td className={styles.companyCell}>
-                    <img
-                      src="/icons/Image.svg"
-                      alt=""
+                    <Image
+                      src={company.logo_url || "/icons/Image.svg"}
+                      alt={company.company_name || ""}
                       className={styles.companyIcon}
+                      width={32}
+                      height={32}
+                      unoptimized
                     />
                     <Link href={`/company/${(company.company_name || "").toLowerCase().replace(/\s+/g, "-")}`} className={styles.companyLink}>{company.company_name || "-"}</Link>
                   </td>

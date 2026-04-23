@@ -236,6 +236,13 @@
   font-weight: 500;
 }
 
+.companyIcon {
+  border-radius: 50%;
+  object-fit: contain;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
 .statusBadge {
   background-color: rgba(220, 252, 231, 1);
   color: rgba(22, 163, 74, 1);

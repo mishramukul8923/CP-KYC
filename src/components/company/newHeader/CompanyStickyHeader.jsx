@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./CompanyStickyHeader.module.css";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCompanySection } from "../context/CompanySectionContext";
 import DownloadModal from "../modals/DownloadModal";
@@ -75,8 +76,14 @@ export default function CompanyStickyHeader({ visible, companyData }) {
           <div className={styles.titleRow}>
             {/* LEFT */}
             <div className={styles.left}>
-              <div className={styles.logo}>
-                <img src="/icons/Image.svg" alt={companyData?.company_information?.legal_name + "logo"} />
+              <div className={styles.logo} style={{ width: '40px', height: '40px' }}>
+                <Image
+                  src={companyData?.header?.logo_url || "/icons/Image.svg"}
+                  alt={companyData?.company_information?.legal_name + " logo"}
+                  width={40}
+                  height={40}
+                  unoptimized
+                />
               </div>
             </div>
             <h1 className={styles.companyName} title={companyName?.full}>{companyName?.display}</h1>
@@ -202,7 +209,7 @@ export default function CompanyStickyHeader({ visible, companyData }) {
       <ShareModal
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
-        shareLink={`${process.env.NEXT_PUBLIC_SHARE_BASE_URL || 'https://cp-kyc.vercel.app'}/company/${slug}`}
+        shareLink={`${process.env.NEXT_PUBLIC_SHARE_BASE_URL}/company/${slug}`}
         companyName={companyData?.company_information?.legal_name}
         title="Share Company"
         subtitle={`Share ${companyData?.company_information?.legal_name}'s company profile with your network`}
