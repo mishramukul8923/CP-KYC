@@ -191,9 +191,17 @@ const CompanyNewHeader = ({ companyData }) => {
           <div className={styles.logoWrapper}>
             <div className={styles.logoCircle}>
               <Image
-                src={companyData?.header?.logo_url || "/icons/Image.svg"}
+                src={
+                  companyData?.header?.logo_url && companyData.header.logo_url !== "-"
+                    ? companyData.header.logo_url
+                    : "/icons/Image.svg"
+                }
                 alt={companyData?.company_information?.legal_name + " logo"}
-                className={companyData?.header?.logo_url ? styles.logoImage : styles.logoCircle}
+                className={
+                  companyData?.header?.logo_url && companyData.header.logo_url !== "-"
+                    ? styles.logoImage
+                    : styles.logoCircle
+                }
                 width={100}
                 height={100}
                 priority
