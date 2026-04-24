@@ -29,7 +29,7 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
   /* ================= SAFE DATA EXTRACTION ================= */
 
   const shareholding = companyHighlights?.shareholding || {};
-  
+
   const openChargesObj = companyHighlights?.open_charges || {};
   const openCharges = openChargesObj?.items || [];
 
@@ -104,7 +104,7 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
           <span className={styles.infoDivider}></span>
           <span className={styles.infoGroup}>
             <span className={styles.infoLabel}>Last Updated:</span>
-            <span className={styles.infoValue}>{formatDateToIST(companyHighlights?.last_updated)|| "-"}</span>
+            <span className={styles.infoValue}>{formatDateToIST(companyHighlights?.last_updated) || "-"}</span>
           </span>
         </div>
       </div>
@@ -155,14 +155,14 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
               <div className={`${styles.dot} ${styles.dotPromoter}`}></div>
               <div>
                 <p className={styles.legendLabel}>Promoter </p>
-                <p className={styles.legendValue}>{shareholding.promoter_percentage?.toFixed(2) ?? "0"}%</p>
+                <p className={styles.legendValue}>{Number(shareholding.promoter_percentage).toFixed(2) ?? "0"}%</p>
               </div>
             </div>
             <div className={styles.legendItem}>
               <div className={`${styles.dot} ${styles.dotNonPromoter}`}></div>
               <div>
                 <p className={styles.legendLabel}>Non Promoter</p>
-                <p className={styles.legendValue}>{shareholding.non_promoter_percentage?.toFixed(2) ?? "0"}%</p>
+                <p className={styles.legendValue}>{Number(shareholding.non_promoter_percentage).toFixed(2) ?? "0"}%</p>
               </div>
             </div>
           </div>
@@ -231,7 +231,7 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
                 ))) : (
                   <tr>
                     <td colSpan="5" className={styles.noData}>
-                      No open charges found on this page 
+                      No open charges found on this page
                     </td>
                   </tr>
                 )}

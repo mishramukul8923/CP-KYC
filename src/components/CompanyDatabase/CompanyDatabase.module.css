@@ -250,6 +250,26 @@
   border-radius: 9999px;
   font-size: 14px;
   font-weight: 500;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.fixedWidthCol {
+  width: 150px;
+  min-width: 150px;
+  max-width: 150px;
+}
+
+.hiddenScroll {
+  width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.hiddenScroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 
 .footer {

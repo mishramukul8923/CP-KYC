@@ -78,7 +78,11 @@ export default function CompanyStickyHeader({ visible, companyData }) {
             <div className={styles.left}>
               <div className={styles.logo} style={{ width: '40px', height: '40px' }}>
                 <Image
-                  src={companyData?.header?.logo_url || "/icons/Image.svg"}
+                  src={
+                    companyData?.header?.logo_url && companyData.header.logo_url !== "-"
+                      ? companyData.header.logo_url
+                      : "/icons/Image.svg"
+                  }
                   alt={companyData?.company_information?.legal_name + " logo"}
                   width={40}
                   height={40}

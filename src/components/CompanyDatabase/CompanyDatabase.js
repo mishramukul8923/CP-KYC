@@ -213,13 +213,24 @@ export default function CompanyDatabase() {
 
   const formatAddress = (addr) => {
     if (!addr) return "-";
-    const parts = addr.split(',').slice(-4, -1);
-    const city = parts[0]?.trim() || "";
-    const state = parts[1]?.trim() || "";
+    const parts = addr.split(',').map(p => p.trim());
     
-    if (!city && !state) return "-";
+    // Filter out parts that are clearly not city/state (pincodes, country names, empty)
+    const cleanedParts = parts.filter(p => {
+      if (!p) return false;
+      const pLower = p.toLowerCase();
+      // Matches 6-digit pincode alone or with trailing text like "-India"
+      const isPincode = /^\d{6}/.test(p); 
+      const isCountry = pLower === "india" || pLower === "ind";
+      return !isPincode && !isCountry;
+    });
     
-    const rawAddr = city + (state ? ", " + state : "");
+    // Take the last two available parts (usually City and State)
+    const cityStateParts = cleanedParts.slice(-2);
+    if (cityStateParts.length === 0) return "-";
+    
+    const rawAddr = cityStateParts.join(", ");
+    // Capitalize first letter of each word
     return rawAddr.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
@@ -458,8 +469,8 @@ export default function CompanyDatabase() {
                   />
                 </div>
               </th>
-              <th>Location</th>
-              <th>Industry</th>
+              <th className={styles.fixedWidthCol}>Location</th>
+              <th className={styles.fixedWidthCol}>Industry</th>
               <th>Company Status</th>
             </tr>
           </thead>
@@ -510,7 +521,11 @@ export default function CompanyDatabase() {
 
                   <td className={styles.companyCell}>
                     <Image
-                      src={company.logo_url || "/icons/Image.svg"}
+                      src={
+                        company.logo_url && company.logo_url !== "-"
+                          ? company.logo_url
+                          : "/icons/Image.svg"
+                      }
                       alt={company.company_name || ""}
                       className={styles.companyIcon}
                       width={32}
@@ -535,8 +550,16 @@ export default function CompanyDatabase() {
                       : "-"}
                   </td>
                   <td>{company.incorporation_date || "-"}</td>
-                  <td>{formatAddress(company.registered_address)}</td>
-                  <td>{company.industry || "-"}</td>
+                  <td className={styles.fixedWidthCol}>
+                    <div className={styles.hiddenScroll}>
+                      {formatAddress(company.registered_address)}
+                    </div>
+                  </td>
+                  <td className={styles.fixedWidthCol}>
+                    <div className={styles.hiddenScroll}>
+                      {company.industry || "-"}
+                    </div>
+                  </td>
                   <td>
                     <span className={styles.statusBadge}>
                       {company.company_status || "-"}
