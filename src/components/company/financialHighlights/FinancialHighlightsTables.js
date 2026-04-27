@@ -7,16 +7,16 @@ import { useParams } from "next/navigation";
 import { scrollToElementWithOffset } from "@/utils/scrollUtils";
 
 
-const FinancialHighlightsTables = ({ 
+const FinancialHighlightsTables = ({
   pnlApiData,
   pnlLoading,
   pnlError,
   pnlViewType,
   setPnlViewType,
-  auditorsData, 
-  auditorsLoading, 
-  auditorsError, 
-  audType, 
+  auditorsData,
+  auditorsLoading,
+  auditorsError,
+  audType,
   setAudType,
   balanceSheetData,
   balanceSheetLoading,
@@ -49,7 +49,7 @@ const FinancialHighlightsTables = ({
   };
 
   const pnlPeriods = pnlApiData?.periods
-    ? pnlApiData.periods.filter((p) => p !== "setAttributes" && p !== "isExpandable")
+    ? pnlApiData.periods.filter((p) => p !== "setAttributes" && p !== "isExpandable" && p !== "TTM")
     : [];
 
   const bsPeriods = balanceSheetData?.periods
@@ -76,8 +76,8 @@ const FinancialHighlightsTables = ({
     ];
     const rows = [];
     sections.forEach(({ label, data }) => {
-      if (!data || !Array.isArray(data)) return;
       rows.push({ type: "header", label });
+      if (!data || !Array.isArray(data)) return;
       data.forEach((item) => {
         rows.push({
           type: "data",
@@ -100,7 +100,6 @@ const FinancialHighlightsTables = ({
     { type: "total", label: "Net Cash Flow", path: "summary.net_cash_flow" },
     { label: "Free Cash Flow", path: "summary.free_cash_flow" },
   ].map(row => {
-    if (row.type === "header") return row;
     const dataObj = row.path ? getNestedValue(cashFlowData, row.path) : null;
     return {
       ...row,
@@ -119,8 +118,8 @@ const FinancialHighlightsTables = ({
     ];
     const rows = [];
     sections.forEach(({ label, data }) => {
-      if (!data) return;
       rows.push({ type: "header", label });
+      if (!data) return;
       Object.entries(data).forEach(([key, rowData]) => {
         const displayLabel = key.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
         const isTotal = key.startsWith("total_");
@@ -356,7 +355,7 @@ const FinancialHighlightsTables = ({
                       <td className={styles.labelCell}>{row.label}</td>
                       {displayBsPeriods.map((period) => (
                         <td key={period} className={styles.valueCell}>
-                          {getValue(row.valuesObj, period)}
+                          {isHeader ? "" : getValue(row.valuesObj, period)}
                         </td>
                       ))}
                     </tr>
@@ -380,24 +379,21 @@ const FinancialHighlightsTables = ({
           </span>
           <div className={styles.toggleContainer}>
             <div
-              className={`${styles.toggleSlider} ${
-                pnlViewType === "Standalone"
-                  ? styles.sliderStandalone
-                  : styles.sliderConsolidated
-              }`}
+              className={`${styles.toggleSlider} ${pnlViewType === "Standalone"
+                ? styles.sliderStandalone
+                : styles.sliderConsolidated
+                }`}
             ></div>
             <button
-              className={`${styles.toggleBtn} ${
-                pnlViewType === "Standalone" ? styles.activeToggle : ""
-              }`}
+              className={`${styles.toggleBtn} ${pnlViewType === "Standalone" ? styles.activeToggle : ""
+                }`}
               onClick={() => setPnlViewType("Standalone")}
             >
               Standalone
             </button>
             <button
-              className={`${styles.toggleBtn} ${
-                pnlViewType === "Consolidated" ? styles.activeToggle : ""
-              }`}
+              className={`${styles.toggleBtn} ${pnlViewType === "Consolidated" ? styles.activeToggle : ""
+                }`}
               onClick={() => setPnlViewType("Consolidated")}
             >
               Consolidated
@@ -452,7 +448,7 @@ const FinancialHighlightsTables = ({
                       <td className={styles.labelCell}>{row.label}</td>
                       {displayPnlPeriods.map((period) => (
                         <td key={period} className={styles.valueCell}>
-                          {getValue(row.valuesObj, period)}
+                          {isHeader ? "" : getValue(row.valuesObj, period)}
                         </td>
                       ))}
                     </tr>
@@ -536,7 +532,7 @@ const FinancialHighlightsTables = ({
                       <td className={styles.labelCell}>{row.label}</td>
                       {displayCfPeriods.map((period) => (
                         <td key={period} className={styles.valueCell}>
-                          {getValue(getNestedValue(cashFlowData, period), row.path)}
+                          {getValue(row.valuesObj, period)}
                         </td>
                       ))}
                     </tr>
@@ -620,7 +616,7 @@ const FinancialHighlightsTables = ({
                       <td className={styles.labelCell}>{row.label}</td>
                       {displayRatiosPeriods.map((period) => (
                         <td key={period} className={styles.valueCell}>
-                          {getValue(row.valuesObj, period)}
+                          {isHeader ? "" : getValue(row.valuesObj, period)}
                         </td>
                       ))}
                     </tr>
@@ -668,7 +664,7 @@ const FinancialHighlightsTables = ({
           Error: {auditorsError}
         </div>
       ) : (() => {
-        const hasValidData = auditorsData && auditorsData.length > 0 && auditorsData.some(row => 
+        const hasValidData = auditorsData && auditorsData.length > 0 && auditorsData.some(row =>
           Object.values(row).some(val => val !== "-" && val !== null && val !== undefined && val !== "")
         );
 

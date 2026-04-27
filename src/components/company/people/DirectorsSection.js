@@ -18,10 +18,10 @@ const DirectorsSection = ({ directorsData, directorsLoading, directorsError }) =
   }
 
   const stats = [
-    { label: 'Total Directors', value: directorsData?.summary?.total_directors ?? "-", colorClass: styles.blueStat },
-    { label: 'Active Directors', value: directorsData?.summary?.active_directors ?? "-", colorClass: styles.greenStat },
-    { label: 'Resigned Directors', value: directorsData?.summary?.resigned_directors ?? "-", colorClass: styles.redStat },
-    { label: 'Total KMPs', value: directorsData?.summary?.total_kmp ?? "-", colorClass: styles.purpleStat },
+    { label: 'Current Directors', value: directorsData?.summary?.current_directors ?? "-", colorClass: styles.blueStat },
+    { label: 'Past Directors', value: directorsData?.summary?.past_directors ?? "-", colorClass: styles.greenStat },
+    { label: 'Current KMPs', value: directorsData?.summary?.current_kmp ?? "-", colorClass: styles.redStat },
+    { label: 'Past KMPs', value: directorsData?.summary?.past_kmp ?? "-", colorClass: styles.purpleStat },
   ];
 
   return (
