@@ -124,9 +124,9 @@ function RowsPerPage({ value, onChange }) {
 
 // export default RowsPerPage;
 
-const LigilationDetails = ({ 
-  data, 
-  loading, 
+const LigilationDetails = ({
+  data,
+  loading,
   error,
   paPage, paSize, setPaPage, setPaSize,
   pbPage, pbSize, setPbPage, setPbSize,
@@ -205,7 +205,7 @@ const LigilationDetails = ({
               <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '150px' }} />
             </div>
           </div>
-          
+
           <div className={styles.kpiSection}>
             {[...Array(4)].map((_, i) => (
               <div key={i} className={`${styles.skeleton} ${styles.skeletonKpiCard}`}></div>
@@ -223,21 +223,18 @@ const LigilationDetails = ({
     );
   }
 
-  if (error) {
-    return (
-      <div className={styles.mainWrapper}>
-        <div className={styles.errorContainer}>
-          <p>{error}</p>
-        </div>
-      </div>
-    );
-  }
+  // Remove early return for error to allow partial rendering
 
   const kpis = data?.summaryCardsSection?.cards || [];
 
   return (
     <div className={styles.mainWrapper}>
       <div className={styles.container}>
+        {error && (
+          <div style={{ color: "#EF4444", fontWeight: 500, marginBottom: "20px", padding: "12px", background: "#FEF2F2", borderRadius: "8px", border: "1px solid #FCA5A5" }}>
+            {error}
+          </div>
+        )}
         <div className={styles.header}>
           <h2 className={styles.title}>{data?.summaryCardsSection?.sectionTitle || "Litigation"}</h2>
           <div className={styles.sourceRow}>
@@ -299,13 +296,13 @@ const LigilationDetails = ({
                       rows.map((row, idx) => (
                         <tr key={idx}>
                           {columns.map((col) => (
-                            <td 
-                              key={col.key} 
+                            <td
+                              key={col.key}
                               className={
-                                col.key === "caseNumber" ? styles.caseNumber : 
-                                col.key === "year" ? styles.yearCell : 
-                                col.key === "court" ? styles.courtCell : 
-                                styles.ellipsis
+                                col.key === "caseNumber" ? styles.caseNumber :
+                                  col.key === "year" ? styles.yearCell :
+                                    col.key === "court" ? styles.courtCell :
+                                      styles.ellipsis
                               }
                             >
                               {row[col.key]}
@@ -315,8 +312,8 @@ const LigilationDetails = ({
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={columns.length} className={styles.noData}>
-                          No data available for this section.
+                        <td colSpan={columns.length || 1} className={styles.noData}>
+                          Data not found
                         </td>
                       </tr>
                     )}
@@ -345,36 +342,36 @@ const LigilationDetails = ({
                     </span>
 
                     <div className={styles.pageControls}>
-                      <button 
+                      <button
                         disabled={pagination.currentPage <= 1 || loading}
                         onClick={() => section.setPage(1)}
                       >
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                          <path d="M7.33333 11.3346L4 8.0013L7.33333 4.66797M12 11.3346L8.66667 8.0013L12 4.66797" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M7.33333 11.3346L4 8.0013L7.33333 4.66797M12 11.3346L8.66667 8.0013L12 4.66797" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       </button>
-                      <button 
+                      <button
                         disabled={pagination.currentPage <= 1 || loading}
                         onClick={() => section.setPage(section.page - 1)}
                       >
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                          <path d="M10 12L6 8L10 4" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M10 12L6 8L10 4" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       </button>
-                      <button 
+                      <button
                         disabled={pagination.currentPage >= pagination.totalPages || loading}
                         onClick={() => section.setPage(section.page + 1)}
                       >
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                          <path d="M6 12L10 8L6 4" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M6 12L10 8L6 4" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       </button>
-                      <button 
+                      <button
                         disabled={pagination.currentPage >= pagination.totalPages || loading}
                         onClick={() => section.setPage(pagination.totalPages)}
                       >
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                          <path d="M4 11.3346L7.33333 8.0013L4 4.66797M8.66667 11.3346L12 8.0013L8.66667 4.66797" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M4 11.3346L7.33333 8.0013L4 4.66797M8.66667 11.3346L12 8.0013L8.66667 4.66797" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       </button>
                     </div>

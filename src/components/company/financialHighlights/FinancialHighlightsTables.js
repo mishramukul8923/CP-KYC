@@ -168,17 +168,17 @@ const FinancialHighlightsTables = ({
   const displayPnlPeriods = hasPnlData ? pnlPeriods : ["Mar 2024", "Mar 2023", "Mar 2022"];
   const displayPnlRows = hasPnlData ? pnlRows : [
     { type: "header", label: "Revenue" },
-    { type: "data", label: "Revenue from Operations", valuesObj: { "Mar 2024": "1200.00", "Mar 2023": "1100.00", "Mar 2022": "1000.00" } },
-    { type: "grand-total", label: "Total Revenue", valuesObj: { "Mar 2024": "1250.00", "Mar 2023": "1150.00", "Mar 2022": "1050.00" } }
+    { type: "data", label: "Revenue from Operations", valuesObj: { "Mar 2024": "-", "Mar 2023": "-", "Mar 2022": "-" } },
+    { type: "grand-total", label: "Total Revenue", valuesObj: { "Mar 2024": "-", "Mar 2023": "-", "Mar 2022": "-" } }
   ];
 
   const hasBsData = balanceSheetData && bsPeriods.length > 0;
   const displayBsPeriods = hasBsData ? bsPeriods : ["Mar 2024", "Mar 2023", "Mar 2022"];
   const displayBsRows = hasBsData ? bsRows : [
     { type: "header", label: "Equity and Liabilities" },
-    { type: "data", label: "Share Capital", valuesObj: { "Mar 2024": "100.00", "Mar 2023": "100.00", "Mar 2022": "100.00" } },
-    { type: "data", label: "Reserves and Surplus", valuesObj: { "Mar 2024": "500.00", "Mar 2023": "450.00", "Mar 2022": "400.00" } },
-    { type: "grand-total", label: "Total Liabilities", valuesObj: { "Mar 2024": "1000.00", "Mar 2023": "900.00", "Mar 2022": "800.00" } }
+    { type: "data", label: "Share Capital", valuesObj: { "Mar 2024": "-", "Mar 2023": "-", "Mar 2022": "-" } },
+    { type: "data", label: "Reserves and Surplus", valuesObj: { "Mar 2024": "-", "Mar 2023": "-", "Mar 2022": "-" } },
+    { type: "grand-total", label: "Total Liabilities", valuesObj: { "Mar 2024": "-", "Mar 2023": "-", "Mar 2022": "-" } }
   ];
 
   const hasCfData = cashFlowData && cfPeriods.length > 0;
@@ -187,15 +187,17 @@ const FinancialHighlightsTables = ({
     { label: "Cash from Operating Activity", path: "summary.cash_from_operating_activity" },
     { label: "Cash from Investing Activity", path: "summary.cash_from_investing_activity" },
     { label: "Cash from Financing Activity", path: "summary.cash_from_financing_activity" },
-    { type: "total", label: "Net Cash Flow", path: "summary.net_cash_flow" }
+    { type: "total", label: "Net Cash Flow", path: "summary.net_cash_flow" },
+    { label: "Free Cash Flow", path: "summary.free_cash_flow" },
+
   ];
 
   const hasRatiosData = ratiosData && ratiosPeriods.length > 0;
   const displayRatiosPeriods = hasRatiosData ? ratiosPeriods : ["Mar 2024", "Mar 2023", "Mar 2022"];
   const displayRatiosRows = hasRatiosData ? ratioRows : [
     { type: "header", label: "Profitability Ratios" },
-    { type: "data", label: "Operating Margin (%)", valuesObj: { "Mar 2024": "15.50", "Mar 2023": "14.20", "Mar 2022": "13.80" } },
-    { type: "data", label: "Net Profit Margin (%)", valuesObj: { "Mar 2024": "10.20", "Mar 2023": "9.80", "Mar 2022": "9.50" } }
+    { type: "data", label: "Operating Margin (%)", valuesObj: { "Mar 2024": "-", "Mar 2023": "-", "Mar 2022": "-" } },
+    { type: "data", label: "Net Profit Margin (%)", valuesObj: { "Mar 2024": "-", "Mar 2023": "-", "Mar 2022": "-" } }
   ];
 
   const { activeSubSection, setActiveSection } = useCompanySection();
@@ -310,16 +312,7 @@ const FinancialHighlightsTables = ({
       </div>
 
       <div className={styles.blurContainer}>
-        {!balanceSheetLoading && !balanceSheetError && !hasBsData && (
-          <div className={styles.overlay}>
-            <span className={styles.overlayTitle}>Content Not Available</span>
-            <span className={styles.overlaySubtitle}>Need MCA Documents.</span>
-            <div className={styles.lockIcon} onClick={() => { setActiveSection?.("documents"); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ cursor: "pointer" }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" /><path d="m21 3-9 9" /><path d="M15 3h6v6" /></svg>
-            </div>
-          </div>
-        )}
-        <div className={`${styles.tableWrapper} ${!balanceSheetLoading && !balanceSheetError && !hasBsData ? styles.blurContent : ""}`}>
+        <div className={styles.tableWrapper}>
           {balanceSheetLoading ? (
             renderSkeletonTable(6)
           ) : balanceSheetError ? (
@@ -403,16 +396,7 @@ const FinancialHighlightsTables = ({
       </div>
 
       <div className={styles.blurContainer}>
-        {!pnlLoading && !pnlError && !hasPnlData && (
-          <div className={styles.overlay}>
-            <span className={styles.overlayTitle}>Content Not Available</span>
-            <span className={styles.overlaySubtitle}>Need MCA Documents.</span>
-            <div className={styles.lockIcon} onClick={() => { setActiveSection?.("documents"); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ cursor: "pointer" }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" /><path d="m21 3-9 9" /><path d="M15 3h6v6" /></svg>
-            </div>
-          </div>
-        )}
-        <div className={`${styles.tableWrapper} ${!pnlLoading && !pnlError && !hasPnlData ? styles.blurContent : ""}`}>
+        <div className={styles.tableWrapper}>
           {pnlLoading ? (
             renderSkeletonTable(6)
           ) : pnlError ? (
@@ -490,16 +474,7 @@ const FinancialHighlightsTables = ({
       </div>
 
       <div className={styles.blurContainer}>
-        {!cashFlowLoading && !cashFlowError && !hasCfData && (
-          <div className={styles.overlay}>
-            <span className={styles.overlayTitle}>Content Not Available</span>
-            <span className={styles.overlaySubtitle}>Need MCA Documents.</span>
-            <div className={styles.lockIcon} onClick={() => { setActiveSection?.("documents"); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ cursor: "pointer" }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" /><path d="m21 3-9 9" /><path d="M15 3h6v6" /></svg>
-            </div>
-          </div>
-        )}
-        <div className={`${styles.tableWrapper} ${!cashFlowLoading && !cashFlowError && !hasCfData ? styles.blurContent : ""}`}>
+        <div className={styles.tableWrapper}>
           {cashFlowLoading ? (
             renderSkeletonTable(6)
           ) : cashFlowError ? (
@@ -574,16 +549,7 @@ const FinancialHighlightsTables = ({
       </div>
 
       <div className={styles.blurContainer}>
-        {!ratiosLoading && !ratiosError && !hasRatiosData && (
-          <div className={styles.overlay}>
-            <span className={styles.overlayTitle}>Content Not Available</span>
-            <span className={styles.overlaySubtitle}>Need MCA Documents.</span>
-            <div className={styles.lockIcon} onClick={() => { setActiveSection?.("documents"); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ cursor: "pointer" }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" /><path d="m21 3-9 9" /><path d="M15 3h6v6" /></svg>
-            </div>
-          </div>
-        )}
-        <div className={`${styles.tableWrapper} ${!ratiosLoading && !ratiosError && !hasRatiosData ? styles.blurContent : ""}`}>
+        <div className={styles.tableWrapper}>
           {ratiosLoading ? (
             renderSkeletonTable(6)
           ) : ratiosError ? (

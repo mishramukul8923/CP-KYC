@@ -43,7 +43,7 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
   const [isFiiOpen, setIsFiiOpen] = useState(true);
   const [isAllotmentOpen, setIsAllotmentOpen] = useState(true);
 
-  const isAllotmentEmpty = !allotmentData || allotmentData.length === 0 || allotmentData.every(item => 
+  const isAllotmentEmpty = !allotmentData || allotmentData.length === 0 || allotmentData.every(item =>
     Object.values(item).every(val => !val || val === "-" || val === "null" || val === "undefined")
   );
 
@@ -59,18 +59,18 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
   return (
     <div className={styles.container}>
       {/* ... previous content preserved ... */}
-      <div 
+      <div
         className={styles.headerRow}
         onClick={() => setIsDirectorsOpen(!isDirectorsOpen)}
       >
-         <h2 className={styles.tableTitle}>{shareholdingData?.directors_shareholdings_table_title || "Directors Shareholdings"}</h2>
-         <img 
-            src="/icons/chevron-down-dark.svg" 
-            alt="Expand" 
-            className={`${styles.expandIcon} ${isDirectorsOpen ? styles.rotateIcon : ""}`} 
-          />
+        <h2 className={styles.tableTitle}>{shareholdingData?.directors_shareholdings_table_title || "Directors Shareholdings"}</h2>
+        <img
+          src="/icons/chevron-down-dark.svg"
+          alt="Expand"
+          className={`${styles.expandIcon} ${isDirectorsOpen ? styles.rotateIcon : ""}`}
+        />
       </div>
-      
+
       {isDirectorsOpen && (
         <div className={styles.tableWrapper}>
           <table className={styles.table}>
@@ -104,23 +104,23 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
 
       <div className={styles.spacer}></div>
 
-      <div 
+      <div
         className={styles.headerRow}
         onClick={() => setIsFiiOpen(!isFiiOpen)}
       >
         <h2 className={styles.tableTitle}>
-          Foreign Institutional Investor 
+          Foreign Institutional Investor
           {fiiData.length > 0 && (
             <span className={styles.tableCount}>
               ({Math.min((fiiPage - 1) * rowsPerPage + 1, fiiData.length)} - {Math.min(fiiPage * rowsPerPage, fiiData.length)} of {fiiData.length})
             </span>
           )}
         </h2>
-        <img 
-            src="/icons/chevron-down-dark.svg" 
-            alt="Expand" 
-            className={`${styles.expandIcon} ${isFiiOpen ? styles.rotateIcon : ""}`} 
-          />
+        <img
+          src="/icons/chevron-down-dark.svg"
+          alt="Expand"
+          className={`${styles.expandIcon} ${isFiiOpen ? styles.rotateIcon : ""}`}
+        />
       </div>
 
       {isFiiOpen && (
@@ -153,7 +153,7 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
               </tbody>
             </table>
           </div>
-    
+
           {fiiData.length > 0 && (
             <div className={styles.paginationRow}>
               <span className={styles.showingText}>
@@ -162,17 +162,17 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
               <div className={styles.paginationControls}>
                 <div className={styles.paginationInfo}>
                   <span className={styles.rowsLabel}>Rows per page</span>
-                  <RowsPerPage 
-                    value={rowsPerPage} 
+                  <RowsPerPage
+                    value={rowsPerPage}
                     onChange={(val) => {
                       setRowsPerPage(val);
                       setFiiPage(1);
-                    }} 
+                    }}
                   />
                 </div>
-                  <span className={styles.pageLabel}>Page {fiiPage} of {Math.ceil(fiiData.length / rowsPerPage)}</span>
+                <span className={styles.pageLabel}>Page {fiiPage} of {Math.ceil(fiiData.length / rowsPerPage)}</span>
                 <div className={styles.navButtons}>
-                  <button 
+                  <button
                     className={fiiPage === 1 ? styles.navBtnDisabled : styles.navBtn}
                     onClick={() => setFiiPage(1)}
                     disabled={fiiPage === 1}
@@ -183,8 +183,8 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
                       className={styles.navIcon}
                     />
                   </button>
-      
-                  <button 
+
+                  <button
                     className={fiiPage === 1 ? styles.navBtnDisabled : styles.navBtn}
                     onClick={() => setFiiPage(prev => Math.max(1, prev - 1))}
                     disabled={fiiPage === 1}
@@ -196,7 +196,7 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
                     />
                   </button>
 
-                  <button 
+                  <button
                     className={fiiPage === Math.ceil(fiiData.length / rowsPerPage) ? styles.navBtnDisabled : styles.navBtn}
                     onClick={() => setFiiPage(prev => Math.min(Math.ceil(fiiData.length / rowsPerPage), prev + 1))}
                     disabled={fiiPage === Math.ceil(fiiData.length / rowsPerPage) || fiiData.length === 0}
@@ -208,7 +208,7 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
                     />
                   </button>
 
-                  <button 
+                  <button
                     className={fiiPage === Math.ceil(fiiData.length / rowsPerPage) ? styles.navBtnDisabled : styles.navBtn}
                     onClick={() => setFiiPage(Math.ceil(fiiData.length / rowsPerPage))}
                     disabled={fiiPage === Math.ceil(fiiData.length / rowsPerPage) || fiiData.length === 0}
@@ -228,7 +228,7 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
 
       <div className={styles.spacer}></div>
 
-      <div 
+      <div
         className={styles.headerRow}
         onClick={() => setIsAllotmentOpen(!isAllotmentOpen)}
         id="securities-allotment-table"
@@ -241,11 +241,11 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
             </span>
           )}
         </h2>
-        <img 
-            src="/icons/chevron-down-dark.svg" 
-            alt="Expand" 
-            className={`${styles.expandIcon} ${isAllotmentOpen ? styles.rotateIcon : ""}`} 
-          />
+        <img
+          src="/icons/chevron-down-dark.svg"
+          alt="Expand"
+          className={`${styles.expandIcon} ${isAllotmentOpen ? styles.rotateIcon : ""}`}
+        />
       </div>
 
       {isAllotmentOpen && (
@@ -255,7 +255,7 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
               <span className={styles.overlayTitle}>Content Not Available</span>
               <span className={styles.overlaySubtitle}>Need MCA Documents.</span>
               <div className={styles.lockIcon} onClick={() => { setActiveSection?.("documents"); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ cursor: "pointer" }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" /><path d="m21 3-9 9" /><path d="M15 3h6v6" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" /><path d="m21 3-9 9" /><path d="M15 3h6v6" /></svg>
               </div>
             </div>
           )}
@@ -303,18 +303,18 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
                 <div className={styles.paginationControls}>
                   <div className={styles.paginationInfo}>
                     <span className={styles.rowsLabel}>Rows per page</span>
-                    <RowsPerPage 
-                      value={rowsPerPage} 
+                    <RowsPerPage
+                      value={rowsPerPage}
                       onChange={(val) => {
                         setRowsPerPage(val);
                         setAllotmentPage(1);
                         setFiiPage(1); // Reset both to be consistent
-                      }} 
+                      }}
                     />
                   </div>
-                    <span className={styles.pageLabel}>Page {allotmentPage} of {Math.ceil(displayAllotment.length / rowsPerPage)}</span>
+                  <span className={styles.pageLabel}>Page {allotmentPage} of {Math.ceil(displayAllotment.length / rowsPerPage)}</span>
                   <div className={styles.navButtons}>
-                    <button 
+                    <button
                       className={allotmentPage === 1 ? styles.navBtnDisabled : styles.navBtn}
                       onClick={() => setAllotmentPage(1)}
                       disabled={allotmentPage === 1}
@@ -325,8 +325,8 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
                         className={styles.navIcon}
                       />
                     </button>
-        
-                    <button 
+
+                    <button
                       className={allotmentPage === 1 ? styles.navBtnDisabled : styles.navBtn}
                       onClick={() => setAllotmentPage(prev => Math.max(1, prev - 1))}
                       disabled={allotmentPage === 1}
@@ -337,8 +337,8 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
                         className={styles.navIcon}
                       />
                     </button>
-      
-                    <button 
+
+                    <button
                       className={allotmentPage === Math.ceil(displayAllotment.length / rowsPerPage) ? styles.navBtnDisabled : styles.navBtn}
                       onClick={() => setAllotmentPage(prev => Math.min(Math.ceil(displayAllotment.length / rowsPerPage), prev + 1))}
                       disabled={allotmentPage === Math.ceil(displayAllotment.length / rowsPerPage) || displayAllotment.length === 0}
@@ -349,8 +349,8 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
                         className={styles.navIcon}
                       />
                     </button>
-      
-                    <button 
+
+                    <button
                       className={allotmentPage === Math.ceil(displayAllotment.length / rowsPerPage) ? styles.navBtnDisabled : styles.navBtn}
                       onClick={() => setAllotmentPage(Math.ceil(displayAllotment.length / rowsPerPage))}
                       disabled={allotmentPage === Math.ceil(displayAllotment.length / rowsPerPage) || displayAllotment.length === 0}

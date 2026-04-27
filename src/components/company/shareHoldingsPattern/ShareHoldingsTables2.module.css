@@ -31,13 +31,13 @@
 }
 
 .expandIcon {
-    width: 20px;
-    height: 20px;
-    transition: transform 0.3s ease;
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
 }
 
 .rotateIcon {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 .tableWrapper {
@@ -103,7 +103,9 @@
 /* Responsive Breakpoints */
 
 @media (max-width: 1024px) {
-  .table th, .table td {
+
+  .table th,
+  .table td {
     padding: 14px 16px;
   }
 }
@@ -112,13 +114,17 @@
   .tableWrapper {
     border-radius: 6px;
   }
+
   .table {
     min-width: 650px;
   }
-  .table th, .table td {
+
+  .table th,
+  .table td {
     padding: 12px 12px;
     font-size: 13px;
   }
+
   .tableTitle {
     font-size: 16px;
   }
@@ -128,7 +134,9 @@
   .table {
     min-width: 500px;
   }
-  .table th, .table td {
+
+  .table th,
+  .table td {
     padding: 10px 8px;
   }
 }
@@ -164,10 +172,11 @@
   gap: 32px;
 }
 
-.rowsLabel , .pageLabel {
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(30, 41, 59, 1);
+.rowsLabel,
+.pageLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(30, 41, 59, 1);
 }
 
 .selectBox {
@@ -192,7 +201,8 @@
   gap: 8px;
 }
 
-.navBtn, .navBtnDisabled {
+.navBtn,
+.navBtnDisabled {
   width: 32px;
   height: 32px;
   display: flex;
@@ -242,45 +252,45 @@
 }
 
 .blurContainer {
-    position: relative;
-    width: 100%;
+  position: relative;
+  width: 100%;
 }
 
 .blurContent {
-    filter: blur(5px);
-    pointer-events: none;
-    user-select: none;
+  filter: blur(5px);
+  pointer-events: none;
+  user-select: none;
 }
 
 .overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    z-index: 10;
-    width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 10;
+  width: 100%;
 }
 
 .overlayTitle {
-    font-weight: 700;
-    font-size: 28px;
-    color: #18181b;
-    margin: 0;
-    display: block;
+  font-weight: 700;
+  font-size: 24px;
+  color: #18181b;
+  margin: 0;
+  display: block;
 }
 
 .overlaySubtitle {
-    font-weight: 500;
-    font-size: 22px;
-    color: #18181b;
-    margin-top: 4px;
-    display: block;
+  font-weight: 500;
+  font-size: 18px;
+  color: #18181b;
+  margin-top: 4px;
+  display: block;
 }
 
 .lockIcon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
 }

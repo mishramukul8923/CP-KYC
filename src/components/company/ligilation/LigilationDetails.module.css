@@ -343,7 +343,7 @@
 .kpiLabel {
   font-size: 14px;
   font-weight: 500;
-  white-space: nowrap;
+  /* white-space: nowrap; */
   line-height: 20px;
 }
 
@@ -705,6 +705,7 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
