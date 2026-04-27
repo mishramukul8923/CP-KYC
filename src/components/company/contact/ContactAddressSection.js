@@ -36,20 +36,29 @@ const ContactAddressSection = ({ companyData, loading, error }) => {
     return null;
   }
 
+  const cleanEmail = (email) => {
+    if (!email || email === "-") return "-";
+    return email
+      .replace(/\[\s*d\s*ot\s*\]/gi, '.')
+      .replace(/\[\s*dot\s*\]/gi, '.')
+      .replace(/\[\s*at\s*\]/gi, '@')
+      .replace(/\s*\[at\]\s*/gi, '@')
+      .replace(/\s*\[dot\]\s*/gi, '.')
+      .trim();
+  };
+
+  const cleanedEmail = cleanEmail(contact.email_address);
+
   const contactItems = [
     {
-      label: "Official Email ID",
-      value: (
-        <a href={`mailto:${contact.email}`} className={styles.link}>
-          {contact.email || "-"}
-        </a>
-      ),
+      label: "Registered Address",
+      value: contact.registered_address || "-",
     },
     {
       label: "Official Website",
       value: (
         <a
-          href={contact.website}
+          href={contact.website ? (contact.website.match(/^https?:\/\//) ? contact.website : `https://${contact.website}`) : undefined}
           target="_blank"
           rel="noopener noreferrer"
           className={styles.link}
@@ -58,18 +67,20 @@ const ContactAddressSection = ({ companyData, loading, error }) => {
         </a>
       ),
     },
+
     {
-      label: "Registered Office Address",
-      value: contact.registered_office_address || "-",
+      label: "Country",
+      value: contact.country || "-",
     },
     {
-      label: "City",
-      value: contact.city || "-",
+      label: "Email Address",
+      value: (cleanedEmail !== "-") ? (
+        <a href={`mailto:${cleanedEmail}`} className={styles.link}>
+          {cleanedEmail}
+        </a>
+      ) : "-",
     },
-    {
-      label: "State",
-      value: contact.state || "-",
-    },
+
   ];
 
   const socialIcons = [
