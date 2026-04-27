@@ -96,7 +96,11 @@ const VersionHistory = () => {
         <div className={styles.content}>
           <div className={styles.timeline}>
             {loading ? (
-               <div style={{ padding: "20px", textAlign: "center", color: "#666" }}>Loading history...</div>
+               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                 {[...Array(5)].map((_, i) => (
+                   <div key={i} className={`${styles.skeleton} ${styles.skeletonItem}`} />
+                 ))}
+               </div>
             ) : historyData.length > 0 ? (
               historyData.map((item) => (
                 <div 

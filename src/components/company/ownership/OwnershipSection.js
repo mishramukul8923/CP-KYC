@@ -421,7 +421,9 @@ const OwnershipSection = ({
 
       {groupStructureLoading ? (
         <section className={styles.section}>
-          <div className={`${styles.skeleton} ${styles.skeletonValue}`} style={{ width: '200px' }} />
+          <div className={styles.sectionWrapper}>
+            <h2 className={styles.sectionTitle}>Group Structure</h2>
+          </div>
           <div className={styles.statsGrid}>
             {[1, 2, 3, 4].map(i => (
               <div key={i} className={`${styles.skeleton} ${styles.skeletonStat}`} style={{ height: '80px' }} />
@@ -430,38 +432,39 @@ const OwnershipSection = ({
           <div className={`${styles.skeleton} ${styles.skeletonProgress}`} style={{ height: '200px' }} />
         </section>
       ) : (
-        <div className={styles.blurContainer}>
-          {!groupStructureLoading && isGroupStructureEmpty && (
-            <div className={styles.overlay}>
-              <span className={styles.overlayTitle}>Content Not Available</span>
-              <span className={styles.overlaySubtitle}>Need MCA Documents.</span>
-              <div className={styles.lockIcon} onClick={() => { setActiveSection?.("documents"); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ cursor: "pointer" }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" /><path d="m21 3-9 9" /><path d="M15 3h6v6" /></svg>
-              </div>
-            </div>
-          )}
-          <div className={isGroupStructureEmpty ? styles.blurContent : ""}>
-            <section ref={groupStructureRef} className={styles.section} id="group-structure">
-              <div className={styles.sectionWrapper}>
-                <h2 className={styles.sectionTitle}>Group Structure</h2>
-                {!groupStats.every(stat => !stat.value || stat.value === "-") && (
-                  <div className={styles.statsGrid}>
-                    {groupStats.map((stat, idx) => (
-                      <div
-                        key={idx}
-                        className={`${styles.statCard} ${styles[stat.type + "Stat"]}`}
-                      >
-                        <p className={styles.statLabel}>{stat.label}</p>
-                        <p className={styles.statValue}>{stat.value}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </section>
-            <SubsidiaryAccordion groupStructureData={groupDataToUse} />
+        <section ref={groupStructureRef} className={styles.section} id="group-structure">
+          <div className={styles.sectionWrapper}>
+            <h2 className={styles.sectionTitle}>Group Structure</h2>
           </div>
-        </div>
+
+          <div className={styles.blurContainer}>
+            {!groupStructureLoading && isGroupStructureEmpty && (
+              <div className={styles.overlay}>
+                <span className={styles.overlayTitle}>Content Not Available</span>
+                <span className={styles.overlaySubtitle}>Need MCA Documents.</span>
+                <div className={styles.lockIcon} onClick={() => { setActiveSection?.("documents"); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ cursor: "pointer" }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" /><path d="m21 3-9 9" /><path d="M15 3h6v6" /></svg>
+                </div>
+              </div>
+            )}
+            <div className={isGroupStructureEmpty ? styles.blurContent : ""}>
+              {!groupStats.every(stat => !stat.value || stat.value === "-") && (
+                <div className={styles.statsGrid}>
+                  {groupStats.map((stat, idx) => (
+                    <div
+                      key={idx}
+                      className={`${styles.statCard} ${styles[stat.type + "Stat"]}`}
+                    >
+                      <p className={styles.statLabel}>{stat.label}</p>
+                      <p className={styles.statValue}>{stat.value}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <SubsidiaryAccordion groupStructureData={groupDataToUse} />
+            </div>
+          </div>
+        </section>
       )}
 
       {overseasInvestmentLoading ? (
