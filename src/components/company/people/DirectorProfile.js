@@ -10,7 +10,7 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
   const [activeTab, setActiveTab] = useState("current");
   const [directorTab, setDirectorTab] = useState("current");
 
-  const { activeSubSection, setActiveSubSection } = useCompanySection() || {};
+  const { activeSubSection, setActiveSubSection, setActiveSection } = useCompanySection() || {};
   const [expandedNewsIds, setExpandedNewsIds] = useState({});
 
   const toggleNewsExpand = (id) => {
@@ -40,8 +40,26 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
     }
   };
 
+  const hasData = directors && directors.length > 0;
+  const directorsToUse = hasData ? directors : [
+    {
+      name: "Aman Singh",
+      designation: "Managing Director",
+      din_pan: "01234567",
+      director_type: directorTab === "current",
+      details: { profile_image: "-", din_status: "Active" }
+    },
+    {
+      name: "Rahul Verma",
+      designation: "CFO",
+      din_pan: "87654321",
+      director_type: directorTab === "current",
+      details: { profile_image: "-", din_status: "Active" }
+    }
+  ];
+
   // Filter directors based on tab (current/past) and search
-  const filteredDirectors = directors.filter((director) => {
+  const filteredDirectors = directorsToUse.filter((director) => {
     // Current directors have director_type === true
     // Past directors have director_type === false
     const matchesTab = directorTab === "current" ? director.director_type === true : director.director_type === false;
@@ -113,20 +131,20 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
 
   const fetchMoreNews = async () => {
     if (newsLoading || !hasMoreNews || !companyName) return;
-    
+
     try {
       setNewsLoading(true);
       const nextPage = newsPage + 1;
       const token = localStorage.getItem("token");
       const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${encodeURIComponent(companyName)}/news?page=${nextPage}&size=5&search=${encodeURIComponent(selectedDirector.name)}`;
-      
+
       const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       const data = await response.json();
-      
+
       if (data.news && Array.isArray(data.news)) {
         setDirectorNewsList(prev => [...prev, ...data.news]);
         setNewsPage(nextPage);
@@ -267,163 +285,158 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
 
   return (
     <div className={styles.container}>
-      {directors.length === 0 ? (
-        <p style={{ fontStyle: 'italic', fontWeight: 300, color: "#80858fff", padding: "20px" }}>
-          Download MCA document
-        </p>
-      ) : (
-        <>
-          {!hideSidebar && (
-            <div className={styles.containerHeader}>
-              <div className={styles.sidebarTabs}>
-                <div
-                  className={`${styles.sidebarTab} ${directorTab === "current" ? styles.sidebarTabActive : ""
-                    }`}
-                  onClick={() => handleTabChange("current")}
-                >
-                  Current Directors & KMP
-                </div>
+      <>
+        {!hideSidebar && (
+          <div className={styles.containerHeader}>
+            <div className={styles.sidebarTabs}>
+              <div
+                className={`${styles.sidebarTab} ${directorTab === "current" ? styles.sidebarTabActive : ""
+                  }`}
+                onClick={() => handleTabChange("current")}
+              >
+                Current Directors & KMP
+              </div>
 
-                <div
-                  className={`${styles.sidebarTab} ${directorTab === "past" ? styles.sidebarTabActive : ""
-                    }`}
-                  onClick={() => handleTabChange("past")}
-                >
-                  Past Directors & KMP
-                </div>
+              <div
+                className={`${styles.sidebarTab} ${directorTab === "past" ? styles.sidebarTabActive : ""
+                  }`}
+                onClick={() => handleTabChange("past")}
+              >
+                Past Directors & KMP
               </div>
             </div>
-          )}
-
-          <div className={styles.mainContainer}>
-        {!hideSidebar && (
-          <aside className={styles.sidebar}>
-            <div className={styles.searchWrapper}>
-              <img
-                src="/icons/search.svg"
-                alt="thumb"
-                className={styles.searchImg}
-              />
-              <input
-                type="text"
-                placeholder="Search by name, role, or DIN"
-                className={styles.searchInput}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-
-            {/* Filter Tags */}
-            <div className={styles.filterContainer}>
-              {filters.map((filter) => (
-                <div
-                  key={filter}
-                  className={`${styles.filterTag} ${activeFilter === filter ? styles.activeFilter : ""
-                    }`}
-                  onClick={() => setActiveFilter(filter)}
-                >
-                  {filter}
-                </div>
-              ))}
-            </div>
-
-            <div className={styles.sidebarList}>
-              {sidebarItems.map((item, idx) => (
-                <div
-                  key={idx}
-                  className={`${styles.sidebarItem} ${activeIndex === idx ? styles.active : ""
-                    }`}
-                  onClick={() => setActiveIndex(idx)}
-                >
-
-                  {/* IMAGES FOR THE SIDEBAR */}
-                  <img
-                    src={(item.image && item.image !== "-") ? item.image : "/icons/profile-icon.svg"}
-                    alt="profile"
-                    className={styles.sidebarImg}
-                  />
-
-                  <div className={styles.sidebarInfo}>
-                    <span className={styles.sidebarName}>{item.name}</span>
-                    <span className={styles.sidebarRole}>{item.role}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </aside>
+          </div>
         )}
 
-        {/* MAIN CONTENT */}
-        <main className={`${styles.main} ${hideSidebar ? styles.fullWidth : ""}`}>
-          {/* PROFILE HEADER */}
-          <section className={styles.headerCard}>
-            <div className={styles.headerLeft}>
+        <div className={styles.mainContainer}>
+            {!hideSidebar && (
+              <aside className={styles.sidebar}>
+                <div className={styles.searchWrapper}>
+                  <img
+                    src="/icons/search.svg"
+                    alt="thumb"
+                    className={styles.searchImg}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search by name, role, or DIN"
+                    className={styles.searchInput}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
 
-              <img
-                src={
-                  selectedDirector.details?.profile_image &&
-                    selectedDirector.details.profile_image !== "-"
-                    ? selectedDirector.details.profile_image
-                    : "/icons/profile-icon.svg"
-                }
-                alt="profile"
-                className={styles.profilePic}
-              />
-              <div className={styles.profileTitle}>
-                <div className={styles.profileTitleWrapper}>
-                  <h1>{selectedDirector.name || 'Select a Director'}</h1>
-                  {selectedDirector.linkedin_url && selectedDirector.linkedin_url !== "-" && (
-                    <a href={selectedDirector.linkedin_url} target="_blank" rel="noopener noreferrer">
-                      <img src="/images/linkedln.svg" alt="linkedln" />
-                    </a>
-                  )}
+                {/* Filter Tags */}
+                <div className={styles.filterContainer}>
+                  {filters.map((filter) => (
+                    <div
+                      key={filter}
+                      className={`${styles.filterTag} ${activeFilter === filter ? styles.activeFilter : ""
+                        }`}
+                      onClick={() => setActiveFilter(filter)}
+                    >
+                      {filter}
+                    </div>
+                  ))}
+                </div>
 
-                  {/* PROFILE IMAGE FOR MAIN SECTIION
+                <div className={styles.sidebarList}>
+                  {sidebarItems.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className={`${styles.sidebarItem} ${activeIndex === idx ? styles.active : ""
+                        }`}
+                      onClick={() => setActiveIndex(idx)}
+                    >
+
+                      {/* IMAGES FOR THE SIDEBAR */}
+                      <img
+                        src={(item.image && item.image !== "-") ? item.image : "/icons/profile-icon.svg"}
+                        alt="profile"
+                        className={styles.sidebarImg}
+                      />
+
+                      <div className={styles.sidebarInfo}>
+                        <span className={styles.sidebarName}>{item.name}</span>
+                        <span className={styles.sidebarRole}>{item.role}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </aside>
+            )}
+
+            {/* MAIN CONTENT */}
+            <main className={`${styles.main} ${hideSidebar ? styles.fullWidth : ""}`}>
+              {/* PROFILE HEADER */}
+              <section className={styles.headerCard}>
+                <div className={styles.headerLeft}>
+
+                  <img
+                    src={
+                      selectedDirector.details?.profile_image &&
+                        selectedDirector.details.profile_image !== "-"
+                        ? selectedDirector.details.profile_image
+                        : "/icons/profile-icon.svg"
+                    }
+                    alt="profile"
+                    className={styles.profilePic}
+                  />
+                  <div className={styles.profileTitle}>
+                    <div className={styles.profileTitleWrapper}>
+                      <h1>{selectedDirector.name || 'Select a Director'}</h1>
+                      {selectedDirector.linkedin_url && selectedDirector.linkedin_url !== "-" && (
+                        <a href={selectedDirector.linkedin_url} target="_blank" rel="noopener noreferrer">
+                          <img src="/images/linkedln.svg" alt="linkedln" />
+                        </a>
+                      )}
+
+                      {/* PROFILE IMAGE FOR MAIN SECTIION
                   {selectedDirector.details?.profile_image && (
                     <img src={selectedDirector.details?.profile_image || "/icons/dabur-logo.svg"} alt="profile" />
                   )} */}
+                    </div>
+                    <div className={styles.profileSubtitle}>
+                      <span>DIN: {selectedDirector.din || '-'}</span>
+                      <span className={styles.grayDot}></span>
+                      <span>{selectedDirector.role || '-'}</span>
+                    </div>
+                  </div>
                 </div>
-                <div className={styles.profileSubtitle}>
-                  <span>DIN: {selectedDirector.din || '-'}</span>
-                  <span className={styles.grayDot}></span>
-                  <span>{selectedDirector.role || '-'}</span>
+                <div className={styles.dinStatus}>
+                  DIN Status : <span className={`${styles.statusTag} ${selectedDirector.details?.din_status === "Active" ? styles.activeTag : styles.inactiveTag}`}>
+                    {selectedDirector.details?.din_status || '-'}
+                  </span>
                 </div>
+              </section>
+
+              {/* PERSONAL INFO GRID */}
+              <div className={styles.detailsGrid}>
+                <InfoBlock label="DIN" value={selectedDirector.din || '-'} />
+                <InfoBlock label="PAN" value={selectedDirector?.details?.pan || '-'} />
+                <InfoBlock label="Nationality" value={selectedDirector.details?.nationality || '-'} />
+                <InfoBlock label="Date of Birth" value={selectedDirector.details?.dob || '-'} />
+                <InfoBlock label="Gender" value={selectedDirector.details?.gender || '-'} />
+                <InfoBlock label="Residential Status" value={selectedDirector.details?.residential_status || '-'} />
+                <InfoBlock label="Email ID" value={selectedDirector.details?.email || '-'} />
+                <InfoBlock label="Mobile Number" value={selectedDirector.details?.mobile || '-'} />
+                <InfoBlock label="Type" value={selectedDirector?.category || '-'} />
+
               </div>
-            </div>
-            <div className={styles.dinStatus}>
-              DIN Status : <span className={`${styles.statusTag} ${selectedDirector.details?.din_status === "Active" ? styles.activeTag : styles.inactiveTag}`}>
-                {selectedDirector.details?.din_status || '-'}
-              </span>
-            </div>
-          </section>
 
-          {/* PERSONAL INFO GRID */}
-          <div className={styles.detailsGrid}>
-            <InfoBlock label="DIN" value={selectedDirector.din || '-'} />
-            <InfoBlock label="PAN" value={selectedDirector?.details?.pan || '-'} />
-            <InfoBlock label="Nationality" value={selectedDirector.details?.nationality || '-'} />
-            <InfoBlock label="Date of Birth" value={selectedDirector.details?.dob || '-'} />
-            <InfoBlock label="Gender" value={selectedDirector.details?.gender || '-'} />
-            <InfoBlock label="Residential Status" value={selectedDirector.details?.residential_status || '-'} />
-            <InfoBlock label="Email ID" value={selectedDirector.details?.email || '-'} />
-            <InfoBlock label="Mobile Number" value={selectedDirector.details?.mobile || '-'} />
-            <InfoBlock label="Type" value={selectedDirector?.category || '-'} />
+              <div className={styles.addressGrid}>
+                <InfoBlock
+                  label="Current Residential Address"
+                  value={selectedDirector.details?.current_residential_address || '-'}
+                />
+                <InfoBlock
+                  label="Permanent Address"
+                  value={selectedDirector.details?.permanent_address || '-'}
+                />
+              </div>
 
-          </div>
-
-          <div className={styles.addressGrid}>
-            <InfoBlock
-              label="Current Residential Address"
-              value={selectedDirector.details?.current_residential_address || '-'}
-            />
-            <InfoBlock
-              label="Permanent Address"
-              value={selectedDirector.details?.permanent_address || '-'}
-            />
-          </div>
-
-          {/* ROLE & APPOINTMENT */}
-          {/* <section className={styles.section}>
+              {/* ROLE & APPOINTMENT */}
+              {/* <section className={styles.section}>
             <h2 className={styles.sectionHeading}>
               Role & Appointment Details
             </h2>
@@ -462,132 +475,132 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
             </div>
           </section> */}
 
-          {/* OTHER ASSOCIATIONS */}
-          <section className={styles.section}>
-            <div className={styles.headerArea}>
-              <h2 className={styles.sectionHeading}>Other Associations</h2>
-              <div className={styles.subTabs}>
-                <div
-                  className={`${styles.subTab} ${activeTab === "current" ? styles.subTabActive : ""
-                    }`}
-                  onClick={() => setActiveTab("current")}
-                >
-                  Current Companies
+              {/* OTHER ASSOCIATIONS */}
+              <section className={styles.section}>
+                <div className={styles.headerArea}>
+                  <h2 className={styles.sectionHeading}>Other Associations</h2>
+                  <div className={styles.subTabs}>
+                    <div
+                      className={`${styles.subTab} ${activeTab === "current" ? styles.subTabActive : ""
+                        }`}
+                      onClick={() => setActiveTab("current")}
+                    >
+                      Current Companies
+                    </div>
+
+                    <div
+                      className={`${styles.subTab} ${activeTab === "previous" ? styles.subTabActive : ""
+                        }`}
+                      onClick={() => setActiveTab("previous")}
+                    >
+                      Previous Companies
+                    </div>
+
+                    <div
+                      className={`${styles.subTab} ${activeTab === "shareholding" ? styles.subTabActive : ""
+                        }`}
+                      onClick={() => setActiveTab("shareholding")}
+                    >
+                      Shareholding
+                    </div>
+                  </div>
                 </div>
 
-                <div
-                  className={`${styles.subTab} ${activeTab === "previous" ? styles.subTabActive : ""
-                    }`}
-                  onClick={() => setActiveTab("previous")}
-                >
-                  Previous Companies
-                </div>
-
-                <div
-                  className={`${styles.subTab} ${activeTab === "shareholding" ? styles.subTabActive : ""
-                    }`}
-                  onClick={() => setActiveTab("shareholding")}
-                >
-                  Shareholding
-                </div>
-              </div>
-            </div>
-
-            {activeTab === "current" && (
-              <div className={styles.tableContainer}>
-                <table className={styles.dataTable}>
-                  <thead>
-                    <tr>
-                      <th>Company/LLP name</th>
-                      <th>Designation</th>
-                      <th>Type</th>
-                      <th>Period</th>
-                      <th>Appointment Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedDirector.details?.current_positions?.map((position, idx) => (
-                      <AssociationRow
-                        key={idx}
-                        image={position.company_log}
-                        name={position.company_name || "-"}
-                        role={position.designation || "-"}
-                        type={position.category || "-"}
-                        period={position.tenure_years || "-"}
-                        date={position.appointment_date || "-"}
-                      />
-                    ))}
-                    {(!selectedDirector.details?.current_positions || selectedDirector.details.current_positions.length === 0) && (
-                      <tr>
-                        <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
-                          No current positions found
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
-            {activeTab === "previous" && (
-              <div className={styles.tableContainer}>
-                <table className={styles.dataTable}>
-                  <thead>
-                    <tr>
-                      <th>Company/LLP name</th>
-                      <th>Designation</th>
-                      <th>Tenure</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedDirector.details?.past_positions?.map((position, idx) => (
-                      <AssociationRow
-                        key={idx}
-                        image={position.company_log}
-                        name={position.company_name || "-"}
-                        role={position.designation || "-"}
-                        date={position?.tenure_years||"-"}
-                      />
-                    ))}
-                    {(!selectedDirector.details?.past_positions || selectedDirector.details.past_positions.length === 0) && (
-                      <tr>
-                        <td colSpan="3" style={{ textAlign: 'center', padding: '20px' }}>
-                          No past positions found
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
-            {activeTab === "shareholding" && (
-              <div className={styles.tableContainer}>
-                <table className={styles.dataTable}>
-                  <thead>
-                    <tr>
-                      <th>Company/LLP name</th>
-                      <th>Shareholding %</th>
-                      <th>Nature</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedDirector.details?.shareholding?.map((item, idx) => (
-                      <AssociationRow
-                        key={idx}
-                        image={item.company_log}
-                        name={item.company_name || "-"}
-                        role={item.share_percentage || "-"}
-                        date={item?.nature_of_holding||"-"}
-                      />
-                    ))}
-                    {(!selectedDirector.details?.shareholding || selectedDirector.details.shareholding.length === 0) && (
-                      <tr>
-                        <td colSpan="3" style={{ textAlign: 'center', padding: '20px' }}>
-                          No shareholding found
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                  {/* <tbody>
+                {activeTab === "current" && (
+                  <div className={styles.tableContainer}>
+                    <table className={styles.dataTable}>
+                      <thead>
+                        <tr>
+                          <th>Company/LLP name</th>
+                          <th>Designation</th>
+                          <th>Type</th>
+                          <th>Period</th>
+                          <th>Appointment Date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedDirector.details?.current_positions?.map((position, idx) => (
+                          <AssociationRow
+                            key={idx}
+                            image={position.company_log}
+                            name={position.company_name || "-"}
+                            role={position.designation || "-"}
+                            type={position.category || "-"}
+                            period={position.tenure_years || "-"}
+                            date={position.appointment_date || "-"}
+                          />
+                        ))}
+                        {(!selectedDirector.details?.current_positions || selectedDirector.details.current_positions.length === 0) && (
+                          <tr>
+                            <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
+                              No current positions found
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                {activeTab === "previous" && (
+                  <div className={styles.tableContainer}>
+                    <table className={styles.dataTable}>
+                      <thead>
+                        <tr>
+                          <th>Company/LLP name</th>
+                          <th>Designation</th>
+                          <th>Tenure</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedDirector.details?.past_positions?.map((position, idx) => (
+                          <AssociationRow
+                            key={idx}
+                            image={position.company_log}
+                            name={position.company_name || "-"}
+                            role={position.designation || "-"}
+                            date={position?.tenure_years || "-"}
+                          />
+                        ))}
+                        {(!selectedDirector.details?.past_positions || selectedDirector.details.past_positions.length === 0) && (
+                          <tr>
+                            <td colSpan="3" style={{ textAlign: 'center', padding: '20px' }}>
+                              No past positions found
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                {activeTab === "shareholding" && (
+                  <div className={styles.tableContainer}>
+                    <table className={styles.dataTable}>
+                      <thead>
+                        <tr>
+                          <th>Company/LLP name</th>
+                          <th>Shareholding %</th>
+                          <th>Nature</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedDirector.details?.shareholding?.map((item, idx) => (
+                          <AssociationRow
+                            key={idx}
+                            image={item.company_log}
+                            name={item.company_name || "-"}
+                            role={item.share_percentage || "-"}
+                            date={item?.nature_of_holding || "-"}
+                          />
+                        ))}
+                        {(!selectedDirector.details?.shareholding || selectedDirector.details.shareholding.length === 0) && (
+                          <tr>
+                            <td colSpan="3" style={{ textAlign: 'center', padding: '20px' }}>
+                              No shareholding found
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                      {/* <tbody>
                     <tr>
                       <td>
                         <div className={styles.companyRow}>
@@ -631,13 +644,13 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
                       </td>
                     </tr>
                   </tbody> */}
-                </table>
-              </div>
-            )}
-          </section>
+                    </table>
+                  </div>
+                )}
+              </section>
 
-          {/* KMP SECTION */}
-          {/* <section className={styles.section2}>
+              {/* KMP SECTION */}
+              {/* <section className={styles.section2}>
             <h2 className={styles.sectionHeading}>KMP-Specific Details</h2>
             <div className={styles.kmpContainer}>
               <div className={styles.kmpItem}>
@@ -666,126 +679,126 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
             </div>
           </section> */}
 
-          {/* REGULATORY GROUP HEADER */}
-          <div className={styles.regulatoryHeader}>
-            Regulatory, Banking & Reputation Check — Individual
-          </div>
-
-          {/* DYNAMIC SECTIONS */}
-          {regulatoryData.map((section, index) => (
-            <section key={index} className={styles.checkContainer}>
-              <div className={styles.checkTitle}>{section.title}</div>
-              <div className={styles.cardFrame}>
-                <table
-                  className={`${styles.dataTable} ${styles[section.tableKey] || ""
-                    }`}
-                >
-                  <thead>
-                    <tr>
-                      {section.headers.map((header) => (
-                        <th key={header}>{header}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {section.rows.map((row, rowIndex) => (
-                      <tr key={rowIndex}>
-                        {Object.values(row).map((cell, cellIndex) => (
-                          <td key={cellIndex}>{renderCellContent(cell)}</td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              {/* REGULATORY GROUP HEADER */}
+              <div className={styles.regulatoryHeader}>
+                Regulatory, Banking & Reputation Check — Individual
               </div>
-            </section>
-          ))}
 
-          {/* CAREER TIMELINE */}
-          <section className={styles.section}>
-            <h2 className={styles.sectionHeading}>Career Timeline</h2>
-            <div className={styles.timeline}>
-              {selectedDirector.details?.career_timeline?.length > 0 ? (
-                selectedDirector.details.career_timeline.map((item, idx) => (
-                  <TimelineItem
-                    key={idx}
-                    date={`${item.appointment_date || "-"} - ${item.cessation_date || "-"}`}
-                    name={item.company_name || "-"}
-                    role={`${item.designation || "-"} • ${item.tenure_years || "-"}`}
-                    active={item.status === "Active"}
-                  />
-                ))
-              ) : (
-                <p style={{ textAlign: "center", width: "100%", padding: "20px", color: "#666" }}>
-                  No career timeline found
-                </p>
-              )}
-            </div>
-          </section>
+              {/* DYNAMIC SECTIONS */}
+              {regulatoryData.map((section, index) => (
+                <section key={index} className={styles.checkContainer}>
+                  <div className={styles.checkTitle}>{section.title}</div>
+                  <div className={styles.cardFrame}>
+                    <table
+                      className={`${styles.dataTable} ${styles[section.tableKey] || ""
+                        }`}
+                    >
+                      <thead>
+                        <tr>
+                          {section.headers.map((header) => (
+                            <th key={header}>{header}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {section.rows.map((row, rowIndex) => (
+                          <tr key={rowIndex}>
+                            {Object.values(row).map((cell, cellIndex) => (
+                              <td key={cellIndex}>{renderCellContent(cell)}</td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              ))}
 
-          {/* QUALIFICATIONS SECTION */}
-          <section className={styles.section}>
-            <h2 className={styles.sectionHeading}>Qualifications</h2>
-            <div className={styles.qualList}>
-              {selectedDirector.details?.qualifications?.length > 0 ? (
-                selectedDirector.details.qualifications.map((item, idx) => (
-                  <QualificationItem
-                    key={idx}
-                    icon={item.icon || "/images/placeholder.svg"}
-                    title={item.title || "-"}
-                    inst={item.inst || "-"}
-                    spec={item.spec || "-"}
-                    year={`${item.yearfrom || "-"} - ${item.yearto || "-"}`}
-                  />
-                ))
-              ) : (
-                <p style={{ textAlign: "center", width: "100%", padding: "20px", color: "#666" }}>
-                  No qualifications found
-                </p>
-              )}
-              
-            </div>
-          </section>
-
-          {/* DIRECTORS & LEADERSHIP NEWS SECTION */}
-          <section className={styles.section}>
-            <h2 className={styles.sectionHeading}>Directors & Leadership News</h2>
-            <div className={styles.newsList}>
-              {directorNewsList.length > 0 ? (
-                <>
-                  {directorNewsList.map((item, idx) => (
-                    <DirectorNewsItem 
-                      key={idx} 
-                      news={item} 
-                      isExpanded={expandedNewsIds[idx]}
-                      onToggle={() => toggleNewsExpand(idx)}
-                      onShare={handleShare}
-                    />
-                  ))}
-                  {hasMoreNews && (
-                    <div className={styles.loadMoreWrapper}>
-                      <button 
-                        className={styles.loadMoreBtn} 
-                        onClick={fetchMoreNews}
-                        disabled={newsLoading}
-                      >
-                        {newsLoading ? "Loading..." : "Load More"}
-                      </button>
-                    </div>
+              {/* CAREER TIMELINE */}
+              <section className={styles.section}>
+                <h2 className={styles.sectionHeading}>Career Timeline</h2>
+                <div className={styles.timeline}>
+                  {selectedDirector.details?.career_timeline?.length > 0 ? (
+                    selectedDirector.details.career_timeline.map((item, idx) => (
+                      <TimelineItem
+                        key={idx}
+                        date={`${item.appointment_date || "-"} - ${item.cessation_date || "-"}`}
+                        name={item.company_name || "-"}
+                        role={`${item.designation || "-"} • ${item.tenure_years || "-"}`}
+                        active={item.status === "Active"}
+                      />
+                    ))
+                  ) : (
+                    <p style={{ textAlign: "center", width: "100%", padding: "20px", color: "#666" }}>
+                      No career timeline found
+                    </p>
                   )}
-                </>
-              ) : (
-                <p style={{ textAlign: "center", width: "100%", padding: "20px", color: "#666" }}>
-                  No news found for this director
-                </p>
-              )}
-            </div>
-          </section>
-        </main>
-      </div>
-    </>
-  )}
-</div>
+                </div>
+              </section>
+
+              {/* QUALIFICATIONS SECTION */}
+              <section className={styles.section}>
+                <h2 className={styles.sectionHeading}>Qualifications</h2>
+                <div className={styles.qualList}>
+                  {selectedDirector.details?.qualifications?.length > 0 ? (
+                    selectedDirector.details.qualifications.map((item, idx) => (
+                      <QualificationItem
+                        key={idx}
+                        icon={item.icon || "/images/placeholder.svg"}
+                        title={item.title || "-"}
+                        inst={item.inst || "-"}
+                        spec={item.spec || "-"}
+                        year={`${item.yearfrom || "-"} - ${item.yearto || "-"}`}
+                      />
+                    ))
+                  ) : (
+                    <p style={{ textAlign: "center", width: "100%", padding: "20px", color: "#666" }}>
+                      No qualifications found
+                    </p>
+                  )}
+
+                </div>
+              </section>
+
+              {/* DIRECTORS & LEADERSHIP NEWS SECTION */}
+              <section className={styles.section}>
+                <h2 className={styles.sectionHeading}>Directors & Leadership News</h2>
+                <div className={styles.newsList}>
+                  {directorNewsList.length > 0 ? (
+                    <>
+                      {directorNewsList.map((item, idx) => (
+                        <DirectorNewsItem
+                          key={idx}
+                          news={item}
+                          isExpanded={expandedNewsIds[idx]}
+                          onToggle={() => toggleNewsExpand(idx)}
+                          onShare={handleShare}
+                        />
+                      ))}
+                      {hasMoreNews && (
+                        <div className={styles.loadMoreWrapper}>
+                          <button
+                            className={styles.loadMoreBtn}
+                            onClick={fetchMoreNews}
+                            disabled={newsLoading}
+                          >
+                            {newsLoading ? "Loading..." : "Load More"}
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <p style={{ textAlign: "center", width: "100%", padding: "20px", color: "#666" }}>
+                      No news found for this director
+                    </p>
+                  )}
+                </div>
+              </section>
+            </main>
+          </div>
+      </>
+
+    </div>
   );
 }
 
@@ -825,7 +838,7 @@ function InfoBlock({ label, value }) {
   );
 }
 
-function AssociationRow({ name, role, type, period, date,image }) {
+function AssociationRow({ name, role, type, period, date, image }) {
   return (
     <tr>
       <td>
@@ -889,10 +902,10 @@ function DirectorNewsItem({ news, isExpanded, onToggle, onShare }) {
   return (
     <div className={styles.newsCard}>
       <div className={styles.newsImageContainer}>
-        <img 
-          src={(news.image_url && news.image_url !== "-") ? news.image_url : '/icons/Image.svg'} 
-          alt={news.title || "-"} 
-          className={styles.newsImage} 
+        <img
+          src={(news.image_url && news.image_url !== "-") ? news.image_url : '/icons/Image.svg'}
+          alt={news.title || "-"}
+          className={styles.newsImage}
         />
       </div>
       <div className={styles.newsContent}>
@@ -902,7 +915,7 @@ function DirectorNewsItem({ news, isExpanded, onToggle, onShare }) {
             <h3 className={styles.newsTitle}>{news.title || "-"}</h3>
           </div>
         </div>
-        
+
         <div className={styles.newsDescriptionContainer}>
           <p className={`${styles.newsDescription} ${!isExpanded ? styles.newsClamped : ""}`}>
             {news.description || "-"}

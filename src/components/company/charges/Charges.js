@@ -11,7 +11,39 @@ import { formatDateToIST } from "@/utils/dateFormatter";
 export default function ChargesPage({ charges, loading, error, openPage, closedPage, limit, setOpenPage, setClosedPage, setLimit }) {
 
   if (loading) {
-    return <div className={styles.container}>Loading charges...</div>;
+    return (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.headerTitle}>Charges</h1>
+          <div className={styles.headerInfo}>
+            <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100px' }} />
+            <div className={styles.infoDivider}></div>
+            <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '150px' }} />
+          </div>
+        </div>
+
+        <section className={styles.statsGrid}>
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className={`${styles.skeleton} ${styles.skeletonStatCard}`} />
+          ))}
+        </section>
+
+        <section className={styles.chartAndSummary}>
+          <div className={`${styles.skeleton} ${styles.skeletonChartCard}`} />
+          <div className={`${styles.skeleton} ${styles.skeletonSummaryCard}`} />
+        </section>
+
+        <section className={styles.tableSection}>
+          <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '200px', marginBottom: '20px' }} />
+          <div className={`${styles.skeleton} ${styles.skeletonTable}`} />
+        </section>
+
+        <section className={styles.tableSection}>
+          <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '200px', marginBottom: '20px' }} />
+          <div className={`${styles.skeleton} ${styles.skeletonTable}`} />
+        </section>
+      </div>
+    );
   }
 
   if (error) {
@@ -144,7 +176,7 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
 
   const openItems = charges?.open_charges?.items || [];
   const closedItems = charges?.closed_charges?.items || [];
-  
+
 
   const COLORS = ["#0EA5E9", "rgba(244, 244, 245, 1)"];
 
@@ -174,7 +206,7 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
           <span className={styles.infoDivider}></span>
           <span className={styles.infoGroup}>
             <span className={styles.infoLabel}>Last Updated:</span>
-            <span className={styles.infoValue}>{formatDateToIST(charges?.last_updated)|| "-"}</span>
+            <span className={styles.infoValue}>{formatDateToIST(charges?.last_updated) || "-"}</span>
           </span>
         </div>
       </div>
@@ -253,7 +285,7 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
           <div className={styles.summaryRow}>
             <span>Last Charge Activity</span>
             <p className={styles.strong}>{charges?.statistics?.last_charge_activity ?? "-"}</p>
-          </div>  
+          </div>
           <div className={styles.summaryRow}>
             <span>Last Charge Date</span>
             <p className={styles.strong}>{charges?.statistics?.last_charge_date ?? "-"}</p>
@@ -374,7 +406,7 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
                 <th>Creation Date</th>
                 <th>Modication Date</th>
                 <th>Satisfaction Date</th>
-                <th></th>
+                {/* <th></th> */}
               </tr>
             </thead>
             <tbody>
@@ -386,7 +418,7 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
                   <td>{item.creation_date}</td>
                   <td>{item.modification_date}</td>
                   <td>{item.satisfaction_date}</td>
-                  <td className={styles.actionCell}>
+                  {/* <td className={styles.actionCell}>
                     <div className={styles.actionIcon}>
                       <img
                         src="/icons/eye.svg"
@@ -395,7 +427,7 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
                         height="20"
                       />
                     </div>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

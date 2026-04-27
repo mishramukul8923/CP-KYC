@@ -35,6 +35,7 @@
   color: rgba(39, 39, 42, 1);
   font-weight: 500;
 }
+
 .container {
   font-family: "Inter", sans-serif;
   background-color: #ffffff;
@@ -67,7 +68,8 @@
   align-items: center;
   gap: 12px;
   font-size: 13px;
-  color: #6b7280; /* gray-500 */
+  color: #6b7280;
+  /* gray-500 */
 }
 
 .sourceLabel {
@@ -82,7 +84,8 @@
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
-  color: rgba(39, 39, 42, 1); /* blue to distinguish MCA */
+  color: rgba(39, 39, 42, 1);
+  /* blue to distinguish MCA */
 }
 
 .divider {
@@ -98,6 +101,7 @@
   font-size: 14px;
   line-height: 20px;
 }
+
 .updatedText span {
   color: rgba(113, 113, 122, 1);
   font-weight: 400;
@@ -189,6 +193,7 @@
   gap: 12px;
   align-items: flex-start;
 }
+
 .tableTitle {
   /* font-family: Inter; */
   font-weight: 500;
@@ -199,6 +204,7 @@
   letter-spacing: 0%;
   color: #27272a;
 }
+
 .tableRow {
   display: flex;
   justify-content: space-between;
@@ -313,6 +319,7 @@
 .chartContainer {
   width: 100%;
 }
+
 /* ===== KPI SECTION ===== */
 .kpiSection {
   display: grid;
@@ -391,6 +398,7 @@
   background: #fafafa;
   height: 44px !important;
 }
+
 .litigationTable thead tr {
   height: 44px !important;
 }
@@ -455,17 +463,20 @@
 
   max-height: 36px;
 }
+
 .entriesInfo {
   color: #71717a;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
 }
+
 .pagination {
   display: flex;
   align-items: center;
   gap: 32px;
 }
+
 .rowsPerpage span,
 .pageInfo {
   font-size: 14px;
@@ -473,23 +484,27 @@
   color: #1e293b;
   line-height: 20px;
 }
+
 .rowsPerpage {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 }
+
 .pageSelect {
   border: 1px solid #e5e7eb;
   border-radius: 6px;
   padding: 4px 6px;
   font-size: 12px;
 }
+
 .pageControls {
   display: flex;
   align-items: center;
   gap: 8px;
 }
+
 .pageControls button {
   height: 32px;
   width: 32px;
@@ -506,9 +521,11 @@
 .pageControls button:hover {
   background: #f3f4f6;
 }
-.pageControls button:disabled{
-opacity: 0.5;
+
+.pageControls button:disabled {
+  opacity: 0.5;
 }
+
 /* Page size selector */
 .pageSizeControl {
   max-height: 36px;
@@ -550,11 +567,13 @@ opacity: 0.5;
 .arrowBtn:hover {
   color: #111827;
 }
+
 .controls {
   display: flex;
   gap: 32px;
   align-items: center;
 }
+
 /* Responsiveness */
 .rowsWrapper {
   position: relative;
@@ -587,6 +606,7 @@ opacity: 0.5;
 .rowsOption:hover {
   background: #f8fafc;
 }
+
 .dropdownDown {
   top: 39px;
 }
@@ -594,6 +614,7 @@ opacity: 0.5;
 .dropdownUp {
   bottom: 20px;
 }
+
 .portalDropdown {
   position: fixed;
   background: #ffffff;
@@ -603,10 +624,18 @@ opacity: 0.5;
   overflow: hidden;
 }
 
+@media (max-width: 1440px) {
+  .kpiSection {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
 @media (max-width: 1024px) {
   .topGrid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .kpiSection {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -638,6 +667,7 @@ opacity: 0.5;
     align-items: flex-start;
     gap: 12px;
   }
+
   .kpiSection {
     grid-template-columns: 1fr;
   }
@@ -662,22 +692,28 @@ opacity: 0.5;
     font-size: 11px;
   }
 }
+
 /* ===== LOADING & SKELETONS ===== */
 .skeleton {
-  background: #f4f4f5;
-  border-radius: 8px;
-  animation: pulse 1.5s infinite;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite linear;
+  border-radius: 4px;
 }
 
-@keyframes pulse {
-  0% { opacity: 0.6; }
-  50% { opacity: 1; }
-  100% { opacity: 0.6; }
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .skeletonHeader {
   height: 54px;
   border-radius: 100px;
+  width: 100%;
 }
 
 .skeletonKpiCard {
@@ -694,6 +730,12 @@ opacity: 0.5;
 .skeletonTable {
   height: 300px;
   width: 100%;
+  border-radius: 12px;
+}
+
+.skeletonText {
+  height: 20px;
+  width: 150px;
 }
 
 .loadingSection {
@@ -729,8 +771,13 @@ opacity: 0.5;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* ===== ERROR CONTAINER ===== */

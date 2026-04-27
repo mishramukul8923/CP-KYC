@@ -197,18 +197,22 @@ const LigilationDetails = ({
     return (
       <div className={styles.mainWrapper}>
         <div className={styles.container}>
-          {/* Skeleton Header */}
-          <div className={`${styles.skeleton} ${styles.skeletonHeader}`}></div>
+          <div className={styles.header}>
+            <h2 className={styles.title}>Litigation</h2>
+            <div className={styles.sourceRow}>
+              <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100px' }} />
+              <div className={styles.divider}></div>
+              <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '150px' }} />
+            </div>
+          </div>
           
-          {/* Skeleton KPIs */}
           <div className={styles.kpiSection}>
             {[...Array(4)].map((_, i) => (
               <div key={i} className={`${styles.skeleton} ${styles.skeletonKpiCard}`}></div>
             ))}
           </div>
 
-          {/* Skeleton Tables */}
-          {[...Array(2)].map((_, i) => (
+          {[...Array(4)].map((_, i) => (
             <div key={i} className={styles.tableSection}>
               <div className={`${styles.skeleton} ${styles.skeletonTableTitle}`}></div>
               <div className={`${styles.skeleton} ${styles.skeletonTable}`}></div>

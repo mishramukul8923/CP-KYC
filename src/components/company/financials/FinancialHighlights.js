@@ -105,7 +105,45 @@ const FinancialHighlights = ({
   if (!financialHighlights && (financialLoading || revenueLoading)) {
     return (
       <div className={styles.container}>
-        <div>Loading highlights...</div>
+        <div className={styles.header}>
+          <h1 className={styles.headerTitle}>Financials</h1>
+          <div className={styles.headerInfo}>
+            <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100px' }} />
+            <div className={styles.infoDivider}></div>
+            <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '150px' }} />
+          </div>
+        </div>
+        
+        <div className={styles.sectionHeader}>
+          <div className={`${styles.skeleton} ${styles.skeletonHeader}`} style={{ marginTop: '20px' }} />
+        </div>
+
+        <div className={styles.topGrid}>
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className={`${styles.skeleton} ${styles.skeletonStatCard}`} />
+          ))}
+        </div>
+
+        <div className={styles.sectionHeader}>
+          <div className={`${styles.skeleton} ${styles.skeletonHeader}`} style={{ marginTop: '20px' }} />
+        </div>
+
+        <div className={styles.tableSection}>
+          {[1, 2, 3, 4, 5, 6, 7].map(i => (
+            <div key={i} className={styles.tableRow} style={{ padding: '8px 0' }}>
+              <div className={`${styles.skeleton} ${styles.skeletonText}`} />
+              <div className={`${styles.skeleton} ${styles.skeletonText}`} />
+              <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '80px' }} />
+            </div>
+          ))}
+        </div>
+
+        <div className={styles.sectionHeader}>
+          <div className={`${styles.skeleton} ${styles.skeletonHeader}`} style={{ marginTop: '20px' }} />
+        </div>
+
+        <div className={`${styles.skeleton} ${styles.skeletonChartSection}`} />
+
         <div style={{ marginTop: "40px" }}>
           <FinancialHighlightsTables
             pnlApiData={pnlApiData}
@@ -179,16 +217,28 @@ const FinancialHighlights = ({
   }
 
 
-  if (!financialHighlights) {
-    return <div className={styles.container}>Loading...</div>;
+  if (!financialHighlights || !revenueProfitTrend) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.headerTitle}>Financials</h1>
+          <div className={styles.headerInfo}>
+            <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100px' }} />
+            <div className={styles.infoDivider}></div>
+            <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '150px' }} />
+          </div>
+        </div>
+        <div className={styles.topGrid}>
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className={`${styles.skeleton} ${styles.skeletonStatCard}`} />
+          ))}
+        </div>
+        <div className={`${styles.skeleton} ${styles.skeletonChartSection}`} style={{ marginTop: '20px' }} />
+      </div>
+    );
   }
 
   const financialHighlightsData = financialHighlights;
-
-  if (!revenueProfitTrend) {
-    return <div className={styles.container}>Loading...</div>;
-  }
-
 
   const parseChange = (value) => {
     if (!value) return false;

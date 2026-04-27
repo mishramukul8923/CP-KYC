@@ -9,7 +9,7 @@ import DownloadModal from "../modals/DownloadModal";
 import ShareModal from "../modals/ShareModal";
 
 
-export default function CompanyStickyHeader({ visible, companyData }) {
+export default function CompanyStickyHeader({ visible, companyData, loading }) {
   const { isVersionHistoryOpen, setVersionHistoryOpen, alertsData, isGeneratingPdf, setPdfDownloadTrigger } = useCompanySection() || {};
   const actionsRef = useRef(null);
   const router = useRouter();
@@ -77,54 +77,71 @@ export default function CompanyStickyHeader({ visible, companyData }) {
             {/* LEFT */}
             <div className={styles.left}>
               <div className={styles.logo} style={{ width: '40px', height: '40px' }}>
-                <Image
-                  src={
-                    companyData?.header?.logo_url && companyData.header.logo_url !== "-"
-                      ? companyData.header.logo_url
-                      : "/icons/Image.svg"
-                  }
-                  alt={companyData?.company_information?.legal_name + " logo"}
-                  width={40}
-                  height={40}
-                  unoptimized
-                />
-              </div>
-            </div>
-            <h1 className={styles.companyName} title={companyName?.full}>{companyName?.display}</h1>
-
-            <div className={styles.statsContainer}>
-
-              <div className={styles.statItem}>
-                <span className={styles.cinBadge}>{companyData?.company_information?.industry || "-"}</span>
-              </div>
-
-              <div className={styles.divider}></div>
-              <div className={styles.statItem}>
-                {listingText !== "-" ? (
-                  <span className={styles.scoreBadgeGreen}>
-                    <img
-                      src="/icons/greencheck.svg"
-                      alt="check"
-                      className={styles.arrowDownGreen}
-                    />
-                    {listingText}
-                  </span>
+                {loading ? (
+                  <div className={`${styles.skeleton} ${styles.skeletonCircle}`} />
                 ) : (
-                  <span className={styles.cinBadge}>-</span>
+                  <Image
+                    src={
+                      companyData?.header?.logo_url && companyData.header.logo_url !== "-"
+                        ? companyData.header.logo_url
+                        : "/icons/Image.svg"
+                    }
+                    alt={(companyData?.company_information?.legal_name || "Company") + " logo"}
+                    width={40}
+                    height={40}
+                    unoptimized
+                  />
                 )}
               </div>
+            </div>
+            {loading ? (
+              <div className={`${styles.skeleton} ${styles.skeletonName}`} style={{ marginLeft: '8px' }} />
+            ) : (
+              <h1 className={styles.companyName} title={companyName?.full}>{companyName?.display}</h1>
+            )}
 
-              <div className={styles.divider}></div>
-              <div className={styles.infoMetaItem}>
-                <span>Founded {companyData?.company_information?.incorporation_date ? companyData?.company_information?.incorporation_date?.split("/")[2] : "-"}</span>
-              </div>
+            <div className={styles.statsContainer}>
+              {loading ? (
+                <>
+                  <div className={`${styles.skeleton} ${styles.skeletonStat}`} />
+                  <div className={styles.divider}></div>
+                  <div className={`${styles.skeleton} ${styles.skeletonStat}`} />
+                  <div className={styles.divider}></div>
+                  <div className={`${styles.skeleton} ${styles.skeletonStat}`} />
+                </>
+              ) : (
+                <>
+                  <div className={styles.statItem}>
+                    <span className={styles.cinBadge}>{companyData?.company_information?.industry || "-"}</span>
+                  </div>
 
-              <div className={styles.divider}></div>
-              <div className={styles.infoMetaItem}>
-                <span>{companyData?.company_information?.classification || "-"}</span>
-              </div>
+                  <div className={styles.divider}></div>
+                  <div className={styles.statItem}>
+                    {listingText !== "-" ? (
+                      <span className={styles.scoreBadgeGreen}>
+                        <img
+                          src="/icons/greencheck.svg"
+                          alt="check"
+                          className={styles.arrowDownGreen}
+                        />
+                        {listingText}
+                      </span>
+                    ) : (
+                      <span className={styles.cinBadge}>-</span>
+                    )}
+                  </div>
 
+                  <div className={styles.divider}></div>
+                  <div className={styles.infoMetaItem}>
+                    <span>Founded {companyData?.company_information?.incorporation_date ? companyData?.company_information?.incorporation_date?.split("/")[2] : "-"}</span>
+                  </div>
 
+                  <div className={styles.divider}></div>
+                  <div className={styles.infoMetaItem}>
+                    <span>{companyData?.company_information?.classification || "-"}</span>
+                  </div>
+                </>
+              )}
             </div>
 
           </div>
@@ -133,80 +150,76 @@ export default function CompanyStickyHeader({ visible, companyData }) {
         {/* RIGHT */}
         <div className={styles.actionSection}>
           <div className={styles.buttonGroup}>
-            {!isVersionHistoryOpen && (
-              <button
-                className={`${styles.saveButton} ${isVersionHistoryOpen ? styles.hideOn1900 : ""}`}
-                onClick={() => setVersionHistoryOpen(true)}
-              >
-                <img
-                  src="/version.svg"
-                  alt=""
-                  className={styles.buttonIcon}
-                  style={{ width: '18px', height: '18px' }}
-                />
-                Version History
-              </button>
-            )}
+            {loading ? (
+              <>
+                <div className={`${styles.skeleton} ${styles.skeletonButton}`} />
+                <div className={`${styles.skeleton} ${styles.skeletonButton}`} />
+                <div className={`${styles.skeleton} ${styles.skeletonButton}`} />
+              </>
+            ) : (
+              <>
+                {!isVersionHistoryOpen && (
+                  <button
+                    className={`${styles.saveButton} ${isVersionHistoryOpen ? styles.hideOn1900 : ""}`}
+                    onClick={() => setVersionHistoryOpen(true)}
+                  >
+                    <img
+                      src="/version.svg"
+                      alt=""
+                      className={styles.buttonIcon}
+                      style={{ width: '18px', height: '18px' }}
+                    />
+                    Version History
+                  </button>
+                )}
 
-            <button className={`${styles.saveButton} ${isVersionHistoryOpen ? styles.hideOn1200 : ""}`} onClick={() => { window.location.reload(); }}>
-              <img
-                src="/icons/refresh.svg"
-                alt=""
-                className={styles.buttonIcon}
-              />
-              Refresh Company
-            </button>
+                <button className={`${styles.saveButton} ${isVersionHistoryOpen ? styles.hideOn1200 : ""}`} onClick={() => { window.location.reload(); }}>
+                  <img
+                    src="/icons/refresh.svg"
+                    alt=""
+                    className={styles.buttonIcon}
+                  />
+                  Refresh Company
+                </button>
 
-            {/* <button className={`${styles.saveButton} ${isVersionHistoryOpen ? styles.hideOn1750 : ""}`}>
-              <img
-                src="/icons/bookmark.svg"
-                alt=""
-                className={styles.buttonIcon}
-              />
-              Save
-            </button> */}
+                <div ref={actionsRef} className={styles.actionsWrapper}>
+                  <button className={styles.actionsButton} onClick={toggleActions}>
+                    Actions
+                    <img
+                      src="/icons/chevron-down.svg"
+                      alt=""
+                      className={`${styles.chevronDown} ${actionsOpen ? styles.rotated : ""}`}
+                    />
+                  </button>
 
-            <div ref={actionsRef} className={styles.actionsWrapper}>
-              <button className={styles.actionsButton} onClick={toggleActions}>
-                Actions
-                <img
-                  src="/icons/chevron-down.svg"
-                  alt=""
-                  className={`${styles.chevronDown} ${actionsOpen ? styles.rotated : ""}`}
-                />
-              </button>
-
-              {actionsOpen && (
-                <div
-                  className={`${styles.actionsDropdown} ${actionsDirection === "up" ? styles.dropdownUp : styles.dropdownDown}`}
-                >
-                  {isVersionHistoryOpen && (
-                    <>
-                      {/* <button className={`${styles.dropdownItem} ${styles.showOn1750}`}>
-                        Save
-                      </button> */}
-                      <button className={`${styles.dropdownItem} ${styles.showOn1200}`} onClick={() => window.location.reload()}>
-                        Refresh Company
+                  {actionsOpen && (
+                    <div
+                      className={`${styles.actionsDropdown} ${actionsDirection === "up" ? styles.dropdownUp : styles.dropdownDown}`}
+                    >
+                      {isVersionHistoryOpen && (
+                        <button className={`${styles.dropdownItem} ${styles.showOn1200}`} onClick={() => window.location.reload()}>
+                          Refresh Company
+                        </button>
+                      )}
+                      <button className={styles.dropdownItem}>View Company</button>
+                      <button
+                        className={styles.dropdownItem}
+                        onClick={() => setPdfDownloadTrigger(prev => prev + 1)}
+                        disabled={isGeneratingPdf}
+                      >
+                        {isGeneratingPdf ? "Generating PDF..." : "Download Report"}
                       </button>
-                    </>
+                      <button
+                        className={styles.dropdownItem}
+                        onClick={() => setIsShareModalOpen(true)}
+                      >
+                        Share
+                      </button>
+                    </div>
                   )}
-                  <button className={styles.dropdownItem}>View Company</button>
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => setPdfDownloadTrigger(prev => prev + 1)}
-                    disabled={isGeneratingPdf}
-                  >
-                    {isGeneratingPdf ? "Generating PDF..." : "Download Report"}
-                  </button>
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => setIsShareModalOpen(true)}
-                  >
-                    Share
-                  </button>
                 </div>
-              )}
-            </div>
+              </>
+            )}
           </div>
         </div>
       </div>

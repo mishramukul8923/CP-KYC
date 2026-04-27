@@ -110,6 +110,47 @@
   border-radius: 8px;
 }
 
+.badgeHigh .dotRed {
+  width: 12px;
+  height: 12px;
+  background-color: rgba(239, 68, 68, 1);
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite linear;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeletonTitle {
+  height: 28px;
+  width: 320px;
+  margin-bottom: 12px;
+}
+
+.skeletonRow {
+  height: 20px;
+  width: 100%;
+}
+
+.skeletonAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
 .dotRed {
   width: 12px;
   height: 12px;

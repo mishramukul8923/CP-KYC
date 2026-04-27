@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./CompanyNews.module.css";
 import { ChevronRight } from "lucide-react";
@@ -34,7 +35,7 @@ const CompanyNews = ({ companyName }) => {
         if (!dateString || dateString === "-") return "-";
         const now = new Date();
         const past = new Date(dateString);
-        
+
         // Check if date is valid
         if (isNaN(past.getTime())) return dateString;
 
@@ -243,75 +244,89 @@ const CompanyNews = ({ companyName }) => {
             </header>
 
             <div className={styles.newsList}>
-                {news.map((item, index) => (
-                    <div key={index} className={styles.newsCard}>
-                        {/* <div className={`${styles.statusDot} ${styles[item.status]}`}></div> */}
-                        <div className={styles.imageContainer}>
-                            <img
-                                src={(item.image_url && item.image_url !== "-") ? item.image_url : '/icons/Image.svg'}
-                                alt={item.title || "-"}
-                                className={styles.newsImage}
-                            />
-                        </div>
-                        <div className={styles.content}>
-                            <h3 className={styles.newsTitle}>{item.title || "-"}</h3>
-                            <div className={styles.descriptionContainer}>
-                                <p
-                                    ref={el => descriptionRefs.current[index] = el}
-                                    className={`${styles.description} ${expandedIds[index] ? styles.expanded : styles.clamped}`}
-                                >
-                                    {item.description || "-"}
-                                </p>
-                                {!expandedIds[index] && overflowingIds[index] && (
-                                    <span
-                                        className={styles.showMoreInline}
-                                        onClick={() => toggleExpand(index)}
-                                    >
-                                        ... Show More
-                                    </span>
-                                )}
-                                {expandedIds[index] && (
-                                    <span
-                                        className={styles.showLess}
-                                        onClick={() => toggleExpand(index)}
-                                    >
-                                        Show Less
-                                    </span>
-                                )}
+                {isLoading && news.length === 0 ? (
+                    [...Array(3)].map((_, index) => (
+                        <div key={index} className={styles.newsCard}>
+                            <div className={`${styles.skeleton} ${styles.skeletonImage}`} />
+                            <div className={styles.content}>
+                                <div className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+                                <div className={`${styles.skeleton} ${styles.skeletonDesc}`} />
+                                <div className={`${styles.skeleton} ${styles.skeletonDesc}`} />
+                                <div className={`${styles.skeleton} ${styles.skeletonFooter}`} />
                             </div>
-                            <div className={styles.footer}>
-                                <div className={styles.footerItem}>
-                                    <img src="/icons/footer_calender.svg" alt="date" className={styles.footerIcon} />
-                                    <span>{timeAgo(item.date)}</span>
+                        </div>
+                    ))
+                ) : (
+                    news.map((item, index) => (
+                        <div key={index} className={styles.newsCard}>
+                            {/* <div className={`${styles.statusDot} ${styles[item.status]}`}></div> */}
+                            <div className={styles.imageContainer}>
+                                <img
+                                    src={(item.image_url && item.image_url !== "-") ? item.image_url : '/icons/Image.svg'}
+                                    alt={item.title || "-"}
+                                    className={styles.newsImage}
+                                />
+                            </div>
+                            <div className={styles.content}>
+                                <h3 className={styles.newsTitle}>{item.title || "-"}</h3>
+                                <div className={styles.descriptionContainer}>
+                                    <p
+                                        ref={el => descriptionRefs.current[index] = el}
+                                        className={`${styles.description} ${expandedIds[index] ? styles.expanded : styles.clamped}`}
+                                    >
+                                        {item.description || "-"}
+                                    </p>
+                                    {!expandedIds[index] && overflowingIds[index] && (
+                                        <span
+                                            className={styles.showMoreInline}
+                                            onClick={() => toggleExpand(index)}
+                                        >
+                                            ... Show More
+                                        </span>
+                                    )}
+                                    {expandedIds[index] && (
+                                        <span
+                                            className={styles.showLess}
+                                            onClick={() => toggleExpand(index)}
+                                        >
+                                            Show Less
+                                        </span>
+                                    )}
                                 </div>
-                                <div className={styles.footerItem}>
-                                    <img src="/globe.svg" alt="source" className={styles.footerIcon} />
-                                    <span>{item.source || "-"}</span>
-                                </div>
-                                {item.category && (
-                                    <div className={styles.tag}>
-                                        {item.category || "-"}
+                                <div className={styles.footer}>
+                                    <div className={styles.footerItem}>
+                                        <img src="/icons/footer_calender.svg" alt="date" className={styles.footerIcon} />
+                                        <span>{timeAgo(item.date)}</span>
                                     </div>
+                                    <div className={styles.footerItem}>
+                                        <img src="/globe.svg" alt="source" className={styles.footerIcon} />
+                                        <span>{item.source || "-"}</span>
+                                    </div>
+                                    {item.category && (
+                                        <div className={styles.tag}>
+                                            {item.category || "-"}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div className={styles.cardActions}>
+                                {item.external_url && (
+                                    <a href={item.external_url} target="_blank" rel="noopener noreferrer">
+                                        <img src="/viewsourceIcon.svg" alt="view-source" className={styles.actionIcon} />
+                                    </a>
                                 )}
+                                {
+                                    <div
+                                        onClick={() => handleShare(item.external_url || item.share_url)}
+                                        className={styles.actionButton}
+                                    >
+                                        <img src="/iconShare.svg" alt="share" className={styles.actionIcon} />
+                                    </div>
+                                }
                             </div>
                         </div>
-                        <div className={styles.cardActions}>
-                            {item.external_url && (
-                                <a href={item.external_url} target="_blank" rel="noopener noreferrer">
-                                    <img src="/viewsourceIcon.svg" alt="view-source" className={styles.actionIcon} />
-                                </a>
-                            )}
-                            {
-                                <div
-                                    onClick={() => handleShare(item.external_url || item.share_url)}
-                                    className={styles.actionButton}
-                                >
-                                    <img src="/iconShare.svg" alt="share" className={styles.actionIcon} />
-                                </div>
-                            }
-                        </div>
-                    </div>
-                ))}
+                    ))
+                )}
 
                 {news.length < totalNews && (
                     <div className={styles.loadMoreWrapper}>
@@ -328,12 +343,12 @@ const CompanyNews = ({ companyName }) => {
                 )}
 
                 {news.length === 0 && !isLoading && (
-                    <div className={styles.noResults}>No news articles found for this selection.</div>
+                    <div className={styles.noResults}>No news articles found.</div>
                 )}
             </div>
-            <ShareModal 
-                isOpen={isShareModalOpen} 
-                onClose={() => setIsShareModalOpen(false)} 
+            <ShareModal
+                isOpen={isShareModalOpen}
+                onClose={() => setIsShareModalOpen(false)}
                 shareLink={currentShareLink}
                 companyName={companyName}
                 title="Share News"

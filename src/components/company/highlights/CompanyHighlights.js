@@ -9,7 +9,64 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
 
 
   if (loading) {
-    return <div className={styles.container}>Loading highlights...</div>;
+    return (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h2 className={styles.headerTitle}>Company Highlights</h2>
+          <div className={styles.headerInfo}>
+            <div className={styles.infoGroup}>
+              <span className={styles.infoLabel}>Source:</span>
+              <div className={`${styles.skeleton}`} style={{ width: '40px', height: '20px' }} />
+            </div>
+            <span className={styles.infoDivider}></span>
+            <div className={styles.infoGroup}>
+              <span className={styles.infoLabel}>Last Updated:</span>
+              <div className={`${styles.skeleton}`} style={{ width: '120px', height: '20px' }} />
+            </div>
+          </div>
+        </div>
+
+        <section className={styles.section}>
+          <h3 className={styles.sectionTitle}>Shareholding</h3>
+          <div className={styles.card}>
+            <div className={styles.statsGrid}>
+              <div className={styles.statItemFirst}>
+                <span className={styles.statLabel}>Total Equity Shares</span>
+                <div className={`${styles.skeleton} ${styles.skeletonStatValue}`} />
+              </div>
+              <div className={styles.statItemMiddle}>
+                <span className={styles.statLabel}>Promoter Holding</span>
+                <div className={`${styles.skeleton} ${styles.skeletonStatValue}`} style={{ margin: '4px auto 0' }} />
+              </div>
+              <div className={styles.statItemLast}>
+                <span className={styles.statLabel}>Non-Promoter Holding</span>
+                <div className={`${styles.skeleton} ${styles.skeletonStatValue}`} style={{ marginLeft: 'auto' }} />
+              </div>
+            </div>
+            <div className={styles.shareholdingSection}>
+              <div className={`${styles.skeleton} ${styles.skeletonProgress}`} />
+              <div className={styles.legendGrid}>
+                <div className={`${styles.skeleton} ${styles.skeletonLegend}`} />
+                <div className={`${styles.skeleton} ${styles.skeletonLegend}`} />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className={styles.section}>
+          <div className={styles.chargesHeader}>
+            <h3 className={styles.sectionTitle}>Charges</h3>
+            <div className={styles.toggleContainer}>
+              <div className={`${styles.skeleton}`} style={{ width: '250px', height: '32px', borderRadius: '50px' }} />
+            </div>
+          </div>
+          <div className={styles.card} style={{ padding: 0 }}>
+            <div className={`${styles.skeleton} ${styles.skeletonTable}`} />
+            <div className={`${styles.skeleton} ${styles.skeletonPagination}`} style={{ margin: '16px' }} />
+          </div>
+        </section>
+      </div>
+    );
   }
 
   if (error) {
@@ -97,75 +154,110 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
       <div className={styles.header}>
         <h1 className={styles.headerTitle}>Company Highlights</h1>
         <div className={styles.headerInfo}>
-          <span className={styles.infoGroup}>
-            <span className={styles.infoLabel}>Source:</span>
-            <span className={styles.infoValue}>{companyHighlights?.source}</span>
-          </span>
-          <span className={styles.infoDivider}></span>
-          <span className={styles.infoGroup}>
-            <span className={styles.infoLabel}>Last Updated:</span>
-            <span className={styles.infoValue}>{formatDateToIST(companyHighlights?.last_updated) || "-"}</span>
-          </span>
+          {loading || !companyHighlights ? (
+            <>
+              <div className={`${styles.skeleton} ${styles.skeletonStatValue}`} style={{ width: '150px' }} />
+              <div className={styles.infoDivider}></div>
+              <div className={`${styles.skeleton} ${styles.skeletonStatValue}`} style={{ width: '150px' }} />
+            </>
+          ) : (
+            <>
+              <span className={styles.infoGroup}>
+                <span className={styles.infoLabel}>Source:</span>
+                <span className={styles.infoValue}>{companyHighlights?.source}</span>
+              </span>
+              <span className={styles.infoDivider}></span>
+              <span className={styles.infoGroup}>
+                <span className={styles.infoLabel}>Last Updated:</span>
+                <span className={styles.infoValue}>{formatDateToIST(companyHighlights?.last_updated) || "-"}</span>
+              </span>
+            </>
+          )}
         </div>
       </div>
 
       {/* Shareholding Section */}
       <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>Shareholding</h2>
+        <h2 className={styles.sectionTitle}>Shareholding </h2>
         <div className={styles.card}>
-          <div className={styles.shareholdingSection}>
-            <div className={styles.statsGrid}>
-              <div className={`${styles.statItem} ${styles.statItemFirst}`}>
-                <span className={styles.statLabel}>Total Equity Shares</span>
-                <span className={styles.statValue}>
-                  {shareholding?.total_equity_shares?.toLocaleString() ?? "-"}
-                </span>
+          {loading || !companyHighlights ? (
+            <div className={styles.shareholdingSection}>
+              <div className={styles.statsGrid}>
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className={`${styles.statItem} ${i === 0 ? styles.statItemFirst : i === 1 ? styles.statItemMiddle : styles.statItemLast}`}>
+                    <div className={`${styles.skeleton} ${styles.skeletonStatValue}`} style={{ width: '100px', height: '14px' }} />
+                    <div className={`${styles.skeleton} ${styles.skeletonStatValue}`} />
+                  </div>
+                ))}
               </div>
-              <div className={`${styles.statItem} ${styles.statItemMiddle}`}>
-                <span className={styles.statLabel}>Promoter Holding</span>
-                <span className={styles.statValue}>{shareholding.promoter_holding?.toLocaleString() ?? "-"}</span>
+              <div className={styles.chartHeader}>
+                <div className={styles.chartLine}></div>
+                <div className={`${styles.skeleton} ${styles.skeletonStatValue}`} style={{ width: '100px', height: '20px' }} />
+                <div className={styles.chartLine}></div>
               </div>
-              <div className={`${styles.statItem} ${styles.statItemLast}`}>
-                <span className={styles.statLabel}>Non-Promoter Holding</span>
-                <span className={styles.statValue}>{shareholding.non_promoter_holding?.toLocaleString() ?? "-"}</span>
+              <div className={`${styles.skeleton} ${styles.skeletonProgress}`} />
+              <div className={styles.legendGrid} style={{ marginTop: '20px' }}>
+                <div className={`${styles.skeleton} ${styles.skeletonLegend}`} />
+                <div className={`${styles.skeleton} ${styles.skeletonLegend}`} />
               </div>
             </div>
-            <div className={styles.chartHeader}>
-              <div className={styles.chartLine}></div>
-              <span className={styles.chartHeaderText}>Shareholding</span>
-              <div className={styles.chartLine}></div>
-            </div>
+          ) : (
+            <>
+              <div className={styles.shareholdingSection}>
+                <div className={styles.statsGrid}>
+                  <div className={`${styles.statItem} ${styles.statItemFirst}`}>
+                    <span className={styles.statLabel}>Total Equity Shares</span>
+                    <span className={styles.statValue}>
+                      {shareholding?.total_equity_shares?.toLocaleString() ?? "-"}
+                    </span>
+                  </div>
+                  <div className={`${styles.statItem} ${styles.statItemMiddle}`}>
+                    <span className={styles.statLabel}>Promoter Holding</span>
+                    <span className={styles.statValue}>{shareholding.promoter_holding?.toLocaleString() ?? "-"}</span>
+                  </div>
+                  <div className={`${styles.statItem} ${styles.statItemLast}`}>
+                    <span className={styles.statLabel}>Non-Promoter Holding</span>
+                    <span className={styles.statValue}>{shareholding.non_promoter_holding?.toLocaleString() ?? "-"}</span>
+                  </div>
+                </div>
+                <div className={styles.chartHeader}>
+                  <div className={styles.chartLine}></div>
+                  <span className={styles.chartHeaderText}>Shareholding</span>
+                  <div className={styles.chartLine}></div>
+                </div>
 
-            <div className={styles.progressContainer}>
-              <div className={styles.progressBar}>
-                <div
-                  className={styles.progressPromoter}
-                  style={{ width: `${shareholding.promoter_percentage || 0}%` }}
-                ></div>
-                <div
-                  className={styles.progressNonPromoter}
-                  style={{ width: `${shareholding.non_promoter_percentage || 0}%` }}
-                ></div>
+                <div className={styles.progressContainer}>
+                  <div className={styles.progressBar}>
+                    <div
+                      className={styles.progressPromoter}
+                      style={{ width: `${Number(shareholding.promoter_percentage).toFixed(2) || 0}%` }}
+                    ></div>
+                    <div
+                      className={styles.progressNonPromoter}
+                      style={{ width: `${Number(shareholding.non_promoter_percentage).toFixed(2) || 0}%` }}
+                    ></div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <div className={styles.legendGrid}>
-            <div className={styles.legendItem}>
-              <div className={`${styles.dot} ${styles.dotPromoter}`}></div>
-              <div>
-                <p className={styles.legendLabel}>Promoter </p>
-                <p className={styles.legendValue}>{Number(shareholding.promoter_percentage).toFixed(2) ?? "0"}%</p>
+              <div className={styles.legendGrid}>
+                <div className={styles.legendItem}>
+                  <div className={`${styles.dot} ${styles.dotPromoter}`}></div>
+                  <div>
+                    <p className={styles.legendLabel}>Promoter</p>
+                    <p className={styles.legendValue}>{Number(shareholding.promoter_percentage).toFixed(2) ?? "0"}%</p>
+                  </div>
+                </div>
+                <div className={styles.legendItem}>
+                  <div className={`${styles.dot} ${styles.dotNonPromoter}`}></div>
+                  <div>
+                    <p className={styles.legendLabel}>Non Promoter</p>
+                    <p className={styles.legendValue}>{Number(shareholding.non_promoter_percentage).toFixed(2) ?? "0"}%</p>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className={styles.legendItem}>
-              <div className={`${styles.dot} ${styles.dotNonPromoter}`}></div>
-              <div>
-                <p className={styles.legendLabel}>Non Promoter</p>
-                <p className={styles.legendValue}>{Number(shareholding.non_promoter_percentage).toFixed(2) ?? "0"}%</p>
-              </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -207,7 +299,33 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
           </div>
         </div>
 
-        {activeTab === "open" ? (
+        {loading || !companyHighlights ? (
+          <div className={styles.chargesTableContainer}>
+            <table className={styles.chargesTable}>
+              <thead>
+                <tr>
+                  <th>Charge ID</th>
+                  <th>Lender</th>
+                  <th>Amount (Cr.)</th>
+                  <th>Creation Date</th>
+                  <th>Modification Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...Array(5)].map((_, i) => (
+                  <tr key={i}>
+                    <td><div className={`${styles.skeleton} ${styles.skeletonTableRow}`} /></td>
+                    <td><div className={`${styles.skeleton} ${styles.skeletonTableRow}`} /></td>
+                    <td><div className={`${styles.skeleton} ${styles.skeletonTableRow}`} /></td>
+                    <td><div className={`${styles.skeleton} ${styles.skeletonTableRow}`} /></td>
+                    <td><div className={`${styles.skeleton} ${styles.skeletonTableRow}`} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className={`${styles.skeleton} ${styles.skeletonPagination}`} style={{ margin: '16px' }} />
+          </div>
+        ) : activeTab === "open" ? (
           <div className={styles.chargesTableContainer}>
             <table className={styles.chargesTable}>
               <thead>
@@ -298,7 +416,7 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
                   <th>Creation Date</th>
                   <th>Modification Date</th>
                   <th>Satisfaction Date</th>
-                  <th></th>
+                  {/* <th></th> */}
                 </tr>
               </thead>
               <tbody>
@@ -311,7 +429,7 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
                       <td>{charge.creation_date || "-"}</td>
                       <td>{charge.modification_date || "-"}</td>
                       <td>{charge.satisfaction_date || "-"}</td>
-                      <td>
+                      {/* <td>
                         <button className={styles.actionButton}>
                           <svg
                             width="24"
@@ -326,7 +444,7 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
                             />
                           </svg>
                         </button>
-                      </td>
+                      </td> */}
                     </tr>
                   ))
                 ) : (

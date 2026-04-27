@@ -129,7 +129,7 @@ const RISK_DATA = [
   // },
 ];
 
-const CompanyNewHeader = ({ companyData }) => {
+const CompanyNewHeader = ({ companyData, loading }) => {
   const { isVersionHistoryOpen, setVersionHistoryOpen, alertsData, setPdfDownloadTrigger, isGeneratingPdf, setIsGeneratingPdf } = useCompanySection();
   const [isExpanded, setIsExpanded] = useState(false); // State to track expansion
   const router = useRouter();
@@ -190,23 +190,31 @@ const CompanyNewHeader = ({ companyData }) => {
         <div className={styles.mainLayout}>
           <div className={styles.logoWrapper}>
             <div className={styles.logoCircle}>
-              <Image
-                src={
-                  companyData?.header?.logo_url && companyData.header.logo_url !== "-"
-                    ? companyData.header.logo_url
-                    : "/icons/Image.svg"
-                }
-                alt={companyData?.company_information?.legal_name + " logo"}
-                className={
-                  companyData?.header?.logo_url && companyData.header.logo_url !== "-"
-                    ? styles.logoImage
-                    : styles.logoCircle
-                }
-                width={100}
-                height={100}
-                priority
-                unoptimized
-              />
+              {loading ? (
+                <div className={`${styles.skeleton} ${styles.skeletonCircle}`} />
+              ) : (
+                <Image
+                  src={
+                    companyData?.header?.logo_url && 
+                    companyData.header.logo_url !== "-" && 
+                    companyData.header.logo_url !== "null"
+                      ? companyData.header.logo_url
+                      : "/icons/Image.svg"
+                  }
+                  alt={(companyData?.company_information?.legal_name || "Company") + " logo"}
+                  className={
+                    companyData?.header?.logo_url && 
+                    companyData.header.logo_url !== "-" && 
+                    companyData.header.logo_url !== "null"
+                      ? styles.logoImage
+                      : styles.logoCircle
+                  }
+                  width={100}
+                  height={100}
+                  priority
+                  unoptimized
+                />
+              )}
             </div>
           </div>
 
@@ -214,117 +222,128 @@ const CompanyNewHeader = ({ companyData }) => {
 
             <div className={styles.contentSection}>
               <div className={styles.titleRow}>
-                <h1 className={styles.companyName}>{companyData?.company_information?.legal_name || "-"}</h1>
+                {loading ? (
+                  <div className={`${styles.skeleton} ${styles.skeletonName}`} />
+                ) : (
+                  <h1 className={styles.companyName}>{companyData?.company_information?.legal_name || "-"}</h1>
+                )}
               </div>
               <div className={styles.buttonGroup}>
-                {!isVersionHistoryOpen && (
-                  <button
-                    className={styles.saveButton}
-                    onClick={() => setVersionHistoryOpen(true)}
-                  >
-                    <img
-                      src="/version.svg"
-                      alt=""
-                      className={styles.buttonIcon}
-                      style={{ width: '18px', height: '18px' }}
-                    />
-                    Version History
-                  </button>
-                )}
-                <button
-                  className={`${styles.saveButton} ${isVersionHistoryOpen ? styles.hideOn1200 : ""}`}
-                  onClick={() => { window.location.reload(); }}
-                >
-                  <img
-                    src="/icons/refresh.svg"
-                    alt=""
-                    className={styles.buttonIcon}
-                  />
-                  Refresh Company
-                </button>
-                {/* <button className={`${styles.saveButton} ${isVersionHistoryOpen ? styles.hideOn1750 : ""}`}>
-                  <img
-                    src="/icons/bookmark.svg"
-                    alt=""
-                    className={styles.buttonIcon}
-                  />
-                  Save
-                </button> */}
-                <div ref={actionsRef} className={styles.actionsWrapper}>
-                  <button
-                    className={styles.actionsButton}
-                    onClick={toggleActions}
-                  >
-                    Actions
-                    <img
-                      src="/icons/chevron-down.svg"
-                      alt=""
-                      className={`${styles.chevronDown} ${actionsOpen ? styles.rotated : ""
-                        }`}
-                    />
-                  </button>
-
-                  {actionsOpen && (
-                    <div
-                      className={`${styles.actionsDropdown} ${actionsDirection === "up"
-                        ? styles.dropdownUp
-                        : styles.dropdownDown
-                        }`}
+                {loading ? (
+                  <>
+                    <div className={`${styles.skeleton} ${styles.skeletonButton}`} />
+                    <div className={`${styles.skeleton} ${styles.skeletonButton}`} />
+                    <div className={`${styles.skeleton} ${styles.skeletonButton}`} />
+                  </>
+                ) : (
+                  <>
+                    {!isVersionHistoryOpen && (
+                      <button
+                        className={styles.saveButton}
+                        onClick={() => setVersionHistoryOpen(true)}
+                      >
+                        <img
+                          src="/version.svg"
+                          alt=""
+                          className={styles.buttonIcon}
+                          style={{ width: '18px', height: '18px' }}
+                        />
+                        Version History
+                      </button>
+                    )}
+                    <button
+                      className={`${styles.saveButton} ${isVersionHistoryOpen ? styles.hideOn1200 : ""}`}
+                      onClick={() => { window.location.reload(); }}
                     >
-                      {isVersionHistoryOpen && (
-                        <>
-                          {/* <button className={`${styles.dropdownItem} ${styles.showOn1750}`}>
-                            Save
-                          </button> */}
-                          <button className={`${styles.dropdownItem} ${styles.showOn1200}`} onClick={() => window.location.reload()}>
-                            Refresh Company
+                      <img
+                        src="/icons/refresh.svg"
+                        alt=""
+                        className={styles.buttonIcon}
+                      />
+                      Refresh Company
+                    </button>
+                    <div ref={actionsRef} className={styles.actionsWrapper}>
+                      <button
+                        className={styles.actionsButton}
+                        onClick={toggleActions}
+                      >
+                        Actions
+                        <img
+                          src="/icons/chevron-down.svg"
+                          alt=""
+                          className={`${styles.chevronDown} ${actionsOpen ? styles.rotated : ""
+                            }`}
+                        />
+                      </button>
+
+                      {actionsOpen && (
+                        <div
+                          className={`${styles.actionsDropdown} ${actionsDirection === "up"
+                            ? styles.dropdownUp
+                            : styles.dropdownDown
+                            }`}
+                        >
+                          {isVersionHistoryOpen && (
+                            <button className={`${styles.dropdownItem} ${styles.showOn1200}`} onClick={() => window.location.reload()}>
+                              Refresh Company
+                            </button>
+                          )}
+                          <button
+                            className={styles.dropdownItem}
+                            onClick={() => setPdfDownloadTrigger(prev => prev + 1)}
+                            disabled={isGeneratingPdf}
+                          >
+                            {isGeneratingPdf ? "Generating PDF..." : "Download Report"}
                           </button>
-                        </>
+                          <button
+                            className={styles.dropdownItem}
+                            onClick={() => setIsShareModalOpen(true)}
+                          >
+                            Share
+                          </button>
+                        </div>
                       )}
-                      {/* <button className={styles.dropdownItem}>
-                        View Company
-                      </button> */}
-                      <button
-                        className={styles.dropdownItem}
-                        onClick={() => setPdfDownloadTrigger(prev => prev + 1)}
-                        disabled={isGeneratingPdf}
-                      >
-                        {isGeneratingPdf ? "Generating PDF..." : "Download Report"}
-                      </button>
-                      <button
-                        className={styles.dropdownItem}
-                        onClick={() => setIsShareModalOpen(true)}
-                      >
-                        Share
-                      </button>
                     </div>
-                  )}
-                </div>
+                  </>
+                )}
               </div>
             </div>
             <div className={styles.contentSectionBottom}>
 
               <div className={styles.contentSectionBottomLeft}>
                 <div className={styles.statsContainer}>
-                  <div className={styles.statItem}>
-                    <span className={styles.statLabel}>Industry :</span>
-                    <span className={styles.cinBadge}>{companyData?.company_information?.industry || "-"}</span>
-                  </div>
-                  <div className={styles.statItem}>
-                    <span className={styles.statLabel}>Listing Status :</span>
-                    {listingText !== "-" ? (
-                      <span className={styles.scoreBadgeGreen}>
-                        <img
-                          src="/icons/greencheck.svg"
-                          alt="check"
-                          className={styles.checkGreen}
-                        />
-                        {listingText}
-                      </span>
-                    ) : (
-                      <span className={styles.cinBadge}>-</span>
-                    )}
-                  </div>
+                  {loading ? (
+                    <>
+                      <div className={styles.statItem}>
+                        <div className={`${styles.skeleton} ${styles.skeletonStat}`} />
+                      </div>
+                      <div className={styles.statItem}>
+                        <div className={`${styles.skeleton} ${styles.skeletonStat}`} />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className={styles.statItem}>
+                        <span className={styles.statLabel}>Industry :</span>
+                        <span className={styles.cinBadge}>{companyData?.company_information?.industry || "-"}</span>
+                      </div>
+                      <div className={styles.statItem}>
+                        <span className={styles.statLabel}>Listing Status :</span>
+                        {listingText !== "-" ? (
+                          <span className={styles.scoreBadgeGreen}>
+                            <img
+                              src="/icons/greencheck.svg"
+                              alt="check"
+                              className={styles.checkGreen}
+                            />
+                            {listingText}
+                          </span>
+                        ) : (
+                          <span className={styles.cinBadge}>-</span>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* <p className={styles.description}>
@@ -333,113 +352,139 @@ const CompanyNewHeader = ({ companyData }) => {
             </p> */}
 
                 <div className={styles.infoMetaRow}>
-                  <div className={styles.metaItem}>
-                    <img src="/icons/calendar.svg" className={styles.icon} />
-                    <span>Founded {companyData?.company_information?.incorporation_date ? companyData?.company_information?.incorporation_date?.split("/")[2] : "-"}</span>
-                  </div>
-                  <div className={styles.metaItem}>
-                    <img src="/icons/flag.svg" className={styles.icon} />
-                    <span>{companyData?.company_information?.classification || "-"}</span>
-                  </div>
-                  <div className={styles.metaItem}>
-                    <img src="/icons/location.svg" className={styles.icon} />
+                  {loading ? (
+                    <>
+                      <div className={`${styles.skeleton} ${styles.skeletonMeta}`} />
+                      <div className={`${styles.skeleton} ${styles.skeletonMeta}`} />
+                      <div className={`${styles.skeleton} ${styles.skeletonMeta}`} />
+                      <div className={`${styles.skeleton} ${styles.skeletonMeta}`} />
+                      <div className={`${styles.skeleton} ${styles.skeletonMeta}`} />
+                    </>
+                  ) : (
+                    <>
+                      <div className={styles.metaItem}>
+                        <img src="/icons/calendar.svg" className={styles.icon} />
+                        <span>Founded {companyData?.company_information?.incorporation_date ? companyData?.company_information?.incorporation_date?.split("/")[2] : "-"}</span>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <img src="/icons/flag.svg" className={styles.icon} />
+                        <span>{companyData?.company_information?.classification || "-"}</span>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <img src="/icons/location.svg" className={styles.icon} />
 
-                    <span
-                      className={styles.addressLine}
-                      title={fullAddress}
-                    >
-                      {companyState}
-                    </span>
-                  </div>
-                  <div className={styles.metaItem}>
-                    <img src="/icons/profile-2user.svg" className={styles.icon} />
-                    <span>{companyData?.employees?.[0]?.employees || "-"}</span>
-                  </div>
-                  <div className={styles.metaItem}>
-                    <img src="/icons/global.svg" className={styles.icon} />
-                    <a
-                      href={companyData?.contact_details?.website ? (companyData.contact_details.website.match(/^https?:\/\//) ? companyData.contact_details.website : `https://${companyData.contact_details.website}`) : undefined}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.link}
-                    >
-                      {companyData?.contact_details?.website || "-"}
-                    </a>
-                  </div>
-                  <div className={styles.socialIcons}>
-                    {companyData?.contact_details?.social_media?.map((url, index) => {
-                      let iconSrc = "/icons/link.svg";
-                      let altText = "Link";
-
-                      if (url.includes("facebook.com")) {
-                        iconSrc = "/icons/fb.svg";
-                        altText = "Facebook";
-                      } else if (url.includes("linkedin.com")) {
-                        iconSrc = "/icons/li.svg";
-                        altText = "LinkedIn";
-                      } else if (url.includes("twitter.com") || url.includes("x.com")) {
-                        iconSrc = "/icons/twitter.svg";
-                        altText = "Twitter";
-                      } else if (url.includes("instagram.com")) {
-                        iconSrc = "/icons/instagram.svg";
-                        altText = "Instagram";
-                      } else if (url.includes("youtube.com")) {
-                        iconSrc = "/icons/youtube2.svg";
-                        altText = "YouTube";
-                      }
-
-                      return (
-                        <a href={url} target="_blank" rel="noopener noreferrer" key={index}>
-                          <img
-                            src={iconSrc}
-                            alt={altText}
-                            title={altText}
-                            className={styles.socialIcon}
-                          />
+                        <span
+                          className={styles.addressLine}
+                          title={fullAddress}
+                        >
+                          {companyState}
+                        </span>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <img src="/icons/profile-2user.svg" className={styles.icon} />
+                        <span>{companyData?.employees?.[0]?.employees || "-"}</span>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <img src="/icons/global.svg" className={styles.icon} />
+                        <a
+                          href={companyData?.contact_details?.website ? (companyData.contact_details.website.match(/^https?:\/\//) ? companyData.contact_details.website : `https://${companyData.contact_details.website}`) : undefined}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.link}
+                        >
+                          {companyData?.contact_details?.website || "-"}
                         </a>
-                      );
-                    })}
-                  </div>
+                      </div>
+                      <div className={styles.socialIcons}>
+                        {companyData?.contact_details?.social_media?.map((url, index) => {
+                          let iconSrc = "/icons/link.svg";
+                          let altText = "Link";
+
+                          if (url.includes("facebook.com")) {
+                            iconSrc = "/icons/fb.svg";
+                            altText = "Facebook";
+                          } else if (url.includes("linkedin.com")) {
+                            iconSrc = "/icons/li.svg";
+                            altText = "LinkedIn";
+                          } else if (url.includes("twitter.com") || url.includes("x.com")) {
+                            iconSrc = "/icons/twitter.svg";
+                            altText = "Twitter";
+                          } else if (url.includes("instagram.com")) {
+                            iconSrc = "/icons/instagram.svg";
+                            altText = "Instagram";
+                          } else if (url.includes("youtube.com")) {
+                            iconSrc = "/icons/youtube2.svg";
+                            altText = "YouTube";
+                          }
+
+                          return (
+                            <a href={url} target="_blank" rel="noopener noreferrer" key={index}>
+                              <img
+                                src={iconSrc}
+                                alt={altText}
+                                title={altText}
+                                className={styles.socialIcon}
+                              />
+                            </a>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <div className={styles.alertsRow}>
-                  {alertsData?.summary?.litigation?.total > 0 && (
-                    <div className={`${styles.alertBadge} ${styles.legalAlert}`}>
-                      <img src="/icons/scale.svg" alt="" /> <strong>{alertsData.summary.litigation.total}</strong> Legal Cases
-                    </div>
-                  )}
-                  {alertsData?.summary?.adverse?.total > 0 && (
-                    <div className={`${styles.alertBadge} ${styles.adverseAlert}`}>
-                      <img src="/icons/file-text.svg" alt="" /> <strong>{alertsData.summary.adverse.total}</strong> Adverse Cases
-                    </div>
-                  )}
-                  {alertsData?.summary?.regulatory?.total > 0 && (
-                    <div className={`${styles.alertBadge} ${styles.regulatoryAlert}`}>
-                      <img src="/icons/shield.svg" alt="" /> <strong>{alertsData.summary.regulatory.total}</strong> Regulatory Issues
-                    </div>
-                  )}
-                  {/* Risk Alert - To be mapped later from API */}
-                  {false && (
-                    <div className={`${styles.alertBadge} ${styles.riskAlert}`}>
-                      <img src="/icons/activity.svg" alt="" /> <strong>-</strong> Risk
-                    </div>
-                  )}
-                  {alertsData?.summary && (alertsData.summary.litigation?.total > 0 || alertsData.summary.adverse?.total > 0 || alertsData.summary.regulatory?.total > 0) && (
-                    <button
-                      className={styles.viewAllBtn}
-                      onClick={() =>
-                        router.push(`/company/${slug}?section=alerts`)
-                      }
-                    >
-                      View All Alert <img src="/icons/arrow-down-dark.svg" alt="" />
-                    </button>
+                  {loading ? (
+                    <>
+                      <div className={`${styles.skeleton} ${styles.skeletonStat}`} style={{ borderRadius: '100px' }} />
+                      <div className={`${styles.skeleton} ${styles.skeletonStat}`} style={{ borderRadius: '100px' }} />
+                      <div className={`${styles.skeleton} ${styles.skeletonStat}`} style={{ borderRadius: '100px' }} />
+                    </>
+                  ) : (
+                    <>
+                      {alertsData?.summary?.litigation?.total > 0 && (
+                        <div className={`${styles.alertBadge} ${styles.legalAlert}`}>
+                          <img src="/icons/scale.svg" alt="" /> <strong>{alertsData.summary.litigation.total}</strong> Legal Cases
+                        </div>
+                      )}
+                      {alertsData?.summary?.adverse?.total > 0 && (
+                        <div className={`${styles.alertBadge} ${styles.adverseAlert}`}>
+                          <img src="/icons/file-text.svg" alt="" /> <strong>{alertsData.summary.adverse.total}</strong> Adverse Cases
+                        </div>
+                      )}
+                      {alertsData?.summary?.regulatory?.total > 0 && (
+                        <div className={`${styles.alertBadge} ${styles.regulatoryAlert}`}>
+                          <img src="/icons/shield.svg" alt="" /> <strong>{alertsData.summary.regulatory.total}</strong> Regulatory Issues
+                        </div>
+                      )}
+                      {/* Risk Alert - To be mapped later from API */}
+                      {false && (
+                        <div className={`${styles.alertBadge} ${styles.riskAlert}`}>
+                          <img src="/icons/activity.svg" alt="" /> <strong>-</strong> Risk
+                        </div>
+                      )}
+                      {alertsData?.summary && (alertsData.summary.litigation?.total > 0 || alertsData.summary.adverse?.total > 0 || alertsData.summary.regulatory?.total > 0) && (
+                        <button
+                          className={styles.viewAllBtn}
+                          onClick={() =>
+                            router.push(`/company/${slug}?section=alerts`)
+                          }
+                        >
+                          View All Alert <img src="/icons/arrow-down-dark.svg" alt="" />
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
               <div className={styles.contentSectionBottomRight}>
                 <div className={styles.lastUpdated}>
                   <span>Last Updated:</span>{" "}
-                  <strong>{formatDateToIST(companyData?.header?.last_updated)}</strong>
+                  {loading ? (
+                    <div className={`${styles.skeleton} ${styles.skeletonMeta}`} style={{ width: '100px' }} />
+                  ) : (
+                    <strong>{formatDateToIST(companyData?.header?.last_updated)}</strong>
+                  )}
                 </div>
               </div>
 

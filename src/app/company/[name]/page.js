@@ -41,14 +41,14 @@ export default function CompanyPage() {
 
   // Company Details
   const [companyData, setCompanyData] = useState(null);
-  const [companyLoading, setCompanyLoading] = useState(false);
+  const [companyLoading, setCompanyLoading] = useState(true);
   const [companyError, setCompanyError] = useState(null);
 
   // Profit & Loss
   const [pnlViewType, setPnlViewType] = useState("Standalone");
   const [pnlStandalone, setPnlStandalone] = useState(null);
   const [pnlConsolidated, setPnlConsolidated] = useState(null);
-  const [pnlLoading, setPnlLoading] = useState(false);
+  const [pnlLoading, setPnlLoading] = useState(true);
   const [pnlError, setPnlError] = useState(null);
 
   // Derived state for existing components
@@ -56,29 +56,29 @@ export default function CompanyPage() {
 
   // Financial Highlights
   const [financialHighlights, setFinancialHighlights] = useState(null);
-  const [financialLoading, setFinancialLoading] = useState(false);
+  const [financialLoading, setFinancialLoading] = useState(true);
   const [financialError, setFinancialError] = useState(null);
 
   // Revenue Trend
   const [revenueProfitTrend, setRevenueProfitTrend] = useState(null);
-  const [trendLoading, setTrendLoading] = useState(false);
+  const [trendLoading, setTrendLoading] = useState(true);
   const [trendError, setTrendError] = useState(null);
 
   // Common Directorship
   const [commonDirectorship, setCommonDirectorship] = useState(null);
-  const [directorshipLoading, setDirectorshipLoading] = useState(false);
+  const [directorshipLoading, setDirectorshipLoading] = useState(true);
   const [directorshipError, setDirectorshipError] = useState(null);
 
   // Company Highlights (Paginated)
   const [companyHighlights, setCompanyHighlights] = useState(null);
-  const [highlightsLoading, setHighlightsLoading] = useState(false);
+  const [highlightsLoading, setHighlightsLoading] = useState(true);
   const [highlightsError, setHighlightsError] = useState(null);
   const [highlightsPage, setHighlightsPage] = useState(1);
   const [highlightsLimit, setLimit] = useState(10);
 
   // Charges
   const [chargesData, setChargesData] = useState(null);
-  const [chargesLoading, setChargesLoading] = useState(false);
+  const [chargesLoading, setChargesLoading] = useState(true);
   const [chargesError, setChargesError] = useState(null);
   const [openPage, setOpenPage] = useState(1);
   const [closedPage, setClosedPage] = useState(1);
@@ -86,7 +86,7 @@ export default function CompanyPage() {
 
   // Directors & KMPS
   const [directorsData, setDirectorsData] = useState(null);
-  const [directorsLoading, setDirectorsLoading] = useState(false);
+  const [directorsLoading, setDirectorsLoading] = useState(true);
   const [directorsError, setDirectorsError] = useState(null);
 
   // Consume Alerts and PDF trigggers from shared context
@@ -95,7 +95,7 @@ export default function CompanyPage() {
 
 
   // Auditors Details
-  const [auditorsLoading, setAuditorsLoading] = useState(false);
+  const [auditorsLoading, setAuditorsLoading] = useState(true);
   const [auditorsError, setAuditorsError] = useState(null);
   const [audType, setAudType] = useState("Standalone");
   const [audStandalone, setAudStandalone] = useState([]);
@@ -105,7 +105,7 @@ export default function CompanyPage() {
   const auditorsData = audType === "Standalone" ? audStandalone : audConsolidated;
 
   // Balance Sheet Details
-  const [balanceSheetLoading, setBalanceSheetLoading] = useState(false);
+  const [balanceSheetLoading, setBalanceSheetLoading] = useState(true);
   const [balanceSheetError, setBalanceSheetError] = useState(null);
   const [bsType, setBsType] = useState("Standalone");
   const [bsStandalone, setBsStandalone] = useState(null);
@@ -1342,6 +1342,7 @@ export default function CompanyPage() {
           />
           <CompanyCharts
             businessActivity={peerComparisonData?.business_activity}
+            loading={peerComparisonLoading}
             layout="column"
           />
           <ProductDetails />
@@ -1439,7 +1440,7 @@ export default function CompanyPage() {
           error={directorshipError} />
       )}
 
-      {activeSection === "alerts" && <AlertsContainer alertsData={alertsData} alertsLoading={alertsLoading} alertsError={alertsError} />}
+      {activeSection === "alerts" && <AlertsContainer companyName={companyName} alertsData={alertsData} alertsLoading={alertsLoading} alertsError={alertsError} />}
 
       {activeSection === "litigation" && (
         <LigilationDetails

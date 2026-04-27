@@ -16,7 +16,7 @@ export function CompanySectionProvider({ children }) {
   const [activeSubSection, setActiveSubSection] = useState(subFromUrl);
   const [isVersionHistoryOpen, setVersionHistoryOpen] = useState(false);
   const [alertsData, setAlertsData] = useState(null);
-  const [alertsLoading, setAlertsLoading] = useState(false);
+  const [alertsLoading, setAlertsLoading] = useState(true);
   const [alertsError, setAlertsError] = useState(null);
   const [pdfDownloadTrigger, setPdfDownloadTrigger] = useState(0);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);

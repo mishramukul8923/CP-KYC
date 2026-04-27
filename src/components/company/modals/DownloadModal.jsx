@@ -26,7 +26,7 @@ const DownloadModal = ({ isOpen, onClose }) => {
             </button> */}
         </div>
         <div className={styles.processingView}>
-          <div className={styles.processingIcon}>
+          {/* <div className={styles.processingIcon}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -43,7 +43,7 @@ const DownloadModal = ({ isOpen, onClose }) => {
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <path d="m7 10 5 5 5-5" />
             </svg>
-          </div>
+          </div> */}
           <h3 className={styles.processingTitle}>
             Generating Report...
           </h3>

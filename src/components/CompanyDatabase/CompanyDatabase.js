@@ -44,8 +44,8 @@ export default function CompanyDatabase() {
   };
 
 
-  
-    
+
+
 
   // Fetch Companies
   useEffect(() => {
@@ -53,10 +53,10 @@ export default function CompanyDatabase() {
       try {
         setLoading(true);
         const token = localStorage.getItem("token");
-        
+
         const formattedStartDate = formatDate(startDate);
         const formattedEndDate = formatDate(endDate);
-        
+
         const params = new URLSearchParams({
           page: currentPage,
           per_page: rowsPerPage,
@@ -113,7 +113,7 @@ export default function CompanyDatabase() {
 
   const handleSort = (key) => {
     let direction = "asc";
-    
+
     if (sortConfig.key === key) {
       if (sortConfig.direction === "asc") {
         direction = "desc";
@@ -214,21 +214,21 @@ export default function CompanyDatabase() {
   const formatAddress = (addr) => {
     if (!addr) return "-";
     const parts = addr.split(',').map(p => p.trim());
-    
+
     // Filter out parts that are clearly not city/state (pincodes, country names, empty)
     const cleanedParts = parts.filter(p => {
       if (!p) return false;
       const pLower = p.toLowerCase();
       // Matches 6-digit pincode alone or with trailing text like "-India"
-      const isPincode = /^\d{6}/.test(p); 
+      const isPincode = /^\d{6}/.test(p);
       const isCountry = pLower === "india" || pLower === "ind";
       return !isPincode && !isCountry;
     });
-    
+
     // Take the last two available parts (usually City and State)
     const cityStateParts = cleanedParts.slice(-2);
     if (cityStateParts.length === 0) return "-";
-    
+
     const rawAddr = cityStateParts.join(", ");
     // Capitalize first letter of each word
     return rawAddr.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
@@ -254,11 +254,11 @@ export default function CompanyDatabase() {
             />
           </div>
 
-          <div 
-            ref={statusRef} 
+          <div
+            ref={statusRef}
             className={styles.bulkWrapper}
           >
-            <div 
+            <div
               className={styles.filterDropdown}
               onClick={toggleStatus}
             >
@@ -272,20 +272,20 @@ export default function CompanyDatabase() {
 
             {isStatusOpen && (
               <div className={`${styles.bulkDropdown} ${styles.dropdownDown}`}>
-                <button 
-                  className={styles.dropdownItem} 
+                <button
+                  className={styles.dropdownItem}
                   onClick={() => handleStatusSelect("")}
                 >
                   All Status
                 </button>
-                <button 
-                  className={styles.dropdownItem} 
+                <button
+                  className={styles.dropdownItem}
                   onClick={() => handleStatusSelect("Active")}
                 >
                   Active
                 </button>
-                <button 
-                  className={styles.dropdownItem} 
+                <button
+                  className={styles.dropdownItem}
                   onClick={() => handleStatusSelect("Inactive")}
                 >
                   Inactive
@@ -328,7 +328,7 @@ export default function CompanyDatabase() {
                   : "Date of incorporation"}
               </span>
               {startDate && (
-                <button 
+                <button
                   className={styles.clearDateBtn}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -379,10 +379,10 @@ export default function CompanyDatabase() {
                   }`}
               >
                 <button className={styles.dropdownItem}>Export Selected</button>
-                <button className={styles.dropdownItem}>
+                {/* <button className={styles.dropdownItem}>
                   Mark as Inactive
-                </button>
-                <button className={styles.dropdownItem}>Delete</button>
+                </button> */}
+                {/* <button className={styles.dropdownItem}>Delete</button> */}
               </div>
             )}
           </div>
@@ -408,64 +408,64 @@ export default function CompanyDatabase() {
                 </div>
               </th>
 
-              <th 
-                className={styles.sortableHeader} 
+              <th
+                className={styles.sortableHeader}
                 onClick={() => handleSort("company_name")}
               >
                 <div className={styles.headerContent}>
                   Company Name
-                  <img 
-                    src={sortConfig.key === "company_name" 
+                  <img
+                    src={sortConfig.key === "company_name"
                       ? (sortConfig.direction === "asc" ? "/icons/arrow-up.svg" : "/icons/arrow-down.svg")
-                      : "/icons/chevrons-up-down.svg"} 
-                    alt="" 
-                    className={styles.sortIcon} 
+                      : "/icons/chevrons-up-down.svg"}
+                    alt=""
+                    className={styles.sortIcon}
                   />
                 </div>
               </th>
-              <th 
-                className={styles.sortableHeader} 
+              <th
+                className={styles.sortableHeader}
                 onClick={() => handleSort("market_cap")}
               >
                 <div className={styles.headerContent}>
                   Market Cap. (Cr.)
-                  <img 
-                    src={sortConfig.key === "market_cap" 
+                  <img
+                    src={sortConfig.key === "market_cap"
                       ? (sortConfig.direction === "asc" ? "/icons/arrow-down.svg" : "/icons/arrow-up.svg")
-                      : "/icons/chevrons-up-down.svg"} 
-                    alt="" 
-                    className={styles.sortIcon} 
+                      : "/icons/chevrons-up-down.svg"}
+                    alt=""
+                    className={styles.sortIcon}
                   />
                 </div>
               </th>
-              <th 
-                className={styles.sortableHeader} 
+              <th
+                className={styles.sortableHeader}
                 onClick={() => handleSort("paid_up_capital")}
               >
                 <div className={styles.headerContent}>
                   PUC/OOC (Cr.)
-                  <img 
-                    src={sortConfig.key === "paid_up_capital" 
+                  <img
+                    src={sortConfig.key === "paid_up_capital"
                       ? (sortConfig.direction === "asc" ? "/icons/arrow-down.svg" : "/icons/arrow-up.svg")
-                      : "/icons/chevrons-up-down.svg"} 
-                    alt="" 
-                    className={styles.sortIcon} 
+                      : "/icons/chevrons-up-down.svg"}
+                    alt=""
+                    className={styles.sortIcon}
                   />
                 </div>
               </th>
               <th>SOC (Cr.)</th>
-              <th 
-                className={styles.sortableHeader} 
+              <th
+                className={styles.sortableHeader}
                 onClick={() => handleSort("incorporation_date")}
               >
                 <div className={styles.headerContent}>
                   DOI
-                  <img 
-                    src={sortConfig.key === "incorporation_date" 
+                  <img
+                    src={sortConfig.key === "incorporation_date"
                       ? (sortConfig.direction === "asc" ? "/icons/arrow-down.svg" : "/icons/arrow-up.svg")
-                      : "/icons/chevrons-up-down.svg"} 
-                    alt="" 
-                    className={styles.sortIcon} 
+                      : "/icons/chevrons-up-down.svg"}
+                    alt=""
+                    className={styles.sortIcon}
                   />
                 </div>
               </th>
@@ -540,12 +540,12 @@ export default function CompanyDatabase() {
                       : "-"}
                   </td>
                   <td>
-                    {company.paid_up_capital 
+                    {company.paid_up_capital
                       ? (company.paid_up_capital)
                       : "-"}
                   </td>
                   <td>
-                    {company.soc 
+                    {company.soc
                       ? (Number(company.soc.replace(/,/g, "")) / 1000).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                       : "-"}
                   </td>

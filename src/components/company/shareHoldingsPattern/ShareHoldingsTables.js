@@ -3,12 +3,60 @@ import React, { useState } from "react";
 import styles from "./ShareHoldingsTables.module.css";
 import { formatDateToIST } from "@/utils/dateFormatter";
 
-const ShareHoldingsTables = ({ shareholdingData, promoters_table_totals = {}, public_table_totals = {} }) => {
+const ShareHoldingsTables = ({ shareholdingData, promoters_table_totals = {}, public_table_totals = {}, loading }) => {
   const promotersData = Array.isArray(shareholdingData?.promoters_table) ? shareholdingData.promoters_table : [];
   const publicData = Array.isArray(shareholdingData?.public_other_than_promoters_table) ? shareholdingData.public_other_than_promoters_table : [];
 
   const [isPromotersOpen, setIsPromotersOpen] = useState(true);
   const [isPublicOpen, setIsPublicOpen] = useState(true);
+
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.headerRow}>
+          <div className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+        </div>
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th className={styles.categoryHeader}><div className={styles.skeleton} style={{ height: '20px' }} /></th>
+                <th className={styles.groupHeader} colSpan="4"><div className={styles.skeleton} style={{ height: '20px' }} /></th>
+              </tr>
+            </thead>
+            <tbody>
+              {[1, 2, 3, 4, 5].map(i => (
+                <tr key={i}>
+                  <td colSpan="5"><div className={`${styles.skeleton} ${styles.skeletonRow}`} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div style={{ margin: "32px 0" }} />
+        <div className={styles.headerRow}>
+          <div className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+        </div>
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th className={styles.categoryHeader}><div className={styles.skeleton} style={{ height: '20px' }} /></th>
+                <th className={styles.groupHeader} colSpan="4"><div className={styles.skeleton} style={{ height: '20px' }} /></th>
+              </tr>
+            </thead>
+            <tbody>
+              {[1, 2, 3, 4, 5].map(i => (
+                <tr key={i}>
+                  <td colSpan="5"><div className={`${styles.skeleton} ${styles.skeletonRow}`} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>

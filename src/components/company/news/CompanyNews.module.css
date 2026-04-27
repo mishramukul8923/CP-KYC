@@ -413,3 +413,44 @@
   align-items: center;
   justify-content: center;
 }
+
+.skeleton {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite linear;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeletonImage {
+  min-width: 130px;
+  max-width: 130px;
+  height: 120px;
+  border-radius: 12px;
+  margin-left: 14px;
+}
+
+.skeletonTitle {
+  height: 24px;
+  width: 80%;
+  margin-bottom: 12px;
+}
+
+.skeletonDesc {
+  height: 16px;
+  width: 95%;
+  margin-bottom: 8px;
+}
+
+.skeletonFooter {
+  height: 14px;
+  width: 150px;
+}
