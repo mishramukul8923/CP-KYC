@@ -113,7 +113,16 @@ const DocumentsTable = ({ documents, isLoading, onDownload, sortConfig, onSort }
   if (isLoading && (!documents || documents.length === 0)) {
     return (
       <div className={styles.docsTable}>
-        <div className={styles.loadingPlaceholder}>Loading documents...</div>
+        <div className={styles.docsHeader}>
+          <span>Document Name</span>
+          <span>Form Type</span>
+          <span>Filing Date</span>
+        </div>
+        {[...Array(10)].map((_, i) => (
+          <div key={i} className={styles.skeletonRow}>
+            <div className={`${styles.skeleton} ${styles.skeletonRow}`} />
+          </div>
+        ))}
       </div>
     );
   }
@@ -567,11 +576,19 @@ const Documents = ({ companyName }) => {
           <h2 className={styles.title}>Documents</h2>
           <div className={styles.sourceRow}>
             <span className={styles.sourceLabel}>Source:</span>
-            <span className={styles.sourceValue}>{mcaHeaderInfo.source}</span>
+            {mcaHeaderInfo.source === "-" ? (
+              <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '80px', height: '14px' }} />
+            ) : (
+              <span className={styles.sourceValue}>{mcaHeaderInfo.source}</span>
+            )}
             <span className={styles.divider}></span>
             <span className={styles.updatedText}>
               <span> Last Updated:</span>
-              {mcaHeaderInfo.lastUpdated}
+              {mcaHeaderInfo.lastUpdated === "-" ? (
+                <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ display: 'inline-block', width: '100px', height: '14px', verticalAlign: 'middle' }} />
+              ) : (
+                mcaHeaderInfo.lastUpdated
+              )}
             </span>
           </div>
         </div>
@@ -661,7 +678,13 @@ const Documents = ({ companyName }) => {
                 </span>
               </div>
 
-              {openCategory && (
+              {isCategoriesLoading ? (
+                <div className={styles.filterOptions}>
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className={`${styles.skeleton} ${styles.skeletonSidebarItem}`} />
+                  ))}
+                </div>
+              ) : openCategory && (
                 <div className={styles.filterOptions}>
                   {allCategories.map((cat) => (
                     <label key={cat.name} className={styles.checkboxRow}>
@@ -731,7 +754,13 @@ const Documents = ({ companyName }) => {
                 </span>
               </div>
 
-              {openYear && (
+              {isCategoriesLoading ? (
+                <div className={styles.filterOptions}>
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className={`${styles.skeleton} ${styles.skeletonSidebarItem}`} />
+                  ))}
+                </div>
+              ) : openYear && (
                 <div className={styles.filterOptions}>
                   {yearsToDisplay.map((yearItem) => {
                     const yearValue = typeof yearItem === 'object' ? yearItem.year : yearItem;

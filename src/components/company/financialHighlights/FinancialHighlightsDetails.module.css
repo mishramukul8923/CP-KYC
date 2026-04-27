@@ -342,6 +342,50 @@ border: 1px solid rgba(228, 228, 231, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
   width: 100%;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite linear;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeletonTitle {
+  height: 28px;
+  width: 180px;
+}
+
+.skeletonButton {
+  height: 36px;
+  width: 120px;
+  border-radius: 6px;
+}
+
+.skeletonCard {
+  height: 84px;
+  width: 100%;
+  border-radius: 16px;
+}
+
+.skeletonRow {
+  height: 40px;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.skeletonChart {
+  height: 400px;
+  width: 100%;
+  border-radius: 20px;
 }

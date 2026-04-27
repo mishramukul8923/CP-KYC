@@ -997,3 +997,47 @@
     font-size: 12px;
     font-weight: 500;
 }
+
+.blurContainer {
+    position: relative;
+    width: 100%;
+}
+
+.blurContent {
+    filter: blur(5px);
+    pointer-events: none;
+    user-select: none;
+}
+
+.overlay {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 10;
+    width: 100%;
+}
+
+.overlayTitle {
+    font-weight: 700;
+    font-size: 28px;
+    color: #18181b;
+    margin: 0;
+    display: block;
+}
+
+.overlaySubtitle {
+    font-weight: 500;
+    font-size: 22px;
+    color: #18181b;
+    margin-top: 4px;
+    display: block;
+}
+
+.lockIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 12px;
+}

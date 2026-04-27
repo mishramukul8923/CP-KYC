@@ -17,7 +17,7 @@ export default function CompanyLayout({ children }) {
   const [companyName, setCompanyName] = useState("");
   // Company Details
   const [companyData, setCompanyData] = useState(null);
-  const [companyLoading, setCompanyLoading] = useState(false);
+  const [companyLoading, setCompanyLoading] = useState(true);
   const [companyError, setCompanyError] = useState(null);
 
   useEffect(() => {
@@ -127,11 +127,11 @@ export default function CompanyLayout({ children }) {
   return (
     <>
       {/* 🔹 Compact sticky header */}
-      <CompanyStickyHeader visible={showStickyHeader} companyData={companyData} />
+      <CompanyStickyHeader visible={showStickyHeader} companyData={companyData} loading={companyLoading} />
 
       <div className={styles.container}>
         {/* 🔹 Full header */}
-        <CompanyNewHeader companyData={companyData} />
+        <CompanyNewHeader companyData={companyData} loading={companyLoading} />
 
         {/* Sidebar + Content */}
         <div className={styles.contentWrapper}>

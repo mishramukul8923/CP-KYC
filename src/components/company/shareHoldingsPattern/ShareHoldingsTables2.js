@@ -3,6 +3,7 @@ import React from "react";
 import styles from "./ShareHoldingsTables2.module.css";
 import RowsPerPage from "@/components/common/RowsPerPage";
 import { useState } from "react";
+import { useCompanySection } from "@/components/company/context/CompanySectionContext";
 
 const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -45,6 +46,15 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
   const isAllotmentEmpty = !allotmentData || allotmentData.length === 0 || allotmentData.every(item => 
     Object.values(item).every(val => !val || val === "-" || val === "null" || val === "undefined")
   );
+
+  const mockAllotmentData = [
+    { date: "15 Oct 2023", type: "Rights Issue", instrument: "Equity Shares", amount: "50.00", count: "5,000,000", nominal: "10.00", premium: "90.00" },
+    { date: "20 Jun 2022", type: "Bonus Issue", instrument: "Equity Shares", amount: "0.00", count: "10,000,000", nominal: "10.00", premium: "0.00" },
+    { date: "10 Jan 2021", type: "Private Placement", instrument: "CCD", amount: "25.00", count: "250,000", nominal: "1000.00", premium: "0.00" }
+  ];
+
+  const displayAllotment = isAllotmentEmpty ? mockAllotmentData : allotmentData;
+  const { setActiveSection } = useCompanySection() || {};
 
   return (
     <div className={styles.container}>
@@ -239,119 +249,124 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
       </div>
 
       {isAllotmentOpen && (
-        <>
-        <div className={styles.tableWrapper}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th className={styles.thLeft1}>Allotment Date</th>
-                <th className={styles.thLeft1}>Allotment Type</th>
-                <th className={styles.thLeft1}>Instrument</th>
-                <th className={styles.thLeft1}>Amount (Cr)</th>
-                <th className={styles.thLeft1}>No. of Securities Allotted</th>
-                <th className={styles.thLeft1}>Nominal Value</th>
-                <th className={styles.thLeft1}>Premium Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {isAllotmentEmpty ? (
-                <tr>
-                  <td colSpan="7" className={styles.tdValue} style={{ textAlign: "center", padding: "20px" }}>
-                    <p style={{ fontStyle: 'italic', fontWeight: 300, color: "#80858fff" }}>Download MCA document</p>
-                  </td>
-                </tr>
-              ) : allotmentData.length > 0 ? (
-                allotmentData.slice((allotmentPage - 1) * rowsPerPage, allotmentPage * rowsPerPage).map((item, index) => (
-                  <tr key={index}>
-                    <td className={styles.tdName}>{item.date || "-"}</td>
-                    <td className={styles.tdName}>{item.type || "-"}</td>
-                    <td className={styles.tdName}>{item.instrument || "-"}</td>
-                    <td className={styles.tdName}>{item.amount || "-"}</td>
-                    <td className={styles.tdName}>{item.count || "-"}</td>
-                    <td className={styles.tdName}>{item.nominal || "-"}</td>
-                    <td className={styles.tdName}>{item.premium || "-"}</td>
+        <div className={styles.blurContainer}>
+          {isAllotmentEmpty && (
+            <div className={styles.overlay}>
+              <span className={styles.overlayTitle}>Content Not Available</span>
+              <span className={styles.overlaySubtitle}>Need MCA Documents.</span>
+              <div className={styles.lockIcon} onClick={() => { setActiveSection?.("documents"); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ cursor: "pointer" }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" /><path d="m21 3-9 9" /><path d="M15 3h6v6" /></svg>
+              </div>
+            </div>
+          )}
+          <div className={isAllotmentEmpty ? styles.blurContent : ""}>
+            <div className={styles.tableWrapper}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th className={styles.thLeft1}>Allotment Date</th>
+                    <th className={styles.thLeft1}>Allotment Type</th>
+                    <th className={styles.thLeft1}>Instrument</th>
+                    <th className={styles.thLeft1}>Amount (Cr)</th>
+                    <th className={styles.thLeft1}>No. of Securities Allotted</th>
+                    <th className={styles.thLeft1}>Nominal Value</th>
+                    <th className={styles.thLeft1}>Premium Value</th>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="7" className={styles.tdValue} style={{ textAlign: "center", padding: "20px" }}>No data available</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-      {!isAllotmentEmpty && allotmentData.length > 0 && (
-        <div className={styles.paginationRow}>
-          <span className={styles.showingText}>
-            Showing {Math.min((allotmentPage - 1) * rowsPerPage + 1, allotmentData.length)}-{Math.min(allotmentPage * rowsPerPage, allotmentData.length)} of {allotmentData.length}
-          </span>
-          <div className={styles.paginationControls}>
-            <div className={styles.paginationInfo}>
-              <span className={styles.rowsLabel}>Rows per page</span>
-              <RowsPerPage 
-                value={rowsPerPage} 
-                onChange={(val) => {
-                  setRowsPerPage(val);
-                  setAllotmentPage(1);
-                  setFiiPage(1); // Reset both to be consistent
-                }} 
-              />
+                </thead>
+                <tbody>
+                  {displayAllotment.length > 0 ? (
+                    displayAllotment.slice((allotmentPage - 1) * rowsPerPage, allotmentPage * rowsPerPage).map((item, index) => (
+                      <tr key={index}>
+                        <td className={styles.tdName}>{item.date || "-"}</td>
+                        <td className={styles.tdName}>{item.type || "-"}</td>
+                        <td className={styles.tdName}>{item.instrument || "-"}</td>
+                        <td className={styles.tdName}>{item.amount || "-"}</td>
+                        <td className={styles.tdName}>{item.count || "-"}</td>
+                        <td className={styles.tdName}>{item.nominal || "-"}</td>
+                        <td className={styles.tdName}>{item.premium || "-"}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="7" className={styles.tdValue} style={{ textAlign: "center", padding: "20px" }}>No data available</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
-              <span className={styles.pageLabel}>Page {allotmentPage} of {Math.ceil(allotmentData.length / rowsPerPage)}</span>
-            <div className={styles.navButtons}>
-              <button 
-                className={allotmentPage === 1 ? styles.navBtnDisabled : styles.navBtn}
-                onClick={() => setAllotmentPage(1)}
-                disabled={allotmentPage === 1}
-              >
-                <img
-                  src="/icons/chevrons-left.svg"
-                  alt="First page"
-                  className={styles.navIcon}
-                />
-              </button>
-  
-              <button 
-                className={allotmentPage === 1 ? styles.navBtnDisabled : styles.navBtn}
-                onClick={() => setAllotmentPage(prev => Math.max(1, prev - 1))}
-                disabled={allotmentPage === 1}
-              >
-                <img
-                  src="/icons/chevron-left.svg"
-                  alt="Previous"
-                  className={styles.navIcon}
-                />
-              </button>
 
-              <button 
-                className={allotmentPage === Math.ceil(allotmentData.length / rowsPerPage) ? styles.navBtnDisabled : styles.navBtn}
-                onClick={() => setAllotmentPage(prev => Math.min(Math.ceil(allotmentData.length / rowsPerPage), prev + 1))}
-                disabled={allotmentPage === Math.ceil(allotmentData.length / rowsPerPage) || allotmentData.length === 0}
-              >
-                <img
-                  src="/icons/chevron-right-black.svg"
-                  alt="Next"
-                  className={styles.navIcon}
-                />
-              </button>
-
-              <button 
-                className={allotmentPage === Math.ceil(allotmentData.length / rowsPerPage) ? styles.navBtnDisabled : styles.navBtn}
-                onClick={() => setAllotmentPage(Math.ceil(allotmentData.length / rowsPerPage))}
-                disabled={allotmentPage === Math.ceil(allotmentData.length / rowsPerPage) || allotmentData.length === 0}
-              >
-                <img
-                  src="/icons/chevrons-right.svg"
-                  alt="Last page"
-                  className={styles.navIcon}
-                />
-              </button>
-            </div>
+            {displayAllotment.length > 0 && (
+              <div className={styles.paginationRow}>
+                <span className={styles.showingText}>
+                  Showing {Math.min((allotmentPage - 1) * rowsPerPage + 1, displayAllotment.length)}-{Math.min(allotmentPage * rowsPerPage, displayAllotment.length)} of {displayAllotment.length}
+                </span>
+                <div className={styles.paginationControls}>
+                  <div className={styles.paginationInfo}>
+                    <span className={styles.rowsLabel}>Rows per page</span>
+                    <RowsPerPage 
+                      value={rowsPerPage} 
+                      onChange={(val) => {
+                        setRowsPerPage(val);
+                        setAllotmentPage(1);
+                        setFiiPage(1); // Reset both to be consistent
+                      }} 
+                    />
+                  </div>
+                    <span className={styles.pageLabel}>Page {allotmentPage} of {Math.ceil(displayAllotment.length / rowsPerPage)}</span>
+                  <div className={styles.navButtons}>
+                    <button 
+                      className={allotmentPage === 1 ? styles.navBtnDisabled : styles.navBtn}
+                      onClick={() => setAllotmentPage(1)}
+                      disabled={allotmentPage === 1}
+                    >
+                      <img
+                        src="/icons/chevrons-left.svg"
+                        alt="First page"
+                        className={styles.navIcon}
+                      />
+                    </button>
+        
+                    <button 
+                      className={allotmentPage === 1 ? styles.navBtnDisabled : styles.navBtn}
+                      onClick={() => setAllotmentPage(prev => Math.max(1, prev - 1))}
+                      disabled={allotmentPage === 1}
+                    >
+                      <img
+                        src="/icons/chevron-left.svg"
+                        alt="Previous"
+                        className={styles.navIcon}
+                      />
+                    </button>
+      
+                    <button 
+                      className={allotmentPage === Math.ceil(displayAllotment.length / rowsPerPage) ? styles.navBtnDisabled : styles.navBtn}
+                      onClick={() => setAllotmentPage(prev => Math.min(Math.ceil(displayAllotment.length / rowsPerPage), prev + 1))}
+                      disabled={allotmentPage === Math.ceil(displayAllotment.length / rowsPerPage) || displayAllotment.length === 0}
+                    >
+                      <img
+                        src="/icons/chevron-right-black.svg"
+                        alt="Next"
+                        className={styles.navIcon}
+                      />
+                    </button>
+      
+                    <button 
+                      className={allotmentPage === Math.ceil(displayAllotment.length / rowsPerPage) ? styles.navBtnDisabled : styles.navBtn}
+                      onClick={() => setAllotmentPage(Math.ceil(displayAllotment.length / rowsPerPage))}
+                      disabled={allotmentPage === Math.ceil(displayAllotment.length / rowsPerPage) || displayAllotment.length === 0}
+                    >
+                      <img
+                        src="/icons/chevrons-right.svg"
+                        alt="Last page"
+                        className={styles.navIcon}
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      )}
-      </>
       )}
       <div className={styles.spacer}></div>
       <h2 className={styles.tableTitle}>

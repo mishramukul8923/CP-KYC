@@ -185,7 +185,7 @@
   font-size: 13px;
   font-weight: 500;
   padding: 12px 16px;
-  text-align: left;
+  /* text-align: left; */
   border-bottom: 1px solid rgba(228, 228, 231, 1);
 }
 
@@ -202,6 +202,10 @@
 
 .barChartContainer {
   width: 100%;
+}
+
+.textleft {
+  text-align: left;
 }
 
 .textCenter {
@@ -289,4 +293,43 @@
   .shareValue {
     font-size: 16px;
   }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite linear;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeletonCircle {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+}
+
+.skeletonText {
+  height: 20px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.skeletonHeader {
+  height: 24px;
+  width: 150px;
+}
+
+.skeletonTableRow {
+  height: 40px;
+  width: 100%;
+  margin-bottom: 4px;
 }

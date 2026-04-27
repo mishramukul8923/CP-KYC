@@ -48,28 +48,46 @@ const FinancialHighlightsDetails = ({
   setRatiosType
 }) => {
 
-  if (financialLoading || revenueLoading) {
-    return <div className={styles.container}>Loading...</div>;
-  }
-
   if (financialError || revenueError) {
     return (
-      <div className={styles.container}>
-        <div style={{ color: "red", fontWeight: 500 }}>
-          {financialError || revenueError}
+      <div className={styles.mainWrapper}>
+        <div className={styles.container}>
+          <div style={{ color: "red", fontWeight: 500 }}>
+            {financialError || revenueError}
+          </div>
         </div>
       </div>
     );
   }
 
-  if (!financialHighlights) {
-    return <div className={styles.container}>Loading...</div>;
+  if (financialLoading || revenueLoading || !financialHighlights || !revenueProfitTrend) {
+    return (
+      <div className={styles.mainWrapper}>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+            <div className={`${styles.skeleton} ${styles.skeletonButton}`} />
+          </div>
+          <div className={styles.topGrid}>
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className={`${styles.skeleton} ${styles.skeletonCard}`} />
+            ))}
+          </div>
+          <div className={styles.tableSection}>
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className={`${styles.skeleton} ${styles.skeletonRow}`} />
+            ))}
+          </div>
+          <div className={styles.chartSection}>
+            <div className={`${styles.skeleton} ${styles.skeletonChart}`} />
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  const financialHighlightsData = financialHighlights;
-
-  if (!revenueProfitTrend) {
-    return <div className={styles.container}>Loading...</div>;
+  function formatIndianNumber(num) {
+    return Number(num).toLocaleString("en-IN");
   }
 
   const parseChange = (value) => {
@@ -93,119 +111,119 @@ const FinancialHighlightsDetails = ({
   const topCards = [
     {
       label: "Revenue",
-      value: formatValue(financialHighlightsData?.revenue),
-      change: financialHighlightsData?.revenue?.change_pct,
+      value: formatValue(financialHighlights?.revenue),
+      change: financialHighlights?.revenue?.change_pct,
       isNegative: parseChange(
-        financialHighlightsData?.revenue?.change_pct
+        financialHighlights?.revenue?.change_pct
       ),
     },
     {
       label: "Profit",
-      value: formatValue(financialHighlightsData?.profit),
-      change: financialHighlightsData?.profit?.change_pct,
-      isNegative: parseChange(financialHighlightsData?.profit?.change_pct),
+      value: formatValue(financialHighlights?.profit),
+      change: financialHighlights?.profit?.change_pct,
+      isNegative: parseChange(financialHighlights?.profit?.change_pct),
     },
     {
       label: "Cash & Bank Balance",
-      value: formatValue(financialHighlightsData?.cash_and_bank_balance),
-      change: financialHighlightsData?.cash_and_bank_balance?.change_pct,
-      isNegative: parseChange(financialHighlightsData?.cash_and_bank_balance?.change_pct),
+      value: formatValue(financialHighlights?.cash_and_bank_balance),
+      change: financialHighlights?.cash_and_bank_balance?.change_pct,
+      isNegative: parseChange(financialHighlights?.cash_and_bank_balance?.change_pct),
     },
     {
       label: "Net Worth",
-      value: formatValue(financialHighlightsData?.net_worth),
-      change: financialHighlightsData?.net_worth?.change_pct,
-      isNegative: parseChange(financialHighlightsData?.net_worth?.change_pct),
+      value: formatValue(financialHighlights?.net_worth),
+      change: financialHighlights?.net_worth?.change_pct,
+      isNegative: parseChange(financialHighlights?.net_worth?.change_pct),
     },
     {
       label: "Assets",
-      value: formatValue(financialHighlightsData?.assets),
-      change: financialHighlightsData?.assets?.change_pct,
-      isNegative: parseChange(financialHighlightsData?.assets?.change_pct),
+      value: formatValue(financialHighlights?.assets),
+      change: financialHighlights?.assets?.change_pct,
+      isNegative: parseChange(financialHighlights?.assets?.change_pct),
     },
     {
       label: "Outsiders' Liabilities",
-      value: formatValue(financialHighlightsData?.outsiders_liabilities),
-      change: financialHighlightsData?.outsiders_liabilities?.change_pct,
-      isNegative: parseChange(financialHighlightsData?.outsiders_liabilities?.change_pct),
+      value: formatValue(financialHighlights?.outsiders_liabilities),
+      change: financialHighlights?.outsiders_liabilities?.change_pct,
+      isNegative: parseChange(financialHighlights?.outsiders_liabilities?.change_pct),
     },
   ];
 
   const ratioData = [
     {
       label: "EBITDA",
-      value: formatValue(financialHighlightsData?.ebitda),
-      change: financialHighlightsData?.ebitda?.change_pct || "-",
-      isNegative: parseChange(financialHighlightsData?.ebitda?.change_pct),
+      value: formatValue(financialHighlights?.ebitda),
+      change: financialHighlights?.ebitda?.change_pct || "-",
+      isNegative: parseChange(financialHighlights?.ebitda?.change_pct),
     },
     {
       label: "Net Prot Margin",
-      value: formatValue(financialHighlightsData?.net_profit_margin),
-      change: financialHighlightsData?.net_profit_margin?.change_pct || "-",
-      isNegative: parseChange(financialHighlightsData?.net_profit_margin?.change_pct),
+      value: formatValue(financialHighlights?.net_profit_margin),
+      change: financialHighlights?.net_profit_margin?.change_pct || "-",
+      isNegative: parseChange(financialHighlights?.net_profit_margin?.change_pct),
     },
     {
       label: "Sales to Fixed Asset",
-      value: formatValue(financialHighlightsData?.sales_to_fixed_asset),
-      change: financialHighlightsData?.sales_to_fixed_asset?.change_pct || "-",
-      isNegative: parseChange(financialHighlightsData?.sales_to_fixed_asset?.change_pct),
+      value: formatValue(financialHighlights?.sales_to_fixed_asset),
+      change: financialHighlights?.sales_to_fixed_asset?.change_pct || "-",
+      isNegative: parseChange(financialHighlights?.sales_to_fixed_asset?.change_pct),
     },
     {
       label: "Debt to EBITDA",
-      value: formatValue(financialHighlightsData?.debt_to_ebitda),
-      change: financialHighlightsData?.debt_to_ebitda?.change_pct || "-",
-      isNegative: parseChange(financialHighlightsData?.debt_to_ebitda?.change_pct),
+      value: formatValue(financialHighlights?.debt_to_ebitda),
+      change: financialHighlights?.debt_to_ebitda?.change_pct || "-",
+      isNegative: parseChange(financialHighlights?.debt_to_ebitda?.change_pct),
     },
     {
       label: "Interest Coverage Ratio",
-      value: formatValue(financialHighlightsData?.interest_coverage_ratio),
-      change: financialHighlightsData?.interest_coverage_ratio?.change_pct || "-",
-      isNegative: parseChange(financialHighlightsData?.interest_coverage_ratio?.change_pct),
+      value: formatValue(financialHighlights?.interest_coverage_ratio),
+      change: financialHighlights?.interest_coverage_ratio?.change_pct || "-",
+      isNegative: parseChange(financialHighlights?.interest_coverage_ratio?.change_pct),
     },
     {
       label: "Net Worth Margin",
-      value: formatValue(financialHighlightsData?.net_worth_margin),
-      change: financialHighlightsData?.net_worth_margin?.change_pct || "-",
-      isNegative: parseChange(financialHighlightsData?.net_worth_margin?.change_pct),
+      value: formatValue(financialHighlights?.net_worth_margin),
+      change: financialHighlights?.net_worth_margin?.change_pct || "-",
+      isNegative: parseChange(financialHighlights?.net_worth_margin?.change_pct),
     },
     {
       label: "Debt to Equity",
-      value: formatValue(financialHighlightsData?.debt_to_equity),
-      change: financialHighlightsData?.debt_to_equity?.change_pct || "-",
-      isNegative: parseChange(financialHighlightsData?.debt_to_equity?.change_pct),
+      value: formatValue(financialHighlights?.debt_to_equity),
+      change: financialHighlights?.debt_to_equity?.change_pct || "-",
+      isNegative: parseChange(financialHighlights?.debt_to_equity?.change_pct),
     },
     {
       label: "Return on Equity",
-      value: formatValue(financialHighlightsData?.return_on_equity),
-      change: financialHighlightsData?.return_on_equity?.change_pct || "-",
-      isNegative: parseChange(financialHighlightsData?.return_on_equity?.change_pct),
+      value: formatValue(financialHighlights?.return_on_equity),
+      change: financialHighlights?.return_on_equity?.change_pct || "-",
+      isNegative: parseChange(financialHighlights?.return_on_equity?.change_pct),
     },
     {
       label: "Equity Multiplier",
-      value: formatValue(financialHighlightsData?.equity_multiplier),
-      change: financialHighlightsData?.equity_multiplier?.change_pct || "-",
-      isNegative: parseChange(financialHighlightsData?.equity_multiplier?.change_pct),
+      value: formatValue(financialHighlights?.equity_multiplier),
+      change: financialHighlights?.equity_multiplier?.change_pct || "-",
+      isNegative: parseChange(financialHighlights?.equity_multiplier?.change_pct),
     },
     {
-      label:"PE Ratio",
-      value:formatValue(financialHighlightsData?.pe_ratio),
-      change:financialHighlightsData?.pe_ratio?.change_pct || "-",
-      isNegative:parseChange(financialHighlightsData?.pe_ratio?.change_pct),
+      label: "PE Ratio",
+      value: formatValue(financialHighlights?.pe_ratio),
+      change: financialHighlights?.pe_ratio?.change_pct || "-",
+      isNegative: parseChange(financialHighlights?.pe_ratio?.change_pct),
     },
     {
-      label:"Book Value",
-      value:formatValue(financialHighlightsData?.book_value),
-      change:financialHighlightsData?.book_value?.change_pct || "-",
-      isNegative:parseChange(financialHighlightsData?.book_value?.change_pct),
+      label: "Book Value",
+      value: formatValue(financialHighlights?.book_value),
+      change: financialHighlights?.book_value?.change_pct || "-",
+      isNegative: parseChange(financialHighlights?.book_value?.change_pct),
     },
     {
-      label:"Reserves",
-      value:formatValue(financialHighlightsData?.reserves),
-      change:financialHighlightsData?.reserves?.change_pct || "-",
-      isNegative:parseChange(financialHighlightsData?.reserves?.change_pct),
+      label: "Reserves",
+      value: formatValue(financialHighlights?.reserves),
+      change: financialHighlights?.reserves?.change_pct || "-",
+      isNegative: parseChange(financialHighlights?.reserves?.change_pct),
     }
-    
-      
+
+
   ];
 
   // const chartData = [
@@ -355,13 +373,13 @@ const FinancialHighlightsDetails = ({
                             fontSize: 14,
                             fontWeight: 500,
                           }}
-                          tickFormatter={(value) => `${value} cr`}
+                          tickFormatter={(value) => `${formatIndianNumber(value)} cr`}
                           domain={[0, domainMax]}
                           ticks={dynamicTicks}
                         />
                         <Tooltip
                           cursor={{ fill: "transparent" }}
-                          formatter={(value) => `${value} cr`}
+                          formatter={(value) => `${formatIndianNumber(value)} cr`}
                         />
                         <Bar
                           dataKey="revenue"

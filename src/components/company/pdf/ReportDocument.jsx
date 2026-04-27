@@ -465,7 +465,15 @@ export const ReportDocument = ({
       <View style={styles.premiumHeaderContainer}>
         {/* Logo */}
         <View style={styles.logoCircle}>
-          <Image src="/fallbackimagelogoforpdf.png" style={{ width: 120, height: 120 }} />
+          <Image 
+            src={(headerInfo.logo_url && headerInfo.logo_url !== "-" && headerInfo.logo_url !== "null") 
+              ? headerInfo.logo_url 
+              : "/fallbackimagelogoforpdf.png"} 
+            style={{ 
+              width: (headerInfo.logo_url && headerInfo.logo_url !== "-" && headerInfo.logo_url !== "null") ? 50 : 120, 
+              height: (headerInfo.logo_url && headerInfo.logo_url !== "-" && headerInfo.logo_url !== "null") ? 50 : 120 
+            }} 
+          />
         </View>
 
         {/* Company Info */}

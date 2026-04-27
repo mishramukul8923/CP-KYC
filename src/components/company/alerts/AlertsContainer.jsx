@@ -5,12 +5,12 @@ import { useState } from "react";
 import AlertsTabs from "./AlertsTabs";
 
 import AlertsOverview from "./overview/AlertsOverview";
-import Observation from "./observation/page";
-import DefaultsViolations from "./defaults-violations/page";
-import FormerDirectors from "./former-directors/page";
-import AlertsNews from "./news/page";
+import Observation from "./observation/Observation";
+import DefaultsViolations from "./defaults-violations/DefaultsViolations";
+import FormerDirectors from "./former-directors/FormerDirectors";
+import AlertsNews from "./news/AlertsNews";
 
-export default function AlertsContainer({ alertsData, alertsLoading, alertsError }) {
+export default function AlertsContainer({ companyName, alertsData, alertsLoading, alertsError }) {
   const [activeTab, setActiveTab] = useState("overview");
 
   return (
@@ -21,7 +21,7 @@ export default function AlertsContainer({ alertsData, alertsLoading, alertsError
       {activeTab === "observation" && <Observation alertsData={alertsData} alertsLoading={alertsLoading} alertsError={alertsError} />}
       {activeTab === "defaults" && <DefaultsViolations alertsData={alertsData} alertsLoading={alertsLoading} alertsError={alertsError} />}
       {activeTab === "formerDirectors" && <FormerDirectors alertsData={alertsData} alertsLoading={alertsLoading} alertsError={alertsError} />}
-      {activeTab === "news" && <AlertsNews alertsData={alertsData} alertsLoading={alertsLoading} alertsError={alertsError} />}
+      {activeTab === "news" && <AlertsNews companyName={companyName} alertsData={alertsData} alertsLoading={alertsLoading} alertsError={alertsError} />}
     </>
   );
 }

@@ -2,11 +2,10 @@ import React from 'react';
 import styles from './DirectorsSection.module.css';
 import { formatDateToIST } from '@/utils/dateFormatter';
 import DirectorProfile from './DirectorProfile';
+import { useCompanySection } from '@/components/company/context/CompanySectionContext';
 
 const DirectorsSection = ({ directorsData, directorsLoading, directorsError }) => {
- if (directorsLoading) {
-    return <div className={styles.container}>Loading highlights...</div>;
-  }
+  const { setActiveSection } = useCompanySection() || {};
 
   if (directorsError) {
     return (
@@ -18,95 +17,77 @@ const DirectorsSection = ({ directorsData, directorsLoading, directorsError }) =
     );
   }
 
-  if (!directorsData) {
-    return (
-      <div className={styles.container}>
-        <p>Loading related corporates...</p>
-      </div>
-    );
-  }
-  const stats = directorsData?.summary
-  ? [
-      {
-        label: "Current Directors",
-        value: directorsData?.summary.current_directors ||  "-",
-        colorClass: styles.blueStat,
-      },
-      {
-        label: "Past Directors",
-        value: directorsData?.summary.past_directors || "-",
-        colorClass: styles.redStat,
-      },
-      {
-        label: "Current KMP(s)",
-        value: directorsData?.summary.current_kmp || "-",
-        colorClass: styles.purpleStat,
-      },
-      {
-        label: "Past KMP(s)",
-        value: directorsData?.summary.past_kmp || "-",
-        colorClass: styles.greenStat,
-      },
-    ]
-  : [
-    {
-        label: "Current Directors",
-        value: "-",
-        colorClass: styles.blueStat,
-      },
-      {
-        label: "Past Directors",
-        value: "-",
-        colorClass: styles.redStat,
-      },
-      {
-        label: "Current KMP(s)",
-        value: "-",
-        colorClass: styles.purpleStat,
-      },
-      {
-        label: "Past KMP(s)",
-        value: "-",
-        colorClass: styles.greenStat,
-      },
+  const stats = [
+    { label: 'Total Directors', value: directorsData?.summary?.total_directors ?? "-", colorClass: styles.blueStat },
+    { label: 'Active Directors', value: directorsData?.summary?.active_directors ?? "-", colorClass: styles.greenStat },
+    { label: 'Resigned Directors', value: directorsData?.summary?.resigned_directors ?? "-", colorClass: styles.redStat },
+    { label: 'Total KMPs', value: directorsData?.summary?.total_kmp ?? "-", colorClass: styles.purpleStat },
   ];
-
-  // const directors = [
-  //   { name: 'Amit Burman', role: 'Owner', image: '/icons/profile-icon.svg' },
-  //   { name: 'Pradip Burman', role: 'Chairman', image: '/images/chairman.svg' },
-  //   { name: 'Mohit Malhotra', role: 'CEO', image: '/images/ceo.svg' },
-  //   { name: 'Kapil Ohri', role: 'Head of Digital Marketing', image: '/images/head.svg' },
-  // ];
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.headerTitle}>Directors & KMP Details</h1>
         <div className={styles.headerInfo}>
-          <span className={styles.infoGroup}>
-            <span className={styles.infoLabel}>Source:</span>
-            <span className={styles.infoValue}>{directorsData?.source || "-"}</span>
-          </span>
-          <span className={styles.infoDivider}></span>
-          <span className={styles.infoGroup}>
-            <span className={styles.infoLabel}>Last Updated:</span>
-            <span className={styles.infoValue}>{formatDateToIST(directorsData?.summary?.last_updated)|| "-"}</span>
-          </span>
+          {directorsLoading || !directorsData ? (
+            <>
+              <div className={`${styles.skeleton} ${styles.skeletonHeaderInfo}`} />
+              <div className={styles.infoDivider}></div>
+              <div className={`${styles.skeleton} ${styles.skeletonHeaderInfo}`} />
+            </>
+          ) : (
+            <>
+              <span className={styles.infoGroup}>
+                <span className={styles.infoLabel}>Source:</span>
+                <span className={styles.infoValue}>{directorsData?.source || "-"}</span>
+              </span>
+              <span className={styles.infoDivider}></span>
+              <span className={styles.infoGroup}>
+                <span className={styles.infoLabel}>Last Updated:</span>
+                <span className={styles.infoValue}>{formatDateToIST(directorsData?.summary?.last_updated) || "-"}</span>
+              </span>
+            </>
+          )}
         </div>
       </div>
 
-      <div className={styles.statsGrid}>
-        {stats.map((stat, index) => (
-          <div key={index} className={`${styles.statCard} ${stat.colorClass}`}>
-            <p className={styles.statLabel}>{stat.label}</p>
-            <p className={styles.statValue}>{stat.value}</p>
+      <div className={styles.blurContainer}>
+        {!directorsLoading && !directorsError && directorsData && (!directorsData.directors || directorsData.directors.length === 0) && (
+          <div className={styles.overlay}>
+            <span className={styles.overlayTitle}>Content Not Available</span>
+            <span className={styles.overlaySubtitle}>Need MCA Documents.</span>
+            <div className={styles.lockIcon} onClick={() => { setActiveSection?.("documents"); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ cursor: 'pointer' }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" /><path d="m21 3-9 9" /><path d="M15 3h6v6" /></svg>
+            </div>
           </div>
-        ))}
+        )}
+
+        <div className={!directorsLoading && directorsData && (!directorsData.directors || directorsData.directors.length === 0) ? styles.blurContent : ""}>
+          <div className={styles.statsGrid}>
+            {directorsLoading || !directorsData ? (
+              [...Array(4)].map((_, i) => (
+                <div key={i} className={`${styles.skeleton} ${styles.skeletonStatCard}`} />
+              ))
+            ) : (
+              stats.map((stat, index) => (
+                <div key={index} className={`${styles.statCard} ${stat.colorClass}`}>
+                  <p className={styles.statLabel}>{stat.label}</p>
+                  <p className={styles.statValue}>{stat.value}</p>
+                </div>
+              ))
+            )}
+          </div>
+
+          {directorsLoading || !directorsData ? (
+            <div className={`${styles.skeleton} ${styles.skeletonProfileCard}`} />
+          ) : (
+            <DirectorProfile
+              directors={directorsData?.directors}
+              companyName={directorsData?.company_name || ""}
+            />
+          )}
+        </div>
       </div>
-      <DirectorProfile 
-        directors={directorsData?.directors} 
-        companyName={directorsData?.company_name || ""} 
-      />
     </div>
   );
 };

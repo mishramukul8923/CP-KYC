@@ -35,38 +35,32 @@ export default function SubsidiaryAccordion({ groupStructureData }) {
   return (
     <div className={styles.container}>
       <div className={styles.accordionWrapper}>
-        {isEntitiesEmpty ? (
-          <div className={styles.emptyState} style={{ padding: '20px' }}>
-            <p style={{ fontStyle: 'italic', fontWeight: 300, color: "#80858fff" }}>Download MCA document</p>
-          </div>
-        ) : (
-          <>
-            {/* Parent Header */}
-            <div className={styles.parentHeader} onClick={toggleAccordion}>
-              <div className={styles.parentInfo}>
-                <div className={styles.parentLogo}>
-                  <img
-                    src="/icons/Image.svg"
-                    alt="logo"
-                    className={styles.parentLogoImg}
-                  />
-                </div>
-                <div className={styles.parentText}>
-                  <h2 className={styles.parentTitle}>{parent?.company_name || "-"}</h2>
-                  <span className={styles.parentSubtitle}>{parent?.company_role || "Parent Company"}</span>
-                </div>
-              </div>
-              <div className={styles.parentControls}>
-                <span className={styles.subsidiaryCount}>
-                  {parent?.total_subsidiaries || entities.length} Subsidiaries
-                </span>
-                <img
-                  src="/icons/chevron-down-dark.svg"
-                  alt="Toggle"
-                  className={`${styles.chevron} ${isExpanded ? styles.chevronExpanded : ''}`}
-                />
-              </div>
+        {/* Parent Header */}
+        <div className={styles.parentHeader} onClick={toggleAccordion}>
+          <div className={styles.parentInfo}>
+            <div className={styles.parentLogo}>
+              <img
+                src="/icons/Image.svg"
+                alt="logo"
+                className={styles.parentLogoImg}
+              />
             </div>
+            <div className={styles.parentText}>
+              <h2 className={styles.parentTitle}>{parent?.company_name || "-"}</h2>
+              <span className={styles.parentSubtitle}>{parent?.company_role || "Parent Company"}</span>
+            </div>
+          </div>
+          <div className={styles.parentControls}>
+            <span className={styles.subsidiaryCount}>
+              {parent?.total_subsidiaries || entities.length} Subsidiaries
+            </span>
+            <img
+              src="/icons/chevron-down-dark.svg"
+              alt="Toggle"
+              className={`${styles.chevron} ${isExpanded ? styles.chevronExpanded : ''}`}
+            />
+          </div>
+        </div>
 
         {/* Expandable Content */}
         <div className={`${styles.contentWrapper} ${isExpanded ? styles.contentWrapperExpanded : ''}`}>
@@ -98,8 +92,6 @@ export default function SubsidiaryAccordion({ groupStructureData }) {
             )}
           </div>
         </div>
-        </>
-        )}
       </div>
     </div>
   );

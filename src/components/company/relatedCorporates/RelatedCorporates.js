@@ -3,8 +3,47 @@ import { formatDateToIST } from '@/utils/dateFormatter';
 
 export default function RelatedCorporates({ commonDirectorship, loading, error }) {
 
-  if (loading) {
-    return <div className={styles.container}>Loading highlights...</div>;
+  if (loading || !commonDirectorship) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.headerTitle}>Related Corporates</h1>
+          <div className={styles.headerInfo}>
+            <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100px' }} />
+            <div className={styles.infoDivider}></div>
+            <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '150px' }} />
+          </div>
+        </div>
+
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead className={styles.thead}>
+              <tr>
+                <th className={styles.th}><div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '120px' }} /></th>
+                <th className={styles.th}><div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '120px' }} /></th>
+                <th className={styles.th}><div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '120px' }} /></th>
+                <th className={styles.th}><div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '120px' }} /></th>
+              </tr>
+            </thead>
+            <tbody className={styles.tbody}>
+              {[...Array(5)].map((_, i) => (
+                <tr key={i} className={styles.skeletonRow}>
+                  <td className={styles.td}>
+                    <div className={styles.companyCell}>
+                      <div className={`${styles.skeleton} ${styles.skeletonIcon}`} />
+                      <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '180px' }} />
+                    </div>
+                  </td>
+                  <td className={styles.td}><div className={`${styles.skeleton} ${styles.skeletonText}`} /></td>
+                  <td className={styles.td}><div className={`${styles.skeleton} ${styles.skeletonText}`} /></td>
+                  <td className={styles.td}><div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '80px', borderRadius: '9999px' }} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
@@ -13,14 +52,6 @@ export default function RelatedCorporates({ commonDirectorship, loading, error }
         <div style={{ color: "red", fontWeight: 500 }}>
           {error}
         </div>
-      </div>
-    );
-  }
-
-  if (!commonDirectorship) {
-    return (
-      <div className={styles.container}>
-        <p>Loading related corporates...</p>
       </div>
     );
   }

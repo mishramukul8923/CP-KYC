@@ -243,6 +243,7 @@ const ComplianceDetails = () => {
   const companySlug = params?.name;
   const companyName = companySlug ? decodeURIComponent(companySlug.replaceAll("-", " ")).toUpperCase() : "";
 
+  const [loading, setLoading] = useState(true);
   const [auditorRemarksData, setAuditorRemarksData] = useState(null);
   const [auditorsRemarksStandaloneAPI, setAuditorsRemarksStandaloneAPI] = useState(null);
   const [auditorsRemarksConsolidatedAPI, setAuditorsRemarksConsolidatedAPI] = useState(null);
@@ -318,6 +319,8 @@ const ComplianceDetails = () => {
         */
       } catch (err) {
         console.error("Failed to fetch auditor remarks:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchAuditorRemarks();
@@ -430,6 +433,30 @@ const ComplianceDetails = () => {
   */
 
   const sectionRefs = React.useRef({});
+
+  if (loading) {
+    return (
+      <div className={styles.mainWrapper}>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <h2 className={styles.title}>Compliance Details</h2>
+            <div className={styles.sourceRow}>
+              <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100px' }} />
+              <div className={styles.divider}></div>
+              <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '150px' }} />
+            </div>
+          </div>
+
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className={styles.tableSection}>
+              <div className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+              <div className={`${styles.skeleton} ${styles.skeletonTable}`} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.mainWrapper}>

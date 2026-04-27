@@ -6,11 +6,6 @@ import RowsPerPage from "@/components/common/RowsPerPage";
 
 export default function AlertsOverview({ alertsData, alertsLoading, alertsError }) {
 
-  if (alertsLoading) {
-    return <div className={styles.container}>Loading Alerts...</div>;
-
-  }
-
   if (alertsError) {
     return (
       <div className={styles.container}>
@@ -21,10 +16,19 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
     );
   }
 
-  if (!alertsData) {
+  if (alertsLoading || !alertsData) {
     return (
       <div className={styles.container}>
-        <p>Loading Alert details...</p>
+        <div className={styles.cards}>
+          <div className={`${styles.skeleton} ${styles.skeletonCard}`} />
+          <div className={`${styles.skeleton} ${styles.skeletonCard}`} />
+          <div className={`${styles.skeleton} ${styles.skeletonCard}`} />
+        </div>
+        <div className={styles.list}>
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className={`${styles.skeleton} ${styles.skeletonAccordion}`} />
+          ))}
+        </div>
       </div>
     );
   }

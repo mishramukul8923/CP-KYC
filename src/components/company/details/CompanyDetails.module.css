@@ -64,33 +64,61 @@
 }
 
 /* Tablet Breakpoint */
-@media (max-width:1550px){
-  .grid{column-gap:18px}
+@media (max-width:1550px) {
+  .grid {
+    column-gap: 18px
+  }
 }
 
-@media (max-width:1440px){
-  .card{padding:18px}
-  .grid{column-gap:16px}
+@media (max-width:1440px) {
+  .card {
+    padding: 18px
+  }
+
+  .grid {
+    column-gap: 16px
+  }
 }
 
-@media (max-width:1280px){
-  .grid{column-gap:14px;row-gap:14px}
+@media (max-width:1280px) {
+  .grid {
+    column-gap: 14px;
+    row-gap: 14px
+  }
 }
 
-@media (max-width:1024px){
-  .grid{gap:12px}
+@media (max-width:1024px) {
+  .grid {
+    gap: 12px
+  }
 }
 
-@media (max-width:768px){
-  .grid{grid-template-columns:1fr}
+@media (max-width:768px) {
+  .grid {
+    grid-template-columns: 1fr
+  }
 }
 
-@media (max-width:480px){
-  .container{padding:10px}
-  .card{padding:16px}
-  .title{font-size:16px}
-  .label{font-size:12px}
-  .value{font-size:14px}
+@media (max-width:480px) {
+  .container {
+    padding: 10px
+  }
+
+  .card {
+    padding: 16px
+  }
+
+  .title {
+    font-size: 16px
+  }
+
+  .label {
+    font-size: 12px
+  }
+
+  .value {
+    font-size: 14px
+  }
 }
 
 @media (max-width: 1024px) {
@@ -104,7 +132,7 @@
   .grid {
     grid-template-columns: 1fr;
   }
-  
+
   .fullWidth {
     grid-column: span 1;
   }
@@ -140,4 +168,80 @@
   .value {
     font-size: 14px;
   }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite linear;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeletonTitle {
+  height: 28px;
+  width: 200px;
+  margin-top: 32px;
+  margin-bottom: 12px;
+}
+
+.skeletonLabel {
+  height: 14px;
+  width: 40%;
+  margin-bottom: 6px;
+}
+
+.skeletonValue {
+  height: 16px;
+  width: 70%;
+}
+
+.blurValue {
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.lockWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #18181b;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.lockIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.infoBoxWithLock {
+  position: relative;
+}
+
+.overlayText {
+  position: absolute;
+  top: 50%;
+  /* left: 50%; */
+  transform: translate(0%, -50%);
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  color: #18181b;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }

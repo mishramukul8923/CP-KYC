@@ -14,9 +14,14 @@ export default function PeerComparison({
   if (loading || (!data && !error)) {
     // ... skeleton rendering stays the same (I'll keep it for now)
     return (
-      <div className={styles.container}>
+      <div className={styles.mainContainer}>
         <div className={styles.header}>
-          <h2 className={styles.headerTitle}>Peer Comparison</h2>
+          <h1 className={styles.headerTitle}>Peer Comparison</h1>
+          <div className={styles.headerInfo}>
+            <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100px' }} />
+            <div className={styles.infoDivider}></div>
+            <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '150px' }} />
+          </div>
         </div>
         
         <section className={styles.sectionCard}>

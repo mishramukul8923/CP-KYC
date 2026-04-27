@@ -3,8 +3,21 @@ import styles from "./ContactAddressSection.module.css";
 
 const ContactAddressSection = ({ companyData, loading, error }) => {
 
-  if (loading) {
-    return <div className={styles.container}>Loading highlights...</div>;
+  if (loading || !companyData) {
+    return (
+      <div className={styles.wrapper}>
+        <div className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+        <div className={styles.container}>
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className={styles.row}>
+              <div className={`${styles.skeleton} ${styles.skeletonLabel}`} />
+              <div className={`${styles.skeleton} ${styles.skeletonLine}`} />
+              <div className={`${styles.skeleton} ${styles.skeletonValue}`} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (error) {
@@ -20,57 +33,42 @@ const ContactAddressSection = ({ companyData, loading, error }) => {
   const contact = companyData?.contact_details;
 
   if (!contact) {
-    return null; // still loading
+    return null;
   }
 
   const contactItems = [
     {
-      label: "Registered Address",
-      value: contact?.registered_address || "-",
-    },
-    {
-      label: "Country",
-      value: contact?.country || "-",
-    },
-    {
-      label: "Telephone",
-      value: contact?.telephone || "-",
-    },
-    {
-      label: "Email Address",
-      value: contact.email_address ? (
-        <a
-          href={`mailto:${contact.email_address
-            .replaceAll("[at]", "@")
-            .replaceAll("[dot]", ".")}`}
-          className={styles.link}
-        >
-          {contact.email_address
-            .replaceAll("[at]", "@")
-            .replaceAll("[dot]", ".")}
+      label: "Official Email ID",
+      value: (
+        <a href={`mailto:${contact.email}`} className={styles.link}>
+          {contact.email || "-"}
         </a>
-      ) : (
-        "-"
       ),
     },
     {
-      label: "Website",
-      value: contact.website ? (
+      label: "Official Website",
+      value: (
         <a
-          href={
-            contact.website.startsWith("http")
-              ? contact.website
-              : `https://${contact.website}`
-          }
+          href={contact.website}
           target="_blank"
           rel="noopener noreferrer"
           className={styles.link}
         >
-          {contact.website}
+          {contact.website || "-"}
         </a>
-      ) : (
-        "-"
       ),
+    },
+    {
+      label: "Registered Office Address",
+      value: contact.registered_office_address || "-",
+    },
+    {
+      label: "City",
+      value: contact.city || "-",
+    },
+    {
+      label: "State",
+      value: contact.state || "-",
     },
   ];
 
@@ -120,31 +118,16 @@ const ContactAddressSection = ({ companyData, loading, error }) => {
                 >
                   <img
                     src={getSocialIcon(link)}
-                    alt="Social Icon"
+                    alt="Social Media"
                     className={styles.socialIcon}
                   />
                 </a>
               ))
             ) : (
-              <span>-</span>
+              <span className={styles.valueBox}>-</span>
             )}
           </div>
         </div>
-
-        {/* <div className={styles.row}>
-          <label className={styles.label}>Social Media</label>
-          <div className={styles.dashedLine}></div>
-          <div className={styles.socialBox}>
-            {socialIcons.map((src, i) => (
-              <img
-                key={i}
-                src={src}
-                alt="Social Icon"
-                className={styles.socialIcon}
-              />
-            ))}
-          </div>
-        </div> */}
       </div>
     </div>
   );
