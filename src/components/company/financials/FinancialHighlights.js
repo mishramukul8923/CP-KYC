@@ -177,47 +177,11 @@ const FinancialHighlights = ({
     );
   }
 
-  if (financialError || revenueError) {
-    return (
-      <div className={styles.container}>
-        <div style={{ color: "#EF4444", fontWeight: 500 }}>
-          {financialError || revenueError}
-        </div>
-        <div style={{ marginTop: "40px" }}>
-          <FinancialHighlightsTables
-            pnlApiData={pnlApiData}
-            pnlLoading={pnlLoading}
-            pnlError={pnlError}
-            pnlViewType={pnlViewType}
-            setPnlViewType={setPnlViewType}
-            auditorsData={auditorsData}
-            auditorsLoading={auditorsLoading}
-            auditorsError={auditorsError}
-            audType={audType}
-            setAudType={setAudType}
-            balanceSheetData={balanceSheetData}
-            balanceSheetLoading={balanceSheetLoading}
-            balanceSheetError={balanceSheetError}
-            bsType={bsType}
-            setBsType={setBsType}
-            cashFlowData={cashFlowData}
-            cashFlowLoading={cashFlowLoading}
-            cashFlowError={cashFlowError}
-            cfType={cfType}
-            setCfType={setCfType}
-            ratiosData={ratiosData}
-            ratiosLoading={ratiosLoading}
-            ratiosError={ratiosError}
-            ratiosType={ratiosType}
-            setRatiosType={setRatiosType}
-          />
-        </div>
-      </div>
-    );
-  }
+  // Remove early return to allow partial data rendering
 
 
-  if (!financialHighlights || !revenueProfitTrend) {
+
+  if ((financialLoading && !financialError) || (revenueLoading && !revenueError)) {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
@@ -424,15 +388,21 @@ const FinancialHighlights = ({
         <div className={styles.headerInfo}>
           <span className={styles.infoGroup}>
             <span className={styles.infoLabel}>Source:</span>
-            <span className={styles.infoValue}>{financialHighlights.source || "-"}</span>
+            <span className={styles.infoValue}>{financialHighlights?.source || "-"}</span>
           </span>
           <span className={styles.infoDivider}></span>
           <span className={styles.infoGroup}>
             <span className={styles.infoLabel}>Last Updated:</span>
-            <span className={styles.infoValue}>{formatDateToIST(financialHighlights.last_updated) || "-"}</span>
+            <span className={styles.infoValue}>{financialHighlights?.last_updated ? formatDateToIST(financialHighlights.last_updated) : "-"}</span>
           </span>
         </div>
       </div>
+
+      {(financialError || revenueError) && (
+        <div style={{ color: "#EF4444", fontWeight: 500, marginBottom: "20px", padding: "12px", background: "#FEF2F2", borderRadius: "8px", border: "1px solid #FCA5A5" }}>
+          {financialError || revenueError}
+        </div>
+      )}
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>Financials Highlights</h2>
         {/* <Link

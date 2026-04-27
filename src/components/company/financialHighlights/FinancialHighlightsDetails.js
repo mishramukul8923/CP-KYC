@@ -48,19 +48,9 @@ const FinancialHighlightsDetails = ({
   setRatiosType
 }) => {
 
-  if (financialError || revenueError) {
-    return (
-      <div className={styles.mainWrapper}>
-        <div className={styles.container}>
-          <div style={{ color: "red", fontWeight: 500 }}>
-            {financialError || revenueError}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Remove early return to allow partial data rendering
 
-  if (financialLoading || revenueLoading || !financialHighlights || !revenueProfitTrend) {
+  if ((financialLoading && !financialError) || (revenueLoading && !revenueError)) {
     return (
       <div className={styles.mainWrapper}>
         <div className={styles.container}>
@@ -259,6 +249,11 @@ const FinancialHighlightsDetails = ({
   return (
     <div className={styles.mainWrapper}>
       <div className={styles.container}>
+        {(financialError || revenueError) && (
+          <div style={{ color: "#EF4444", fontWeight: 500, marginBottom: "20px", padding: "12px", background: "#FEF2F2", borderRadius: "8px", border: "1px solid #FCA5A5" }}>
+            {financialError || revenueError}
+          </div>
+        )}
         <div className={styles.header}>
           <h2 className={styles.title}>Financial Highlights</h2>
           <button

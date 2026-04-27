@@ -74,7 +74,7 @@ export default function RelatedCorporates({ commonDirectorship, loading, error }
 
 
 
-  
+
 
   return (
     <div className={styles.container}>
@@ -88,7 +88,7 @@ export default function RelatedCorporates({ commonDirectorship, loading, error }
           <span className={styles.infoDivider}></span>
           <span className={styles.infoGroup}>
             <span className={styles.infoLabel}>Last Updated:</span>
-            <span className={styles.infoValue}>{formatDateToIST(commonDirectorship?.last_updated)|| "-"}</span>
+            <span className={styles.infoValue}>{formatDateToIST(commonDirectorship?.last_updated) || "-"}</span>
           </span>
         </div>
       </div>
@@ -97,7 +97,7 @@ export default function RelatedCorporates({ commonDirectorship, loading, error }
         <table className={styles.table}>
           <thead className={styles.thead}>
             <tr>
-              <th className={styles.th}>Company Name test</th>
+              <th className={styles.th}>Company Name</th>
               <th className={styles.th}>Common Directorship</th>
               <th className={styles.th}>Incorporation Date</th>
               <th className={styles.th}>Company Status</th>

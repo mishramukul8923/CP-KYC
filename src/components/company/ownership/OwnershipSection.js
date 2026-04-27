@@ -287,123 +287,123 @@ const OwnershipSection = ({
           </div>
         )}
 
-          {shareholdingLoading ? (
-            <div className={styles.promoterHoldingSection}>
-              <div className={`${styles.skeleton} ${styles.skeletonValue}`} style={{ width: '200px' }} />
+        {shareholdingLoading ? (
+          <div className={styles.promoterHoldingSection}>
+            <div className={`${styles.skeleton} ${styles.skeletonValue}`} style={{ width: '200px' }} />
+            <div className={styles.promoterContent}>
+              <div className={styles.promoterLeft}>
+                <div className={`${styles.skeleton} ${styles.skeletonValue}`} style={{ width: '100px', height: '32px' }} />
+                <div className={`${styles.skeleton} ${styles.skeletonValue}`} style={{ width: '150px', height: '40px' }} />
+                <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100%' }} />
+              </div>
+              <div className={styles.promoterRight}>
+                <div className={`${styles.skeleton} ${styles.skeletonValue}`} style={{ width: '150px' }} />
+                <div className={styles.chartContainer}>
+                  <div className={`${styles.skeleton} ${styles.skeletonDot}`} style={{ width: '150px', height: '150px' }} />
+                  <div className={styles.chartLegendGrid}>
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100%' }} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.promoterHoldingSection}>
+            <div
+              className={styles.promoterHeader}
+              onClick={() => setIsPromoterOpen(!isPromoterOpen)}
+              style={{ cursor: "pointer" }}
+            >
+              <h3 className={styles.promoterTitle}>Promoter Holding</h3>
+              <img
+                src="/icons/chevron-down-dark.svg"
+                alt="Expand"
+                className={`${styles.expandIcon} ${isPromoterOpen ? styles.rotateIcon : ""}`}
+              />
+            </div>
+
+            {isPromoterOpen && (
               <div className={styles.promoterContent}>
                 <div className={styles.promoterLeft}>
-                  <div className={`${styles.skeleton} ${styles.skeletonValue}`} style={{ width: '100px', height: '32px' }} />
-                  <div className={`${styles.skeleton} ${styles.skeletonValue}`} style={{ width: '150px', height: '40px' }} />
-                  <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100%' }} />
+                  <div className={styles.promoterStatBig}>
+                    <span className={styles.promoterStatValue}>{shareholdingData?.promoter_holding_section?.promoter_holding_shares || "-"}</span>
+                    <span className={styles.promoterStatLabel}>Shares</span>
+                  </div>
+
+                  <div className={styles.promoterBadge}>
+                    <span className={styles.promoterBadgeValue}>
+                      {shareholdingData?.promoter_holding_section?.promoter_holding_percentage_of_total_equity &&
+                        shareholdingData?.promoter_holding_section?.promoter_holding_percentage_of_total_equity !== "-"
+                        ? `${shareholdingData?.promoter_holding_section?.promoter_holding_percentage_of_total_equity}`
+                        : "-"}
+                    </span>
+                    <span className={styles.promoterBadgeLabel}>of total equity</span>
+                  </div>
+
+                  <p className={styles.promoterDescription}>
+                    {shareholdingData?.promoter_holding_section?.detailed_classification_note || "Detailed classification not available in current filings."}
+                  </p>
+
+                  <div className={styles.pledgeLockin}>
+                    <div className={styles.pledgeBox}>Pledge: {shareholdingData?.promoter_holding_section?.pledge_status || "-"}</div>
+                    <div className={styles.pledgeBox}>Lock-in: {shareholdingData?.promoter_holding_section?.lock_in_status || "-"}</div>
+                  </div>
                 </div>
+
                 <div className={styles.promoterRight}>
-                  <div className={`${styles.skeleton} ${styles.skeletonValue}`} style={{ width: '150px' }} />
+                  <h4 className={styles.chartTitle}>Non-Promoter Holding Breakdown</h4>
                   <div className={styles.chartContainer}>
-                    <div className={`${styles.skeleton} ${styles.skeletonDot}`} style={{ width: '150px', height: '150px' }} />
+                    <div className={styles.donutWrapper}>
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={promoterHoldingData}
+                            innerRadius={55}
+                            outerRadius={80}
+                            paddingAngle={0.5}
+                            dataKey="value"
+                            stroke="none"
+                          >
+                            {promoterHoldingData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+
                     <div className={styles.chartLegendGrid}>
-                      {[1, 2, 3].map(i => (
-                        <div key={i} className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100%' }} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className={styles.promoterHoldingSection}>
-              <div
-                className={styles.promoterHeader}
-                onClick={() => setIsPromoterOpen(!isPromoterOpen)}
-                style={{ cursor: "pointer" }}
-              >
-                <h3 className={styles.promoterTitle}>Promoter Holding</h3>
-                <img
-                  src="/icons/chevron-down-dark.svg"
-                  alt="Expand"
-                  className={`${styles.expandIcon} ${isPromoterOpen ? styles.rotateIcon : ""}`}
-                />
-              </div>
-
-              {isPromoterOpen && (
-                <div className={styles.promoterContent}>
-                  <div className={styles.promoterLeft}>
-                    <div className={styles.promoterStatBig}>
-                      <span className={styles.promoterStatValue}>{shareholdingData?.promoter_holding_section?.promoter_holding_shares || "-"}</span>
-                      <span className={styles.promoterStatLabel}>Shares</span>
-                    </div>
-
-                    <div className={styles.promoterBadge}>
-                      <span className={styles.promoterBadgeValue}>
-                        {shareholdingData?.promoter_holding_section?.promoter_holding_percentage_of_total_equity &&
-                          shareholdingData?.promoter_holding_section?.promoter_holding_percentage_of_total_equity !== "-"
-                          ? `${shareholdingData?.promoter_holding_section?.promoter_holding_percentage_of_total_equity}`
-                          : "-"}
-                      </span>
-                      <span className={styles.promoterBadgeLabel}>of total equity</span>
-                    </div>
-
-                    <p className={styles.promoterDescription}>
-                      {shareholdingData?.promoter_holding_section?.detailed_classification_note || "Detailed classification not available in current filings."}
-                    </p>
-
-                    <div className={styles.pledgeLockin}>
-                      <div className={styles.pledgeBox}>Pledge: {shareholdingData?.promoter_holding_section?.pledge_status || "-"}</div>
-                      <div className={styles.pledgeBox}>Lock-in: {shareholdingData?.promoter_holding_section?.lock_in_status || "-"}</div>
-                    </div>
-                  </div>
-
-                  <div className={styles.promoterRight}>
-                    <h4 className={styles.chartTitle}>Non-Promoter Holding Breakdown</h4>
-                    <div className={styles.chartContainer}>
-                      <div className={styles.donutWrapper}>
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChart>
-                            <Pie
-                              data={promoterHoldingData}
-                              innerRadius={55}
-                              outerRadius={80}
-                              paddingAngle={0.5}
-                              dataKey="value"
-                              stroke="none"
-                            >
-                              {promoterHoldingData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.color} />
-                              ))}
-                            </Pie>
-                          </PieChart>
-                        </ResponsiveContainer>
-                      </div>
-
-                      <div className={styles.chartLegendGrid}>
-                        {promoterHoldingData
-                          .filter(item => item.name !== "Remaining")
-                          .map((item, idx) => (
-                            <div key={idx} className={styles.chartLegendItem}>
-                              <div className={styles.legendLeft}>
-                                <div
-                                  className={styles.legendColor}
-                                  style={{ backgroundColor: item.color }}
-                                ></div>
-                                <span className={styles.legendName}>{item.name}:</span>
-                              </div>
-                              <span className={styles.legendPercent}>{item.value}%</span>
+                      {promoterHoldingData
+                        .filter(item => item.name !== "Remaining")
+                        .map((item, idx) => (
+                          <div key={idx} className={styles.chartLegendItem}>
+                            <div className={styles.legendLeft}>
+                              <div
+                                className={styles.legendColor}
+                                style={{ backgroundColor: item.color }}
+                              ></div>
+                              <span className={styles.legendName}>{item.name}:</span>
                             </div>
-                          ))}
-                      </div>
+                            <span className={styles.legendPercent}>{item.value}%</span>
+                          </div>
+                        ))}
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
-          )}
+              </div>
+            )}
+          </div>
+        )}
 
-          <ShareHoldingsTables
-            shareholdingData={shareholdingData}
-            promoters_table_totals={shareholdingData?.promoters_table_totals}
-            public_table_totals={shareholdingData?.public_other_than_promoters_table_totals}
-            loading={shareholdingLoading}
-          />
-        </section>
+        <ShareHoldingsTables
+          shareholdingData={shareholdingData}
+          promoters_table_totals={shareholdingData?.promoters_table_totals}
+          public_table_totals={shareholdingData?.public_other_than_promoters_table_totals}
+          loading={shareholdingLoading}
+        />
+      </section>
 
       {securityAllotmentLoading ? (
         <section className={styles.section}>
@@ -443,7 +443,7 @@ const OwnershipSection = ({
                 <span className={styles.overlayTitle}>Content Not Available</span>
                 <span className={styles.overlaySubtitle}>Need MCA Documents.</span>
                 <div className={styles.lockIcon} onClick={() => { setActiveSection?.("documents"); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ cursor: "pointer" }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" /><path d="m21 3-9 9" /><path d="M15 3h6v6" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" /><path d="m21 3-9 9" /><path d="M15 3h6v6" /></svg>
                 </div>
               </div>
             )}
