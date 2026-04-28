@@ -82,23 +82,63 @@ const OwnershipSection = ({
   }, [activeSubSection, shareholdingLoading, securityAllotmentLoading, groupStructureLoading, overseasInvestmentLoading]);
 
   const colorMap = {
-    "Indian": "#818CF8",
-    "Non-Resident Indian (NRI)": "#A78BFA",
-    "Insurance Companies": "#84CC16",
-    "Banks": "#C084FC",
-    "Foreign Institutional Investor": "#0F172A",
-    "Mutual Fund": "#0EA5E9",
-    "Body Corporate": "#14B8A6",
-    "Others": "#D946EF"
+    "Indian": "#A5B4FC",                       // soft indigo
+    "Non-Resident Indian (NRI)": "#C4B5FD",    // pastel violet
+    "Insurance Companies": "#BBF7D0",          // soft green
+    "Banks": "#DDD6FE",                        // light lavender
+    "Foreign Institutional Investor": "#BFDBFE", // pastel blue
+    "Domestic Institutional Investor": "#FBCFE8", // soft pink
+    "Mutual Fund": "#BAE6FD",                  // sky pastel
+    "Body Corporate": "#99F6E4",               // aqua pastel
+    "Others": "#F5D0FE",                       // light magenta
+    "Government": "#FDE68A",                   // pastel yellow
+    "Financial Institutions": "#A7F3D0",       // mint green
+    "Foreign Portfolio Investors": "#93C5FD",  // soft blue
+    "Retail Investors": "#FDA4AF",             // pastel red/pink
+    "Trusts": "#C7D2FE",                       // bluish lavender
+    "Employees": "#76D7C4",                    // light emerald
+    "Public": "#6EE7B7"
   };
+
+  const fallbackColors = [
+    "#FFB3BA", // light pink
+    "#FFDFBA", // peach
+    "#FFFFBA", // pale yellow
+    "#BAFFC9", // mint green
+    "#BAE1FF", // baby blue
+    "#E3BAFF", // lavender
+    "#FFCCE5", // blush pink
+    "#D5FFCC", // soft green
+    "#CCE5FF", // light sky blue
+    "#FFF0B3", // cream yellow
+    "#F0CCFF", // lilac
+    "#FFD6CC", // soft coral
+    "#CCFFD9", // aqua green
+    "#D9CCFF", // pastel violet
+    "#FFE5CC", // light apricot
+    "#CCF2FF", // pale cyan
+    "#F2FFCC", // light lime
+    "#FFCCF2", // pink lavender
+    "#E6FFCC", // soft lime green
+    "#CCE0FF"  // cool blue
+  ];
+
+  let fallbackIndex = 0;
 
   const rawPromoterHoldingData = (shareholdingData?.promoter_holding_section?.non_promoter_holding_breakdown || [])
     .filter(item => item.holding_percentage && item.holding_percentage !== "-")
-    .map(item => ({
-      name: item.holder_category,
-      value: parseFloat(item.holding_percentage.replace('%', '')),
-      color: colorMap[item.holder_category] || "#CBD5E1"
-    }));
+    .map(item => {
+      let color = colorMap[item.holder_category];
+      if (!color) {
+        color = fallbackColors[fallbackIndex % fallbackColors.length];
+        fallbackIndex++;
+      }
+      return {
+        name: item.holder_category,
+        value: parseFloat(item.holding_percentage.replace('%', '')),
+        color: color
+      };
+    });
 
   const totalHolding = rawPromoterHoldingData.reduce((acc, curr) => acc + curr.value, 0);
   const promoterHoldingData = [...rawPromoterHoldingData];

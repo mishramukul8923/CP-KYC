@@ -101,9 +101,9 @@ const CompanyNewSidebar = () => {
       title: "Litigation",
       items: [
         "Pending Cases Filed against Company",
-        "Pending Cases Led by Company",
-        "Disposed Cases Led Against Company",
-        "Disposed Cases Led by Company",
+        "Pending Cases Filed by Company",
+        "Disposed Cases Filed Against Company",
+        "Disposed Cases Filed by Company",
       ],
     },
     { id: "documents", title: "Documents", isStandalone: true },

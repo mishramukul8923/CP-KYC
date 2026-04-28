@@ -365,15 +365,23 @@ const FinancialHighlights = ({
     .filter((item) => item.year !== "TTM" && item.year !== "isExpandable")
     .map((item) => ({
       year: item.year,
-      revenue: item.revenue_cr,
-      profit: item.profit_cr,
+      revenue: Number(item.revenue_cr ?? 0),
+      profit: Number(item.profit_cr ?? 0),
     }))
     .reverse();
 
-  const maxVal = Math.max(...chartData.map(d => Math.max(d.revenue || 0, d.profit || 0)), 0);
-  const domainMax = Math.ceil((maxVal * 1.1) / 100) * 100 || 5000;
-  const step = Math.ceil(domainMax / 5 / 10) * 10 || 1000;
-  const dynamicTicks = Array.from({ length: 6 }, (_, i) => i * step);
+  const allValues = chartData.flatMap(d => [d.revenue, d.profit]);
+  const minVal = Math.min(...allValues, 0);
+  const maxVal = Math.max(...allValues, 0);
+
+  // Buffer and rounding for domain
+  const domainMax = Math.ceil((maxVal * 1.1) / 100) * 100 || 500;
+  const domainMin = minVal < 0 ? Math.floor((minVal * 1.1) / 100) * 100 : 0;
+
+  // Calculate a clean step that covers the range with roughly 6 ticks
+  const range = domainMax - domainMin;
+  const step = Math.ceil(range / 5 / 10) * 10 || 100;
+  const dynamicTicks = Array.from({ length: 6 }, (_, i) => domainMin + i * step);
 
   const longestLabelLength = dynamicTicks.reduce((max, tick) => {
     const label = `${formatIndianNumber(tick)} cr`;
@@ -514,12 +522,12 @@ const FinancialHighlights = ({
                     fontWeight: 500,
                   }}
                   tickFormatter={(value) => `${formatIndianNumber(value)} cr`}
-                  domain={[0, domainMax]}
+                  domain={[domainMin, domainMax]}
                   ticks={dynamicTicks}
                 />
                 <Tooltip
                   cursor={{ fill: "transparent" }}
-                  formatter={(value) => `${formatIndianNumber(value)} cr`}
+                  formatter={(value, name) => [`${formatIndianNumber(value)} cr`, name.charAt(0).toUpperCase() + name.slice(1)]}
                 />
                 {/* radius={[20, 20, 20, 20]} creates the pill shape seen in the image */}
                 <Bar

@@ -182,14 +182,27 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const parseAmount = (amt) => {
+    if (!amt || amt === "-") return 0;
+    return parseFloat(String(amt).replace(/,/g, "")) || 0;
+  };
+
+  const openAmt = parseAmount(charges?.summary?.open_amount);
+  const closedAmt = parseAmount(charges?.summary?.closed_amount);
+  const totalAmt = openAmt + closedAmt;
+
+  const formatNumber = (num) => {
+    return new Intl.NumberFormat("en-IN").format(num);
+  };
+
   const openChartData = [
     {
       name: "Open",
-      value: charges?.summary?.open_count ?? "-",
+      value: openAmt,
     },
     {
       name: "Closed",
-      value: charges?.summary?.closed_count ?? "-",
+      value: closedAmt,
     },
   ];
 
@@ -234,33 +247,40 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
         <div className={styles.chartCard}>
           <h2 className={styles.cardTitle}>Open charges</h2>
           <div className={styles.chartWrapper}>
-            <div className={styles.chartWrapper}>
+            <ResponsiveContainer width={200} height={200}>
+              <PieChart>
+                <Pie
+                  data={openChartData}
+                  dataKey="value"
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={0}
+                  startAngle={90}
+                  endAngle={-270}
+                  stroke="none"
+                >
+                  {openChartData.map((_, index) => (
+                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
 
-              <ResponsiveContainer width={200} height={200}>
-                <PieChart>
-                  <Pie
-                    data={openChartData}
-                    dataKey="value"
-                    innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={0.1}
-                    startAngle={90}
-                    endAngle={-270}
-                  >
-                    {openChartData.map((_, index) => (
-                      <Cell key={index} fill={COLORS[index]} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-
-              <div className={styles.chartLegend}>
-                <div className={styles.legendItem}>
-                  <span className={styles.legendDot}></span>
-                  <span className={styles.legendText}>Others Charges:</span>
+            <div className={styles.chartLegend}>
+              <div className={styles.legendItem}>
+                <div className={styles.legendDot} style={{ backgroundColor: COLORS[0] }}></div>
+                <div style={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
+                  <span className={styles.legendText}>Open Charges:</span>
+                  <span className={styles.legendValue}>{charges?.summary?.open_amount ?? "-"}</span>
                 </div>
-
-                <span className={styles.legendValue}>-</span>
+              </div>
+              {/* <div className={styles.legendDivider}></div> */}
+              <div className={styles.legendItem}>
+                <div className={styles.legendDot} style={{ backgroundColor: COLORS[1] }}></div>
+                <div style={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
+                  <span className={styles.legendText}>Total Charges:</span>
+                  <span className={styles.legendValue}>{totalAmt > 0 ? formatNumber(totalAmt) : "-"} Cr</span>
+                </div>
               </div>
             </div>
           </div>
@@ -353,8 +373,11 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
               {charges?.open_charges?.pages || 1}
             </span>
             <div className={styles.navButtons}>
-              <button disabled={openPage === 1}
-                onClick={() => setOpenPage(1)}>
+              <button
+                className={openPage === 1 ? styles.navBtnDisabled : styles.navBtn}
+                disabled={openPage === 1}
+                onClick={() => setOpenPage(1)}
+              >
                 <img
                   src="/icons/chevrons-left.svg"
                   alt="First page"
@@ -362,29 +385,36 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
                 />
               </button>
 
-              <button disabled={openPage === 1}
-                onClick={() => setOpenPage(prev => prev - 1)}>
+              <button
+                className={openPage === 1 ? styles.navBtnDisabled : styles.navBtn}
+                disabled={openPage === 1}
+                onClick={() => setOpenPage(prev => prev - 1)}
+              >
                 <img
                   src="/icons/chevron-left.svg"
-                  alt="First page"
+                  alt="Previous page"
                   className={styles.navIcon}
                 />
               </button>
-              <button disabled={openPage >= (charges?.open_charges?.pages || 1)}
-                onClick={() => setOpenPage((prev) => prev + 1)}>
+              <button
+                className={openPage >= (charges?.open_charges?.pages || 1) ? styles.navBtnDisabled : styles.navBtn}
+                disabled={openPage >= (charges?.open_charges?.pages || 1)}
+                onClick={() => setOpenPage((prev) => prev + 1)}
+              >
                 <img
-                  src="/icons/chevron-right-black.svg"
-                  alt="First page"
+                  src="/icons/chevron-right.svg"
+                  alt="Next page"
                   className={styles.navIcon}
                 />
               </button>
-              <button disabled={openPage >= (charges?.open_charges?.pages || 1)}
-                onClick={() =>
-                  setOpenPage(charges?.open_charges?.pages || 1)
-                }>
+              <button
+                className={openPage >= (charges?.open_charges?.pages || 1) ? styles.navBtnDisabled : styles.navBtn}
+                disabled={openPage >= (charges?.open_charges?.pages || 1)}
+                onClick={() => setOpenPage(charges?.open_charges?.pages || 1)}
+              >
                 <img
                   src="/icons/chevrons-right.svg"
-                  alt="First page"
+                  alt="Last page"
                   className={styles.navIcon}
                 />
               </button>
@@ -454,8 +484,11 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
               {charges?.closed_charges?.pages || 1}
             </span>
             <div className={styles.navButtons}>
-              <button disabled={closedPage === 1}
-                onClick={() => setClosedPage(1)}>
+              <button
+                className={closedPage === 1 ? styles.navBtnDisabled : styles.navBtn}
+                disabled={closedPage === 1}
+                onClick={() => setClosedPage(1)}
+              >
                 <img
                   src="/icons/chevrons-left.svg"
                   alt="First page"
@@ -463,29 +496,36 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
                 />
               </button>
 
-              <button disabled={closedPage === 1}
-                onClick={() => setClosedPage(prev => prev - 1)}>
+              <button
+                className={closedPage === 1 ? styles.navBtnDisabled : styles.navBtn}
+                disabled={closedPage === 1}
+                onClick={() => setClosedPage((prev) => prev - 1)}
+              >
                 <img
                   src="/icons/chevron-left.svg"
-                  alt="First page"
+                  alt="Previous page"
                   className={styles.navIcon}
                 />
               </button>
-              <button disabled={closedPage >= (charges?.closed_charges?.pages || 1)}
-                onClick={() => setClosedPage((prev) => prev + 1)}>
+              <button
+                className={closedPage >= (charges?.closed_charges?.pages || 1) ? styles.navBtnDisabled : styles.navBtn}
+                disabled={closedPage >= (charges?.closed_charges?.pages || 1)}
+                onClick={() => setClosedPage((prev) => prev + 1)}
+              >
                 <img
-                  src="/icons/chevron-right-black.svg"
-                  alt="First page"
+                  src="/icons/chevron-right.svg"
+                  alt="Next page"
                   className={styles.navIcon}
                 />
               </button>
-              <button disabled={closedPage >= (charges?.closed_charges?.pages || 1)}
-                onClick={() =>
-                  setClosedPage(charges?.closed_charges?.pages || 1)
-                }>
+              <button
+                className={closedPage >= (charges?.closed_charges?.pages || 1) ? styles.navBtnDisabled : styles.navBtn}
+                disabled={closedPage >= (charges?.closed_charges?.pages || 1)}
+                onClick={() => setClosedPage(charges?.closed_charges?.pages || 1)}
+              >
                 <img
                   src="/icons/chevrons-right.svg"
-                  alt="First page"
+                  alt="Last page"
                   className={styles.navIcon}
                 />
               </button>

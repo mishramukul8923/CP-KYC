@@ -119,6 +119,7 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
@@ -155,7 +156,7 @@
   justify-content: space-between;
   padding: 20px;
   background-color: #ffffff;
-  transition: background-color 0.2s ease; 
+  transition: background-color 0.2s ease;
 }
 
 .row:hover {
@@ -208,7 +209,7 @@
 
 .dotOrange {
   background-color: rgba(249, 115, 22, 1);
-} 
+}
 
 .textOrange {
   color: rgba(249, 115, 22, 1);
@@ -231,7 +232,8 @@
 }
 
 .chevron {
-  transition: transform 0.3s ease; /* smooth rotation */
+  transition: transform 0.3s ease;
+  /* smooth rotation */
 }
 
 .chevronOpen {
@@ -273,7 +275,7 @@
   border: 1px solid rgba(228, 228, 231, 1);
   border-radius: 12px;
   background: rgba(255, 255, 255, 1);
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .detailTable {
@@ -296,6 +298,7 @@
   font-size: 14px;
   border-bottom: 1px solid rgba(228, 228, 231, 1);
   color: rgba(39, 39, 42, 1);
+  vertical-align: top;
 }
 
 .customDetailTable td {
@@ -305,33 +308,53 @@
 .detailTable tr:last-child td {
   border-bottom: none;
 }
-/* Target ONLY Regulatory Alerts table (8 columns) */
-.detailTable:has(th:nth-child(8)) {
+
+/* Target Regulatory Alerts table */
+.regulatoryTable {
   table-layout: fixed;
+  min-width: 1000px;
 }
 
-/* First 7 columns: slightly wider */
-.detailTable:has(th:nth-child(8)) th:not(:nth-child(8)),
-.detailTable:has(th:nth-child(8)) td:not(:nth-child(8)) {
-  width: calc(100% / 7);
-}
-
-/* Last column: MORE narrow */
-.detailTable:has(th:nth-child(8)) th:nth-child(8),
-.detailTable:has(th:nth-child(8)) td:nth-child(8) {
-  width: calc(100% / 20);
-}
-
-
-/* Target ONLY Regulatory Alerts table */
-.detailTable:has(th:nth-child(8)) th:nth-child(6),
-.detailTable:has(th:nth-child(8)) td:nth-child(6) {
+.regulatoryTable td {
+  word-wrap: break-word;
   white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  /* overflow-wrap: anywhere; */
 }
 
+.regulatoryTable th:nth-child(1),
+.regulatoryTable td:nth-child(1) {
+  width: 70px;
+}
 
+.regulatoryTable th:nth-child(2),
+.regulatoryTable td:nth-child(2) {
+  width: 155px;
+}
+
+.regulatoryTable th:nth-child(3),
+.regulatoryTable td:nth-child(3) {
+  width: 180px;
+}
+
+.regulatoryTable th:nth-child(4),
+.regulatoryTable td:nth-child(4) {
+  width: 200px;
+}
+
+.regulatoryTable th:nth-child(5),
+.regulatoryTable td:nth-child(5) {
+  width: 180px;
+}
+
+.regulatoryTable th:nth-child(6),
+.regulatoryTable td:nth-child(6) {
+  width: 150px;
+}
+
+.regulatoryTable th:nth-child(7),
+.regulatoryTable td:nth-child(7) {
+  width: 110px;
+}
 
 /* Litigation Layouts */
 .litigationWrapper {
@@ -340,7 +363,7 @@
   gap: 20px;
 }
 
-.litigationWrapper .tableWrapper .detailTable td{
+.litigationWrapper .tableWrapper .detailTable td {
   height: 56px;
   box-sizing: border-box;
 }
@@ -521,7 +544,7 @@
   background: rgba(244, 244, 245, 1);
 }
 
-.sideItem .dotRedSmall{
+.sideItem .dotRedSmall {
   width: 14px;
   height: 14px;
 }
@@ -612,8 +635,8 @@
   display: flex;
   flex-wrap: wrap;
 
-  column-gap: 20px; 
-  row-gap: 12px;  
+  column-gap: 20px;
+  row-gap: 12px;
 
   margin: 20px 0;
 }
@@ -682,7 +705,7 @@
   color: rgba(59, 130, 246, 1);
   font-weight: 400;
   font-size: 12px;
-    white-space: nowrap;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -692,6 +715,7 @@
   color: rgba(113, 113, 122, 1);
   /* white-space: nowrap; */
 }
+
 /* .companyNameCell .companySubText:first-of-type {
   width: 200px;
 } */
@@ -705,12 +729,12 @@
 .avatarIcon {
   width: 40px;
   height: 40px;
-  border-radius: 50%; 
+  border-radius: 50%;
   object-fit: cover;
 }
 
-.customDetailTable{
-    font-size: 12px !important;
+.customDetailTable {
+  font-size: 12px !important;
 }
 
 .actionCell {
@@ -735,7 +759,7 @@
 
 
 /* Pagination Footer */
-.paginationRowExtra{
+.paginationRowExtra {
   margin-top: 12px;
 }
 
@@ -841,23 +865,26 @@
 
 /* Responsive */
 
-@media(max-width: 1600px){
-    .companyNameMain{
+@media(max-width: 1600px) {
+  .companyNameMain {
     white-space: normal;
   }
 }
 
 @media (max-width: 1440px) {
-  .commonDirectorshipWrapper{
+  .commonDirectorshipWrapper {
     flex-direction: column;
   }
-  .sidebar{
+
+  .sidebar {
     width: 100%;
   }
-  .companyNameMain{
+
+  .companyNameMain {
     white-space: normal;
   }
 }
+
 @media (max-width: 768px) {
 
   .cards,
