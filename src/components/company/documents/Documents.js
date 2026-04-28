@@ -141,18 +141,18 @@ const DocumentsTable = ({ documents, isLoading, onDownload, sortConfig, onSort }
       <div className={styles.docsHeader}>
         <span>Document Name</span>
         <span>Form Type</span>
-        <div 
-          className={styles.sortableHeader} 
+        <div
+          className={styles.sortableHeader}
           onClick={() => onSort("filing_date")}
         >
           <div className={styles.headerContent}>
             Filing Date
-            <img 
-              src={sortConfig.key === "filing_date" 
+            <img
+              src={sortConfig.key === "filing_date"
                 ? (sortConfig.direction === "asc" ? "/icons/arrow-up.svg" : "/icons/arrow-down.svg")
-                : "/icons/chevrons-up-down.svg"} 
-              alt="" 
-              className={styles.sortIcon} 
+                : "/icons/chevrons-up-down.svg"}
+              alt=""
+              className={styles.sortIcon}
             />
           </div>
         </div>
@@ -173,9 +173,8 @@ const DocumentsTable = ({ documents, isLoading, onDownload, sortConfig, onSort }
               <div className={styles.docName}>
                 <ChevronRight
                   size={16}
-                  className={`${styles.chevronRow} ${
-                    isOpen ? styles.rotate : ""
-                  }`}
+                  className={`${styles.chevronRow} ${isOpen ? styles.rotate : ""
+                    }`}
                 />
                 <FileText size={20} color="#3B82F6" />
                 <span>{doc.document_name}</span>
@@ -187,13 +186,12 @@ const DocumentsTable = ({ documents, isLoading, onDownload, sortConfig, onSort }
 
             {/* Expandable Section */}
             <div
-              className={`${styles.expandWrapper} ${
-                isOpen ? styles.expandOpen : ""
-              }`}
+              className={`${styles.expandWrapper} ${isOpen ? styles.expandOpen : ""
+                }`}
             >
               <div className={styles.subRow}>
                 <Paperclip size={20} color="#2563EB" />
-                <span 
+                <span
                   className={`${styles.fileLink} ${downloadingId === doc.id ? styles.downloading : ""}`}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -229,16 +227,16 @@ const Documents = ({ companyName }) => {
   const [docYears, setDocYears] = useState([]);
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(false);
   const [documentsList, setDocumentsList] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState(["MCA Documents"]); 
-  const [selectedYears, setSelectedYears] = useState([]); 
+  const [selectedCategories, setSelectedCategories] = useState(["MCA Documents"]);
+  const [selectedYears, setSelectedYears] = useState([]);
   const [page, setPage] = useState(1);
   const [totalDocs, setTotalDocs] = useState(0);
   const [isDocsLoading, setIsDocsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [mcaHeaderInfo, setMcaHeaderInfo] = useState({ 
-    source: "-", 
+  const [mcaHeaderInfo, setMcaHeaderInfo] = useState({
+    source: "-",
     lastUpdated: "-",
-    totalDocuments: null 
+    totalDocuments: null
   });
   const [sortConfig, setSortConfig] = useState({ key: "filing_date", direction: "desc" });
 
@@ -292,11 +290,11 @@ const Documents = ({ companyName }) => {
       setIsDocsLoading(true);
       const token = localStorage.getItem("token");
       const filteredCategories = selectedCategories.filter(cat => cat !== "MCA Documents");
-      const categoryParams = filteredCategories.length > 0 
+      const categoryParams = filteredCategories.length > 0
         ? filteredCategories.map(cat => `category=${encodeURIComponent(cat)}`).join("&")
         : "";
-      
-      const yearParams = selectedYears.length > 0 
+
+      const yearParams = selectedYears.length > 0
         ? selectedYears.map(y => `year=${encodeURIComponent(y)}`).join("&")
         : "";
 
@@ -318,7 +316,7 @@ const Documents = ({ companyName }) => {
       }
 
       const data = await response.json();
-      
+
       if (shouldAppend) {
         setDocumentsList(prev => [...prev, ...(data.documents || [])]);
       } else {
@@ -338,7 +336,7 @@ const Documents = ({ companyName }) => {
         setPage(1);
         fetchDocuments(1, false);
       }, searchQuery ? 500 : 0); // Debounce search if q is present
-      
+
       return () => clearTimeout(timeoutId);
     }
   }, [companyName, selectedCategories, selectedYears, searchQuery, sortConfig]);
@@ -392,10 +390,10 @@ const Documents = ({ companyName }) => {
       const a = document.createElement("a");
       a.style.display = "none";
       a.href = url;
-      
+
       // Clean filename: remove "Optional attachments if any"
       let cleanName = fileName.replace(/Optional attachments if any/gi, "").trim();
-      
+
       // Extract filename from header if possible, or use the provided one
       a.download = cleanName.endsWith(".pdf") ? cleanName : `${cleanName}.pdf`;
       document.body.appendChild(a);
@@ -506,7 +504,7 @@ const Documents = ({ companyName }) => {
 
       const data = await response.json();
       setStatusData(data);
-      
+
       if (data.status === "SUCCESS") {
         setIsUnlocked(true);
         setModalStep(3);
@@ -535,7 +533,7 @@ const Documents = ({ companyName }) => {
     const durationInSeconds = PAYMENT_CHECK_DELAY * 60;
     setTimeLeft(durationInSeconds);
     setModalStep(2);
-    
+
     window.open("https://www.mca.gov.in/content/mca/global/en/foportal/fologin.html", "_blank");
   };
 
@@ -553,9 +551,9 @@ const Documents = ({ companyName }) => {
   */
 
   // Default category "MCA Documents" that should always be present
-  const defaultCategory = { 
-    name: "MCA Documents", 
-    count: mcaHeaderInfo.totalDocuments > 0 ? mcaHeaderInfo.totalDocuments : "100+" 
+  const defaultCategory = {
+    name: "MCA Documents",
+    count: mcaHeaderInfo.totalDocuments > 0 ? mcaHeaderInfo.totalDocuments : "100+"
   };
 
   // Combine default with API categories, filtered to avoid duplicates
@@ -592,7 +590,7 @@ const Documents = ({ companyName }) => {
             </span>
           </div>
         </div>
- 
+
         {mcaHeaderInfo.totalDocuments !== null && mcaHeaderInfo.totalDocuments === 0 && (
           <div className={styles.premiumBanner}>
             <div className={styles.premiumLeft}>
@@ -623,8 +621,8 @@ const Documents = ({ companyName }) => {
                 </div>
               </div>
             </div>
-            <button 
-              className={styles.unlockBtn} 
+            <button
+              className={styles.unlockBtn}
               onClick={handleUnlockSubmit}
               disabled={apiLoading}
             >
@@ -639,7 +637,7 @@ const Documents = ({ companyName }) => {
             </button>
           </div>
         )}
- 
+
         <div className={styles.contentContainer}>
 
           {/* FILTER SIDEBAR */}
@@ -670,9 +668,9 @@ const Documents = ({ companyName }) => {
                     <path
                       d="M15 12.5L10 7.5L5 12.5"
                       stroke="#041E42"
-                      stroke-width="1.66667"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeWidth="1.66667"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     />
                   </svg>
                 </span>
@@ -688,14 +686,14 @@ const Documents = ({ companyName }) => {
                 <div className={styles.filterOptions}>
                   {allCategories.map((cat) => (
                     <label key={cat.name} className={styles.checkboxRow}>
-                      <input 
-                        type="checkbox" 
-                        className={styles.checkboxInput} 
+                      <input
+                        type="checkbox"
+                        className={styles.checkboxInput}
                         checked={selectedCategories.includes(cat.name)}
                         onChange={() => {
-                          setSelectedCategories(prev => 
-                            prev.includes(cat.name) 
-                              ? prev.filter(c => c !== cat.name) 
+                          setSelectedCategories(prev =>
+                            prev.includes(cat.name)
+                              ? prev.filter(c => c !== cat.name)
                               : [...prev, cat.name]
                           );
                         }}
@@ -707,12 +705,12 @@ const Documents = ({ companyName }) => {
                       <div className={styles.labelWrapper}>
                         <span className={styles.checkboxLabel}>{cat.name}</span>
                         {cat.name === "MCA Documents" && mcaHeaderInfo.totalDocuments !== null && mcaHeaderInfo.totalDocuments === 0 && (
-                          <Image 
-                            src="/icons/goldenlock.svg" 
-                            alt="Lock" 
-                            width={20} 
-                            height={20} 
-                            className={styles.categoryLock} 
+                          <Image
+                            src="/icons/goldenlock.svg"
+                            alt="Lock"
+                            width={20}
+                            height={20}
+                            className={styles.categoryLock}
                           />
                         )}
                       </div>
@@ -746,9 +744,9 @@ const Documents = ({ companyName }) => {
                     <path
                       d="M15 12.5L10 7.5L5 12.5"
                       stroke="#041E42"
-                      stroke-width="1.66667"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeWidth="1.66667"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     />
                   </svg>
                 </span>
@@ -772,14 +770,14 @@ const Documents = ({ companyName }) => {
                         key={yearStr}
                         className={`${styles.checkboxRow} ${styles.checkboxRowCenter}`}
                       >
-                        <input 
-                          type="checkbox" 
-                          className={styles.checkboxInput} 
+                        <input
+                          type="checkbox"
+                          className={styles.checkboxInput}
                           checked={selectedYears.includes(yearStr)}
                           onChange={() => {
-                            setSelectedYears(prev => 
-                              prev.includes(yearStr) 
-                                ? prev.filter(y => y !== yearStr) 
+                            setSelectedYears(prev =>
+                              prev.includes(yearStr)
+                                ? prev.filter(y => y !== yearStr)
                                 : [...prev, yearStr]
                             );
                           }}
@@ -842,9 +840,9 @@ const Documents = ({ companyName }) => {
             </div>
 
             <div>
-              <DocumentsTable 
-                documents={documentsList} 
-                isLoading={isDocsLoading} 
+              <DocumentsTable
+                documents={documentsList}
+                isLoading={isDocsLoading}
                 onDownload={handleDownload}
                 sortConfig={sortConfig}
                 onSort={handleSort}
@@ -853,8 +851,8 @@ const Documents = ({ companyName }) => {
 
             {documentsList.length < totalDocs && (
               <div className={styles.loadMoreWrapper}>
-                <button 
-                  className={styles.loadMoreBtn} 
+                <button
+                  className={styles.loadMoreBtn}
                   onClick={() => setPage(prev => prev + 1)}
                   disabled={isDocsLoading}
                 >
@@ -868,12 +866,12 @@ const Documents = ({ companyName }) => {
       </div>
 
       {isModalOpen && (
-        <div 
-          className={`${styles.modalOverlay} ${isClosing ? styles.closing : ""}`} 
+        <div
+          className={`${styles.modalOverlay} ${isClosing ? styles.closing : ""}`}
           onClick={handleCloseModal}
         >
-          <div 
-            className={`${styles.modalContainer} ${isClosing ? styles.closing : ""}`} 
+          <div
+            className={`${styles.modalContainer} ${isClosing ? styles.closing : ""}`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className={styles.modalHeader}>
@@ -945,7 +943,7 @@ const Documents = ({ companyName }) => {
                     {isCheckingStatus ? "Checking Status..." : "Processing Payment..."}
                   </h3>
                   <p className={styles.processingSubtitle}>
-                    {isCheckingStatus 
+                    {isCheckingStatus
                       ? "Verifying your payment with MCA records. Please wait."
                       : `Please complete your payment on the MCA Portal and return to this page. `
                     }
@@ -986,8 +984,8 @@ const Documents = ({ companyName }) => {
                       <p className={styles.successSubtitle}>
                         {statusData?.error_message || "Please complete the payment first to view the documents"}
                       </p>
-                      <button 
-                        className={styles.proceedBtn} 
+                      <button
+                        className={styles.proceedBtn}
                         style={{ marginTop: 20 }}
                         onClick={() => setModalStep(1)}
                       >
@@ -1004,8 +1002,8 @@ const Documents = ({ companyName }) => {
                 <button className={styles.cancelBtn} onClick={handleCloseModal}>
                   Cancel
                 </button>
-                <button 
-                  className={styles.proceedBtn} 
+                <button
+                  className={styles.proceedBtn}
                   onClick={handleProceedToPayment}
                 >
                   Proceed to Payment

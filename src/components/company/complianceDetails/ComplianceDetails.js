@@ -211,15 +211,15 @@ export const epfoSummaryGraphData = [
 // export default RowsPerPage;
 
 const ComplianceDetails = () => {
-  const { activeSubSection } = useCompanySection();
+  const { activeSubSection, scrollTrigger } = useCompanySection();
 
   // ✅ ADD THIS EXACT useEffect HERE
   useEffect(() => {
     if (!activeSubSection) return;
 
     const sectionMap = {
-      "Auditors' Remarks": "auditors-remarks",
-      CARO: "caro",
+      "Auditors' Remarks": "Auditors' Remarks",
+      CARO: "CARO",
       // "Goods & Service Tax (GST)": "gst",
       // EPFO: "epfo",
       // "CSR Credit Rating": "csr",
@@ -233,7 +233,7 @@ const ComplianceDetails = () => {
       scrollToElementWithOffset(element, 140);
     }
 
-  }, [activeSubSection]);
+  }, [scrollTrigger]);
 
   // ⬇️ keep your states AFTER this
   const [rowsOpen, setRowsOpen] = useState(false);
@@ -476,7 +476,7 @@ const ComplianceDetails = () => {
           </div>
         </div>
         {/* Auditors' Remarks Standalone table */}
-        <div id="auditors-remarks" className={styles.tableSection}>
+        <div id="Auditors' Remarks" className={styles.tableSection}>
           {" "}
           <h6
             className={styles.tableTitle}
@@ -572,7 +572,7 @@ const ComplianceDetails = () => {
         </div>
 
         {/* CARO Standalone table*/}
-        <div id="caro" className={styles.tableSection}>
+        <div id="CARO" className={styles.tableSection}>
           <h6 className={styles.tableTitle}>{caroStandaloneAPI?.table_title || `CARO Standalone`}</h6>
           <div className={styles.tableContainer}>
             <table className={styles.litigationTable}>

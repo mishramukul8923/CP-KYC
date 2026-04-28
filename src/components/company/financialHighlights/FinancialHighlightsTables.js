@@ -200,7 +200,7 @@ const FinancialHighlightsTables = ({
     { type: "data", label: "Net Profit Margin (%)", valuesObj: { "Mar 2024": "-", "Mar 2023": "-", "Mar 2022": "-" } }
   ];
 
-  const { activeSubSection, setActiveSection } = useCompanySection();
+  const { activeSubSection, setActiveSection, scrollTrigger } = useCompanySection();
 
   const balanceSheetRef = useRef(null);
   const profitLossRef = useRef(null);
@@ -245,7 +245,7 @@ const FinancialHighlightsTables = ({
       default:
         break;
     }
-  }, [activeSubSection]);
+  }, [scrollTrigger]);
 
 
   const [viewType, setViewType] = React.useState("Standalone");
@@ -284,6 +284,7 @@ const FinancialHighlightsTables = ({
     <div className={styles.container}>
       <div
         ref={balanceSheetRef}
+        id="Balance Sheet"
         style={{ marginTop: "20px" }}
         className={styles.headerContainer}
       >
@@ -362,6 +363,7 @@ const FinancialHighlightsTables = ({
 
       <div
         ref={profitLossRef}
+        id="Profit & Loss"
         style={{ marginTop: "32px" }}
         className={styles.headerContainer}
       >
@@ -446,6 +448,7 @@ const FinancialHighlightsTables = ({
 
       <div
         ref={cashFlowRef}
+        id="Cash Flow"
         style={{ marginTop: "32px" }}
         className={styles.headerContainer}
       >
@@ -521,6 +524,7 @@ const FinancialHighlightsTables = ({
 
       <div
         ref={ratioRef}
+        id="Ratios"
         style={{ marginTop: "32px" }}
         className={styles.headerContainer}
       >
@@ -596,6 +600,7 @@ const FinancialHighlightsTables = ({
 
       <div
         ref={auditorsRef}
+        id="Auditors Details"
         style={{ marginTop: "32px" }}
         className={styles.headerContainer}
       >

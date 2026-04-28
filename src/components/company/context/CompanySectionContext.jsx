@@ -20,6 +20,7 @@ export function CompanySectionProvider({ children }) {
   const [alertsError, setAlertsError] = useState(null);
   const [pdfDownloadTrigger, setPdfDownloadTrigger] = useState(0);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [scrollTrigger, setScrollTrigger] = useState(0);
 
   useEffect(() => {
     setActiveSection(sectionFromUrl);
@@ -29,6 +30,7 @@ export function CompanySectionProvider({ children }) {
   const updateSection = (section, sub = null) => {
     setActiveSection(section);
     setActiveSubSection(sub);
+    setScrollTrigger(prev => prev + 1);
 
     const params = new URLSearchParams();
     params.set("section", section);
@@ -42,6 +44,8 @@ export function CompanySectionProvider({ children }) {
       value={{
         activeSection,
         activeSubSection,
+        scrollTrigger,
+        setScrollTrigger,
         setActiveSection: updateSection,
         setActiveSubSection,
         isVersionHistoryOpen,

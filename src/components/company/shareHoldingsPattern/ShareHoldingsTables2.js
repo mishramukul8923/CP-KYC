@@ -231,15 +231,15 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
       <div
         className={styles.headerRow}
         onClick={() => setIsAllotmentOpen(!isAllotmentOpen)}
-        id="securities-allotment-table"
+        id="Securities Allotment"
       >
         <h2 className={styles.tableTitle}>
           Securities Allotment
-          {allotmentData.length > 0 && (
+          {/* {allotmentData.length > 0 && (
             <span className={styles.tableCount}>
               ({Math.min((allotmentPage - 1) * rowsPerPage + 1, allotmentData.length)} - {Math.min(allotmentPage * rowsPerPage, allotmentData.length)} of {allotmentData.length})
             </span>
-          )}
+          )} */}
         </h2>
         <img
           src="/icons/chevron-down-dark.svg"
