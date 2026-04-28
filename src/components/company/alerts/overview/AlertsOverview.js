@@ -1,8 +1,63 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import styles from "./AlertOverview.module.css";
 import RowsPerPage from "@/components/common/RowsPerPage";
+
+const TruncatedText = ({ text }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const textRef = useRef(null);
+
+  useEffect(() => {
+    if (!textRef.current) return;
+
+    const checkTruncation = () => {
+      if (!isExpanded && textRef.current) {
+        setIsTruncated(textRef.current.scrollHeight > textRef.current.clientHeight + 2);
+      }
+    };
+
+    checkTruncation();
+
+    const resizeObserver = new ResizeObserver(() => {
+      checkTruncation();
+    });
+
+    resizeObserver.observe(textRef.current);
+
+    return () => resizeObserver.disconnect();
+  }, [text, isExpanded]);
+
+  if (!text || text === "-") return <span>{text}</span>;
+
+  return (
+    <div>
+      <div
+        ref={textRef}
+        style={{
+          display: isExpanded ? 'block' : '-webkit-box',
+          WebkitLineClamp: isExpanded ? 'unset' : 4,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          wordBreak: 'break-word'
+        }}
+      >
+        {text}
+      </div>
+      {(isTruncated || isExpanded) && (
+        <button
+          onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }}
+          style={{ background: 'none', border: 'none', color: '#2859a9ff', cursor: 'pointer', padding: 0, marginTop: '4px', fontSize: '12px', fontWeight: 500 }}
+        >
+          {isExpanded ? 'Read Less' : 'Read More'}
+        </button>
+      )}
+    </div>
+  );
+};
 
 export default function AlertsOverview({ alertsData, alertsLoading, alertsError }) {
 
@@ -51,7 +106,7 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
     dev: item.further_developments ?? "-",
     src: item.source ?? "-",
     sev: item.severity ?? "-",
-    action: true
+    // action: true
   }));
 
   const [expandedRow, setExpandedRow] = useState(null);
@@ -125,7 +180,7 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
         "Further Developments",
         "Source",
         "Severity",
-        ""
+        // ""
       ],
       rows: regulatoryRows
     },
@@ -617,7 +672,7 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
                   {/* Condition 1: Basic Tables */}
                   {item.type === "table" && (
                     <div className={styles.tableWrapper}>
-                      <table className={styles.detailTable}>
+                      <table className={`${styles.detailTable} ${item.id === 'regulatory' ? styles.regulatoryTable : ''}`}>
                         <thead>
                           <tr>
                             {item.headers.map((h, i) => (
@@ -639,6 +694,8 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
                                         height="20"
                                       />
                                     </div>
+                                  ) : (item.id === "regulatory" && (key === "chg" || key === "dev" || key === "act")) ? (
+                                    <TruncatedText text={val} />
                                   ) : (
                                     renderBadge(val, item.id)
                                   )}

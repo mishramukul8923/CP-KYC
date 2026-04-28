@@ -20,11 +20,11 @@ export default function DefaultsViolations({ alertsData, alertsLoading, alertsEr
           <table className={styles.table}>
             <thead>
               <tr>
-                <th style={{ width: "20%" }}>Regulator</th>
+                <th style={{ width: "10%" }}>Regulator</th>
                 <th style={{ width: "15%" }}>Entity</th>
                 <th style={{ width: "25%" }}>Regulatory Charges</th>
-                <th style={{ width: "20%" }}>Regulatory Action</th>
-                <th style={{ width: "20%" }}>Further Developments</th>
+                <th style={{ width: "25%" }}>Regulatory Action</th>
+                <th style={{ width: "25%" }}>Further Developments</th>
               </tr>
             </thead>
             <tbody>
