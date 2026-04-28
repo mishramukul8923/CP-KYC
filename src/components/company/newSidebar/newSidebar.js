@@ -9,9 +9,10 @@ import { useCompanySection } from "@/components/company/context/CompanySectionCo
 const CompanyNewSidebar = () => {
   const {
     activeSection,
-    activeSubSection, // 👈 ADD THIS
+    activeSubSection,
     setActiveSection,
     setActiveSubSection,
+    setScrollTrigger,
   } = useCompanySection();
 
   const [expandedSections, setExpandedSections] = useState({
@@ -142,6 +143,46 @@ const CompanyNewSidebar = () => {
     }
   }, [activeSection, activeSubSection]);
 
+  // 🔥 SCROLL SPY LOGIC
+  useEffect(() => {
+    const section = menuData.find((s) => s.id === activeSection);
+    if (!section || !section.items || section.isStandalone) return;
+
+    // Use a small delay to ensure elements are rendered
+    const timer = setTimeout(() => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          // We want the element that is currently crossing the "trigger point" (e.g., 160px from top)
+          // Since rootMargin is used, isIntersecting means it's within that margin.
+          // We pick the one that is intersecting and has the smallest positive distance from top
+          const visibleEntries = entries.filter((e) => e.isIntersecting);
+          if (visibleEntries.length > 0) {
+            // Sort by top position to get the one closest to the trigger
+            visibleEntries.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+            const targetId = visibleEntries[0].target.id;
+            if (targetId && targetId !== activeSubSection) {
+              setActiveSubSection(targetId);
+            }
+          }
+        },
+        {
+          rootMargin: "-150px 0px -70% 0px", // Trigger when element is in the top 30% of viewport
+          threshold: 0,
+        }
+      );
+
+      section.items.forEach((item) => {
+        const el = document.getElementById(item);
+        if (el) observer.observe(el);
+      });
+
+      return () => observer.disconnect();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [activeSection, menuData, setActiveSubSection]);
+
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.activeIndicator} style={{ top: indicatorTop }} />
@@ -220,7 +261,8 @@ const CompanyNewSidebar = () => {
                           onClick={() => {
                             setActiveTab(item);
                             setActiveSection(section.id);
-                            setActiveSubSection(item); 
+                            setActiveSubSection(item);
+                            setScrollTrigger(prev => prev + 1);
                           }}
                         >
                           <span

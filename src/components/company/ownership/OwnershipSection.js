@@ -30,7 +30,7 @@ const OwnershipSection = ({
 
   const shareholding = shareholdingData?.overview || companyHighlights?.shareholding;
 
-  const { activeSubSection, setActiveSection } = useCompanySection();
+  const { activeSubSection, setActiveSection, scrollTrigger } = useCompanySection();
   const mainWrapperRef = useRef(null);
   const shareholdingRef = useRef(null);
   const groupStructureRef = useRef(null);
@@ -62,7 +62,7 @@ const OwnershipSection = ({
           break;
 
         case "Securities Allotment":
-          scroll("securities-allotment-table");
+          scroll("Securities Allotment");
           break;
 
         case "Group Structure":
@@ -79,7 +79,7 @@ const OwnershipSection = ({
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [activeSubSection, shareholdingLoading, securityAllotmentLoading, groupStructureLoading, overseasInvestmentLoading]);
+  }, [scrollTrigger, shareholdingLoading, securityAllotmentLoading, groupStructureLoading, overseasInvestmentLoading]);
 
   const colorMap = {
     "Indian": "#A5B4FC",                       // soft indigo
@@ -205,7 +205,7 @@ const OwnershipSection = ({
         </div>
       </div>
 
-      <section className={styles.section} id="shareholding">
+      <section className={styles.section} id="Shareholding">
         <div className={styles.sectionHeader} ref={shareholdingRef}>
           <h2 className={styles.sectionTitle}>Shareholding </h2>
         </div>
@@ -472,7 +472,7 @@ const OwnershipSection = ({
           <div className={`${styles.skeleton} ${styles.skeletonProgress}`} style={{ height: '200px' }} />
         </section>
       ) : (
-        <section ref={groupStructureRef} className={styles.section} id="group-structure">
+        <section ref={groupStructureRef} className={styles.section} id="Group Structure">
           <div className={styles.sectionWrapper}>
             <h2 className={styles.sectionTitle}>Group Structure</h2>
           </div>
@@ -513,7 +513,7 @@ const OwnershipSection = ({
           <div className={`${styles.skeleton} ${styles.skeletonProgress}`} style={{ height: '300px' }} />
         </section>
       ) : (
-        <div ref={odiRef} id="odi">
+        <div ref={odiRef} id="Overseas Direct Investment (ODI)">
           <InvestmentPage overseasInvestmentData={overseasInvestmentData} />
         </div>
       )}

@@ -1,0 +1,69 @@
+# Company Profile PDF Generation Guide
+
+This document explains the architecture, data flow, and implementation details of the premium PDF report generation system.
+
+## 1. System Overview
+
+The PDF generation is a client-side process that leverages **@react-pdf/renderer** to create high-fidelity documents. Instead of just exporting the current view, the system performs a "Full Data Refresh" to ensure all sections (even those not currently visible or paginated) are included in the report.
+
+## 2. Triggering Mechanism
+
+The generation is triggered by the `pdfDownloadTrigger` state, which is managed in the `CompanySectionContext`.
+
+- **Source**: User clicks a "Download Report" button (usually in `CompanyStickyHeader` or `newHeader`).
+- **Action**: Increments `pdfDownloadTrigger`.
+- **Listener**: A dedicated `useEffect` in `src/app/company/[name]/page.js` detects the change and begins the generation process.
+
+## 3. Data Fetching Phase
+
+Before rendering the PDF, the system ensures all data is present. This is critical because the UI typically uses small page sizes (e.g., 10 rows), but the PDF needs all available data.
+
+### Parallel & Sequential Fetching
+The system fetches the following sections with a high limit (usually `1000`):
+- **Financials**: Standalone/Consolidated Balance Sheets, P&L, Cash Flow, and Ratios.
+- **Corporate Info**: Directors, Shareholding, Group Structure, and Security Allotment.
+- **Operations**: Charges, Litigation (Pending/Disposed), Auditor Remarks, and Peer Comparison.
+
+### Loading State
+While fetching, `isGeneratingPdf` is set to `true`, which shows a global loading overlay to prevent the user from triggering multiple downloads.
+
+## 4. Component Architecture (`ReportDocument.jsx`)
+
+The core of the PDF is defined in `src/components/company/pdf/ReportDocument.jsx`. It is a large, declarative document that maps raw API data to PDF-specific primitives (`<View>`, `<Text>`, `<Image>`, `<Svg>`).
+
+### Key Features:
+1. **Premium Styling**: Uses a centralized `StyleSheet` with consistent typography (Helvetica) and branding colors (Dark Blue: `#041e42`).
+2. **Dynamic Table Layouts**:
+   - `renderDynamicTable`: Automatically calculates column widths based on content length to prevent text overflow.
+   - `formatValue`: A utility that handles nulls, dashes, and inserts zero-width spaces into long strings (like CINs) to ensure they wrap correctly within table cells.
+3. **SVG Charts**: Pie charts are rendered as native PDF vector graphics using SVG paths (`getPiePath`) rather than screenshots, ensuring they remain sharp at any zoom level.
+4. **Sectional Logic**:
+   - **Header**: Includes the company logo, industry badges, listing status, and social media icons.
+   - **Financials**: Custom renderers for 5-year trends with strict 18% width for labels and equal distribution for year columns.
+   - **Litigation KPI**: Premium summary cards for quick status overview.
+
+## 5. Technical Implementation Details
+
+### Dynamic Imports
+To keep the initial page load light, both `@react-pdf/renderer` and `ReportDocument` are imported dynamically only when the download is requested:
+```javascript
+const { pdf } = await import("@react-pdf/renderer");
+const { default: ReportDocument } = await import("@/components/company/pdf/ReportDocument");
+```
+
+### Blob Generation & Download
+The final steps involve converting the React tree to a browser-standard Blob:
+1. `blob = await pdf(<ReportDocument ... />).toBlob();`
+2. `url = URL.createObjectURL(blob);`
+3. A temporary `<a>` tag is created, clicked, and removed to trigger the browser's save dialog.
+
+## 6. Maintenance & Updates
+
+- **Adding a Section**: 
+  1. Add the section data prop to `ReportDocument.jsx`.
+  2. Create a `renderSectionName` function in the component.
+  3. Update the `page.js` fetch logic to include the new data if not already present.
+- **Styling Changes**: Modify the `styles` object at the top of `ReportDocument.jsx`. Use `heading2` for standard section headers.
+
+---
+*Note: Ensure all image URLs passed to the PDF are public and accessible, as the PDF renderer fetches them during generation.*

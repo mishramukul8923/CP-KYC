@@ -53,7 +53,7 @@ const FinancialHighlights = ({
   setRatiosType
 }) => {
 
-  const { activeSubSection } = useCompanySection();
+  const { activeSubSection, scrollTrigger } = useCompanySection();
 
   const containerRef = useRef(null);
   const balanceSheetRef = useRef(null);
@@ -100,7 +100,7 @@ const FinancialHighlights = ({
       default:
         break;
     }
-  }, [activeSubSection]);
+  }, [scrollTrigger]);
 
   if (!financialHighlights && (financialLoading || revenueLoading)) {
     return (
@@ -411,7 +411,7 @@ const FinancialHighlights = ({
           {financialError || revenueError}
         </div>
       )}
-      <div className={styles.sectionHeader}>
+      <div className={styles.sectionHeader} id="Financials Highlights">
         <h2 className={styles.sectionTitle}>Financials Highlights</h2>
         {/* <Link
             href="/company/financialHighlights"

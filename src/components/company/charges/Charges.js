@@ -58,7 +58,7 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
     return <div className={styles.container}>No data available</div>;
   }
 
-  const { activeSubSection } = useCompanySection();
+  const { activeSubSection, scrollTrigger } = useCompanySection();
 
   const containerRef = useRef(null);
   const closedChargesRef = useRef(null);
@@ -85,7 +85,7 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
       default:
         break;
     }
-  }, [activeSubSection]);
+  }, [scrollTrigger]);
 
   const closedCharges = [
     // {
@@ -320,6 +320,7 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
 
       <section
         className={`${styles.tableSection} ${styles.openChargesSection}`}
+        id="Open Charges"
       >
         <h2 className={styles.sectionTitle}>Open Charges</h2>
         <div className={styles.tableWrapper}>
@@ -423,7 +424,7 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
         </div>
       </section>
 
-      <section ref={closedChargesRef} className={styles.tableSection}>
+      <section ref={closedChargesRef} className={styles.tableSection} id="Closed Charges">
         <h2 className={styles.sectionTitle}>Closed Charges</h2>
 
         <div className={styles.tableWrapper}>

@@ -270,18 +270,17 @@ const CompanyNews = ({ companyName }) => {
                             <div className={styles.content}>
                                 <h3 className={styles.newsTitle}>{item.title || "-"}</h3>
                                 <div className={styles.descriptionContainer}>
-                                    <p
+                                    <div
                                         ref={el => descriptionRefs.current[index] = el}
                                         className={`${styles.description} ${expandedIds[index] ? styles.expanded : styles.clamped}`}
-                                    >
-                                        {item.description || "-"}
-                                    </p>
+                                        dangerouslySetInnerHTML={{ __html: item.description || "-" }}
+                                    />
                                     {!expandedIds[index] && overflowingIds[index] && (
                                         <span
                                             className={styles.showMoreInline}
                                             onClick={() => toggleExpand(index)}
                                         >
-                                            ... Show More
+                                            Show More
                                         </span>
                                     )}
                                     {expandedIds[index] && (
@@ -309,21 +308,23 @@ const CompanyNews = ({ companyName }) => {
                                     )}
                                 </div>
                             </div>
-                            <div className={styles.cardActions}>
-                                {item.external_url && (
-                                    <a href={item.external_url} target="_blank" rel="noopener noreferrer">
-                                        <img src="/viewsourceIcon.svg" alt="view-source" className={styles.actionIcon} />
-                                    </a>
-                                )}
-                                {
-                                    <div
-                                        onClick={() => handleShare(item.external_url || item.share_url)}
-                                        className={styles.actionButton}
-                                    >
-                                        <img src="/iconShare.svg" alt="share" className={styles.actionIcon} />
-                                    </div>
-                                }
-                            </div>
+                            {(item.external_url || item.share_url) && (
+                                <div className={styles.cardActions}>
+                                    {item.external_url && item.external_url !== "-" && (
+                                        <a href={item.external_url} target="_blank" rel="noopener noreferrer">
+                                            <img src="/viewsourceIcon.svg" alt="view-source" className={styles.actionIcon} />
+                                        </a>
+                                    )}
+                                    {(item.external_url || item.share_url) && (
+                                        <div
+                                            onClick={() => handleShare(item.external_url || item.share_url)}
+                                            className={styles.actionButton}
+                                        >
+                                            <img src="/iconShare.svg" alt="share" className={styles.actionIcon} />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     ))
                 )}

@@ -32,7 +32,7 @@ import AlertsContainer from "@/components/company/alerts/AlertsContainer";
 import { useParams } from "next/navigation";
 
 export default function CompanyPage() {
-  const { activeSection, activeSubSection } = useCompanySection();
+  const { activeSection, activeSubSection, scrollTrigger } = useCompanySection();
   const params = useParams();
   const rawCompanyName = (params.name.replaceAll("-", " ")).toUpperCase(); // from /company/dabur because route is [name]
 
@@ -1270,26 +1270,26 @@ export default function CompanyPage() {
       scrollToElementWithOffset(targetRef.current, 140);
     }
 
-  }, [activeSection, activeSubSection]);
+  }, [activeSection, scrollTrigger]);
 
   return (
     <>
       {activeSection === "companyDetails" && (
         <>
-          <div ref={overviewRef}>
+          <div ref={overviewRef} id="Summary">
             <CompanyOverview companyData={companyData} loading={companyLoading} error={companyError} />
             <CompanyDetails companyData={companyData} loading={companyLoading} error={companyError} />
           </div>
 
-          <div ref={nameHistoryRef}>
+          <div ref={nameHistoryRef} id="Name History">
             <NameHistory companyData={companyData} loading={companyLoading} error={companyError} />
           </div>
 
-          <div ref={contactRef}>
+          <div ref={contactRef} id="Contact Details">
             <ContactAddressSection companyData={companyData} loading={companyLoading} error={companyError} />
           </div>
 
-          <div ref={newsRef}>
+          <div ref={newsRef} id="Company News">
             <CompanyNews companyName={companyName} />
           </div>
         </>

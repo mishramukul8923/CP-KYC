@@ -133,11 +133,11 @@ const LigilationDetails = ({
   daPage, daSize, setDaPage, setDaSize,
   dbPage, dbSize, setDbPage, setDbSize
 }) => {
-  const { activeSubSection } = useCompanySection();
+  const { activeSubSection, scrollTrigger } = useCompanySection();
 
   const litigationSections = [
     {
-      id: "pending-against",
+      id: "Pending Cases Filed against Company",
       label: "Pending Cases Filed against Company",
       apiKey: "pendingCasesFiledAgainstCompanyTable",
       page: paPage,
@@ -146,7 +146,7 @@ const LigilationDetails = ({
       setSize: setPaSize,
     },
     {
-      id: "pending-by",
+      id: "Pending Cases Filed by Company",
       label: "Pending Cases Filed by Company",
       apiKey: "pendingCasesFiledByCompanyTable",
       page: pbPage,
@@ -155,7 +155,7 @@ const LigilationDetails = ({
       setSize: setPbSize,
     },
     {
-      id: "disposed-against",
+      id: "Disposed Cases Filed Against Company",
       label: "Disposed Cases Filed Against Company",
       apiKey: "disposedCasesFiledAgainstCompanyTable",
       page: daPage,
@@ -164,7 +164,7 @@ const LigilationDetails = ({
       setSize: setDaSize,
     },
     {
-      id: "disposed-by",
+      id: "Disposed Cases Filed by Company",
       label: "Disposed Cases Filed by Company",
       apiKey: "disposedCasesFiledByCompanyTable",
       page: dbPage,
@@ -178,10 +178,10 @@ const LigilationDetails = ({
     if (!activeSubSection) return;
 
     const refMap = {
-      "Pending Cases Filed against Company": "pending-against",
-      "Pending Cases Filed by Company": "pending-by",
-      "Disposed Cases Filed Against Company": "disposed-against",
-      "Disposed Cases Filed by Company": "disposed-by",
+      "Pending Cases Filed against Company": "Pending Cases Filed against Company",
+      "Pending Cases Filed by Company": "Pending Cases Filed by Company",
+      "Disposed Cases Filed Against Company": "Disposed Cases Filed Against Company",
+      "Disposed Cases Filed by Company": "Disposed Cases Filed by Company",
     };
 
     const targetId = refMap[activeSubSection];
@@ -191,7 +191,7 @@ const LigilationDetails = ({
       scrollToElementWithOffset(targetEl, 140);
     }
 
-  }, [activeSubSection]);
+  }, [scrollTrigger]);
 
   if (loading && !data) {
     return (
