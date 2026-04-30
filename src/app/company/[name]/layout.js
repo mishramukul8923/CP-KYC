@@ -10,7 +10,12 @@ import VersionHistory from "@/components/company/versionHistory/VersionHistory";
 import { useCompanySection } from "@/components/company/context/CompanySectionContext";
 
 export default function CompanyLayout({ children }) {
-  const { setAlertsData, setAlertsLoading, setAlertsError } = useCompanySection() || {};
+  const {
+    setAlertsData,
+    setAlertsLoading,
+    setAlertsError,
+    litigationPage
+  } = useCompanySection() || {};
   const [showStickyHeader, setShowStickyHeader] = useState(false);
   const params = useParams();
   const rawCompanyName = (params.name.replaceAll("-", " ")).toUpperCase(); // from /company/dabur because route is [name]
@@ -99,7 +104,7 @@ export default function CompanyLayout({ children }) {
 
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${encodeURIComponent(companyName)}/alerts`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${encodeURIComponent(companyName)}/alerts?page=${litigationPage}&size=10`,
           {
             headers: {
               Authorization: token ? `Bearer ${token}` : "",
@@ -122,7 +127,7 @@ export default function CompanyLayout({ children }) {
     };
 
     getAlerts();
-  }, [companyName, setAlertsData, setAlertsLoading, setAlertsError]);
+  }, [companyName, setAlertsData, setAlertsLoading, setAlertsError, litigationPage]);
 
   return (
     <>

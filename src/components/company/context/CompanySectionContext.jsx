@@ -18,6 +18,7 @@ export function CompanySectionProvider({ children }) {
   const [alertsData, setAlertsData] = useState(null);
   const [alertsLoading, setAlertsLoading] = useState(true);
   const [alertsError, setAlertsError] = useState(null);
+  const [litigationPage, setLitigationPage] = useState(1);
   const [pdfDownloadTrigger, setPdfDownloadTrigger] = useState(0);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [scrollTrigger, setScrollTrigger] = useState(0);
@@ -56,6 +57,8 @@ export function CompanySectionProvider({ children }) {
         setAlertsLoading,
         alertsError,
         setAlertsError,
+        litigationPage,
+        setLitigationPage,
         pdfDownloadTrigger,
         setPdfDownloadTrigger,
         isGeneratingPdf,

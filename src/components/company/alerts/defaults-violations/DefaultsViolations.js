@@ -1,4 +1,60 @@
+import { useState, useRef, useEffect } from "react";
 import styles from "./DefaultsViolations.module.css";
+
+const TruncatedText = ({ text }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const textRef = useRef(null);
+
+  useEffect(() => {
+    if (!textRef.current) return;
+
+    const checkTruncation = () => {
+      if (!isExpanded && textRef.current) {
+        setIsTruncated(textRef.current.scrollHeight > textRef.current.clientHeight + 2);
+      }
+    };
+
+    checkTruncation();
+
+    const resizeObserver = new ResizeObserver(() => {
+      checkTruncation();
+    });
+
+    resizeObserver.observe(textRef.current);
+
+    return () => resizeObserver.disconnect();
+  }, [text, isExpanded]);
+
+  if (!text || text === "-") return <span>{text}</span>;
+
+  return (
+    <div>
+      <div
+        ref={textRef}
+        style={{
+          display: isExpanded ? 'block' : '-webkit-box',
+          WebkitLineClamp: isExpanded ? 'unset' : 3,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          wordBreak: 'break-word'
+        }}
+      >
+        {text}
+      </div>
+      {(isTruncated || isExpanded) && (
+        <button
+          onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }}
+          style={{ background: 'none', border: 'none', color: '#2859a9ff', cursor: 'pointer', padding: 0, fontSize: '12px', fontWeight: 500 }}
+        >
+          {isExpanded ? 'Read Less' : 'Read More'}
+        </button>
+      )}
+    </div>
+  );
+};
 
 export default function DefaultsViolations({ alertsData, alertsLoading, alertsError }) {
 
@@ -20,10 +76,10 @@ export default function DefaultsViolations({ alertsData, alertsLoading, alertsEr
           <table className={styles.table}>
             <thead>
               <tr>
-                <th style={{ width: "10%" }}>Regulator</th>
-                <th style={{ width: "15%" }}>Entity</th>
-                <th style={{ width: "25%" }}>Regulatory Charges</th>
-                <th style={{ width: "25%" }}>Regulatory Action</th>
+                <th style={{ width: "8%" }}>Regulator</th>
+                <th style={{ width: "20%" }}>Entity</th>
+                <th style={{ width: "27%" }}>Regulatory Charges</th>
+                <th style={{ width: "20%" }}>Regulatory Action</th>
                 <th style={{ width: "25%" }}>Further Developments</th>
               </tr>
             </thead>
@@ -54,28 +110,28 @@ export default function DefaultsViolations({ alertsData, alertsLoading, alertsEr
         <table className={styles.table}>
           <thead>
             <tr>
-              <th style={{ width: "20%" }}>Regulator</th>
+              <th style={{ width: "15%" }}>Regulator</th>
               <th style={{ width: "15%" }}>Entity</th>
               <th style={{ width: "25%" }}>Regulatory Charges</th>
               <th style={{ width: "20%" }}>Regulatory Action</th>
-              <th style={{ width: "20%" }}>Further Developments</th>
+              <th style={{ width: "25%" }}>Further Developments</th>
             </tr>
           </thead>
           <tbody>
             {violations.length > 0 ? (
               violations.map((item, index) => (
                 <tr key={index}>
-                  <td>{item.regulator || "-"}</td>
-                  <td>{item.entity || "-"}</td>
+                  <td><TruncatedText text={item.regulator} /></td>
+                  <td><TruncatedText text={item.entity} /></td>
                   <td>
                     {item.regulatory_charges === "Not Available" ? (
                       <span className={styles.italicMuted}>{item.regulatory_charges}</span>
                     ) : (
-                      item.regulatory_charges || "-"
+                      <TruncatedText text={item.regulatory_charges} />
                     )}
                   </td>
-                  <td>{item.regulatory_action || "-"}</td>
-                  <td>{item.further_developments || "-"}</td>
+                  <td><TruncatedText text={item.regulatory_action} /></td>
+                  <td><TruncatedText text={item.further_developments} /></td>
                 </tr>
               ))
             ) : (

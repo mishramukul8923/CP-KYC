@@ -10,7 +10,8 @@ const CompanyNews = ({ companyName }) => {
     const [news, setNews] = useState([]);
     const [totalNews, setTotalNews] = useState(0);
     const [page, setPage] = useState(1);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(!!companyName);
+    const [hasFetched, setHasFetched] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [apiInfo, setApiInfo] = useState({ source: "-", lastUpdated: "-" });
 
@@ -73,7 +74,11 @@ const CompanyNews = ({ companyName }) => {
     }, [isCalendarOpen]);
 
     const fetchNews = async (pageNum = 1, shouldAppend = false) => {
-        if (!companyName || companyName === "undefined") return;
+        if (!companyName || companyName === "undefined") {
+            setIsLoading(false);
+            setHasFetched(true);
+            return;
+        }
         try {
             setIsLoading(true);
             const formatDate = (date) => {
@@ -118,6 +123,7 @@ const CompanyNews = ({ companyName }) => {
             console.error("News API Error:", error);
         } finally {
             setIsLoading(false);
+            setHasFetched(true);
         }
     };
 
@@ -343,7 +349,7 @@ const CompanyNews = ({ companyName }) => {
                     </div>
                 )}
 
-                {news.length === 0 && !isLoading && (
+                {news.length === 0 && !isLoading && hasFetched && (
                     <div className={styles.noResults}>No news articles found.</div>
                 )}
             </div>

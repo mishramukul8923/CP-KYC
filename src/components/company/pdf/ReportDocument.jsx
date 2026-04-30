@@ -392,10 +392,38 @@ export const ReportDocument = ({
   const headerInfo = companyData?.header || {};
 
   const alerts = alertsData?.regulatory_alerts || [];
+  const statutoryAlerts = alertsData?.statutory_compliance || [];
+  const auditorAlerts = alertsData?.auditors || [];
+  const litigationAlerts = alertsData?.litigations?.detailed_cases?.items || [];
+  const litigationSummaryCards = alertsData?.litigations?.summary_cards || {};
+  const litigationSummaryTable = alertsData?.litigations?.summary_table || [];
 
   const allDirectors = directorsData?.directors || [];
-  const currentDirectors = allDirectors.filter(d => !d.din_pan.includes('*'));
-  const pastDirectors = allDirectors.filter(d => d.din_pan.includes('*'));
+  const currentDirectors = allDirectors.filter(d => !d.cessation_date || d.cessation_date === '-');
+  const pastDirectors = allDirectors.filter(d => d.cessation_date && d.cessation_date !== '-');
+
+  const renderCompactHeader = () => (
+    <View style={{
+      position: 'absolute',
+      top: 10,
+      left: 30,
+      right: 30,
+      borderBottomWidth: 1,
+      borderBottomColor: '#f1f1f1',
+      paddingBottom: 5,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      zIndex: 100
+    }} fixed render={({ pageNumber }) => (
+      pageNumber > 1 ? (
+        <>
+          <Text style={{ fontSize: 8, fontFamily: 'Helvetica-Bold', color: '#041e42' }}>{ci.legal_name || "Company Report"}</Text>
+          <Image src="/icons/pdfLogocompanyWiki.png" style={{ width: 50 }} />
+        </>
+      ) : null
+    )} />
+  );
 
   const renderDirectorTable = (directorsList, tableTitle) => {
     if (directorsList.length === 0) return null;
@@ -403,7 +431,7 @@ export const ReportDocument = ({
       <View style={styles.section} wrap={false}>
         <Text style={styles.heading2}>{tableTitle}</Text>
         <View style={styles.table}>
-          <View style={styles.tableRow}>
+          <View style={styles.tableRow} fixed>
             <View style={[styles.tableColHeader, { width: '20%' }]}><Text style={styles.tableCellHeader}>DIN/PAN</Text></View>
             <View style={[styles.tableColHeader, { width: '30%' }]}><Text style={styles.tableCellHeader}>Name</Text></View>
             <View style={[styles.tableColHeader, { width: '20%' }]}><Text style={styles.tableCellHeader}>Designation</Text></View>
@@ -428,8 +456,10 @@ export const ReportDocument = ({
     if (text === null || text === undefined || String(text).trim() === "" || text === "-") return "-";
     const str = String(text);
     // Only insert zero-width spaces for long strings that DON'T contain spaces and AREN'T emails
-    if (!str.includes(' ') && !str.includes('@') && str.length > 15) {
-      return str.replace(/([^\s]{10})(?=[^\s])/g, '$1\u200B');
+    if (!str.includes(' ') && !str.includes('@') && str.length > 20) {
+      // Don't break strings that look like formatted numbers/currency (digits, commas, dots)
+      if (/^[\d,.\s]+$/.test(str)) return str;
+      return str.replace(/([^\s]{15})(?=[^\s])/g, '$1\u200B');
     }
     return str;
   };
@@ -465,14 +495,14 @@ export const ReportDocument = ({
       <View style={styles.premiumHeaderContainer}>
         {/* Logo */}
         <View style={styles.logoCircle}>
-          <Image 
-            src={(headerInfo.logo_url && headerInfo.logo_url !== "-" && headerInfo.logo_url !== "null") 
-              ? headerInfo.logo_url 
-              : "/fallbackimagelogoforpdf.png"} 
-            style={{ 
-              width: (headerInfo.logo_url && headerInfo.logo_url !== "-" && headerInfo.logo_url !== "null") ? 50 : 120, 
-              height: (headerInfo.logo_url && headerInfo.logo_url !== "-" && headerInfo.logo_url !== "null") ? 50 : 120 
-            }} 
+          <Image
+            src={(headerInfo.logo_url && headerInfo.logo_url !== "-" && headerInfo.logo_url !== "null")
+              ? headerInfo.logo_url
+              : "/fallbackimagelogoforpdf.png"}
+            style={{
+              width: (headerInfo.logo_url && headerInfo.logo_url !== "-" && headerInfo.logo_url !== "null") ? 50 : 120,
+              height: (headerInfo.logo_url && headerInfo.logo_url !== "-" && headerInfo.logo_url !== "null") ? 50 : 120
+            }}
           />
         </View>
 
@@ -584,7 +614,7 @@ export const ReportDocument = ({
       <View style={[styles.section, { marginTop: 15 }]}>
         <Text style={styles.heading2}>{title}</Text>
         <View style={styles.table}>
-          <View style={styles.tableRow}>
+          <View style={styles.tableRow} fixed>
             {headers.map((h, i) => (
               <View key={i} style={[styles.tableColHeader, { width: colWidths[i] }]}>
                 <Text style={styles.tableCellHeader}>{formatValue(h.replace(/_/g, ' ').toUpperCase())}</Text>
@@ -605,13 +635,13 @@ export const ReportDocument = ({
     );
   };
 
-  const renderDictTable = (dictObj, title) => {
+  const renderDictTable = (dictObj, title, keys = null, marginTop = 15) => {
     if (!dictObj) return null;
-    const flatKeys = Object.keys(dictObj).filter(k => typeof dictObj[k] !== 'object' || dictObj[k] === null);
+    const flatKeys = keys || Object.keys(dictObj).filter(k => typeof dictObj[k] !== 'object' || dictObj[k] === null);
     if (flatKeys.length === 0) return null;
 
     return (
-      <View style={[styles.section, { marginTop: 15 }]}>
+      <View style={[styles.section, { marginTop: marginTop }]}>
         <Text style={styles.heading2}>{title}</Text>
         <View style={styles.table}>
           {flatKeys.map((k, i) => (
@@ -1361,13 +1391,13 @@ export const ReportDocument = ({
         <Text style={styles.heading2}>Name History</Text>
         <View style={styles.table}>
           <View style={[styles.tableRow, { backgroundColor: '#f9fafb' }]}>
-            <View style={[styles.tableColHeader, { width: '70%' }]}><Text style={styles.tableCellHeader}>Previous Name</Text></View>
-            <View style={[styles.tableColHeader, { width: '30%' }]}><Text style={styles.tableCellHeader}>Changed Date</Text></View>
+            <View style={[styles.tableColHeader, { width: '70%' }]}><Text style={styles.tableCellHeader}>Name</Text></View>
+            <View style={[styles.tableColHeader, { width: '30%' }]}><Text style={styles.tableCellHeader}>Till Date</Text></View>
           </View>
           {history.map((h, i) => (
             <View style={styles.tableRow} key={i}>
               <View style={[styles.tableCol, { width: '70%' }]}><Text style={styles.tableCell}>{formatValue(h.name)}</Text></View>
-              <View style={[styles.tableCol, { width: '30%' }]}><Text style={styles.tableCell}>{formatValue(h.from_date)}</Text></View>
+              <View style={[styles.tableCol, { width: '30%' }]}><Text style={styles.tableCell}>{formatValue(h.till_date)}</Text></View>
             </View>
           ))}
         </View>
@@ -1594,6 +1624,7 @@ export const ReportDocument = ({
     <Document>
       {/* Premium First Page */}
       <Page size="A4" style={styles.page}>
+        {renderCompactHeader()}
         <View style={[styles.letterheadContainer, { borderBottomWidth: 1, borderBottomColor: '#f1f1f1', paddingBottom: 15, width: '100%' }]}>
           <Image src="/icons/pdfLogocompanyWiki.png" style={{ width: 100 }} />
         </View>
@@ -1682,53 +1713,190 @@ export const ReportDocument = ({
       </Page>
 
       {/* Alerts Page (Moved to BEFORE Directors) */}
-      {alerts.length > 0 && (
+      {(alerts.length > 0 || statutoryAlerts.length > 0 || auditorAlerts.length > 0 || litigationAlerts.length > 0) && (
         <Page size="A4" style={styles.page}>
-          <View style={styles.section}>
-            <Text style={styles.heading2}>Regulatory Alerts</Text>
-            <View style={styles.table}>
-              <View style={styles.tableRow}>
-                <View style={[styles.tableColHeader, { width: '15%' }]}><Text style={styles.tableCellHeader}>Regulator</Text></View>
-                <View style={[styles.tableColHeader, { width: '35%' }]}><Text style={styles.tableCellHeader}>Charges</Text></View>
-                <View style={[styles.tableColHeader, { width: '30%' }]}><Text style={styles.tableCellHeader}>Action Taken</Text></View>
-                <View style={[styles.tableColHeader, { width: '10%' }]}><Text style={styles.tableCellHeader}>Severity</Text></View>
-                <View style={[styles.tableColHeader, { width: '10%' }]}><Text style={styles.tableCellHeader}>Source</Text></View>
-              </View>
-              {alerts.map((alert, index) => (
-                <View style={styles.tableRow} key={index} wrap={false}>
-                  <View style={[styles.tableCol, { width: '15%' }]}><Text style={styles.tableCell}>{formatValue(alert.regulator)}</Text></View>
-                  <View style={[styles.tableCol, { width: '35%' }]}><Text style={styles.tableCell}>{formatValue(alert.regulatory_charges)}</Text></View>
-                  <View style={[styles.tableCol, { width: '30%' }]}><Text style={styles.tableCell}>{formatValue(alert.regulatory_action)}</Text></View>
-                  <View style={[styles.tableCol, { width: '10%' }]}><Text style={styles.tableCell}>{formatValue(alert.severity)}</Text></View>
-                  <View style={[styles.tableCol, { width: '10%' }]}><Text style={styles.tableCell}>{formatValue(alert.source)}</Text></View>
+          {renderCompactHeader()}
+          {/* Regulatory Alerts */}
+          {alerts.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.heading2}>Regulatory Alerts</Text>
+              <View style={styles.table}>
+                <View style={styles.tableRow} fixed>
+                  <View style={[styles.tableColHeader, { width: '15%' }]}><Text style={styles.tableCellHeader}>Regulator</Text></View>
+                  <View style={[styles.tableColHeader, { width: '35%' }]}><Text style={styles.tableCellHeader}>Charges</Text></View>
+                  <View style={[styles.tableColHeader, { width: '30%' }]}><Text style={styles.tableCellHeader}>Action Taken</Text></View>
+                  <View style={[styles.tableColHeader, { width: '10%' }]}><Text style={styles.tableCellHeader}>Severity</Text></View>
+                  <View style={[styles.tableColHeader, { width: '10%' }]}><Text style={styles.tableCellHeader}>Source</Text></View>
                 </View>
-              ))}
+                {alerts.map((alert, index) => (
+                  <View style={styles.tableRow} key={index} wrap={false}>
+                    <View style={[styles.tableCol, { width: '15%' }]}><Text style={styles.tableCell}>{formatValue(alert.regulator)}</Text></View>
+                    <View style={[styles.tableCol, { width: '35%' }]}><Text style={styles.tableCell}>{formatValue(alert.regulatory_charges)}</Text></View>
+                    <View style={[styles.tableCol, { width: '30%' }]}><Text style={styles.tableCell}>{formatValue(alert.regulatory_action)}</Text></View>
+                    <View style={[styles.tableCol, { width: '10%' }]}><Text style={styles.tableCell}>{formatValue(alert.severity)}</Text></View>
+                    <View style={[styles.tableCol, { width: '10%' }]}><Text style={styles.tableCell}>{formatValue(alert.source)}</Text></View>
+                  </View>
+                ))}
+              </View>
             </View>
+          )}
+
+          {/* Statutory Compliance Alerts */}
+          {statutoryAlerts.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.heading2}>Statutory Compliance Alerts</Text>
+              <View style={styles.table}>
+                <View style={styles.tableRow} fixed>
+                  <View style={[styles.tableColHeader, { width: '20%' }]}><Text style={styles.tableCellHeader}>Area</Text></View>
+                  <View style={[styles.tableColHeader, { width: '30%' }]}><Text style={styles.tableCellHeader}>Description</Text></View>
+                  <View style={[styles.tableColHeader, { width: '20%' }]}><Text style={styles.tableCellHeader}>Authority</Text></View>
+                  <View style={[styles.tableColHeader, { width: '15%' }]}><Text style={styles.tableCellHeader}>Date</Text></View>
+                  <View style={[styles.tableColHeader, { width: '15%' }]}><Text style={styles.tableCellHeader}>Status</Text></View>
+                </View>
+                {statutoryAlerts.map((item, index) => (
+                  <View style={styles.tableRow} key={index} wrap={false}>
+                    <View style={[styles.tableCol, { width: '20%' }]}><Text style={styles.tableCell}>{formatValue(item.compliance_area)}</Text></View>
+                    <View style={[styles.tableCol, { width: '30%' }]}><Text style={styles.tableCell}>{formatValue(item.description)}</Text></View>
+                    <View style={[styles.tableCol, { width: '20%' }]}><Text style={styles.tableCell}>{formatValue(item.authority)}</Text></View>
+                    <View style={[styles.tableCol, { width: '15%' }]}><Text style={styles.tableCell}>{formatValue(item.effective_date)}</Text></View>
+                    <View style={[styles.tableCol, { width: '15%' }]}><Text style={styles.tableCell}>{formatValue(item.status)}</Text></View>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Auditor Alerts */}
+          {auditorAlerts.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.heading2}>Auditor Alerts</Text>
+              <View style={styles.table}>
+                <View style={styles.tableRow} fixed>
+                  <View style={[styles.tableColHeader, { width: '30%' }]}><Text style={styles.tableCellHeader}>Auditor Name</Text></View>
+                  <View style={[styles.tableColHeader, { width: '20%' }]}><Text style={styles.tableCellHeader}>Appt Date</Text></View>
+                  <View style={[styles.tableColHeader, { width: '30%' }]}><Text style={styles.tableCellHeader}>Remarks</Text></View>
+                  <View style={[styles.tableColHeader, { width: '20%' }]}><Text style={styles.tableCellHeader}>Status</Text></View>
+                </View>
+                {auditorAlerts.map((item, index) => (
+                  <View style={styles.tableRow} key={index} wrap={false}>
+                    <View style={[styles.tableCol, { width: '30%' }]}><Text style={styles.tableCell}>{formatValue(item.auditor_name)}</Text></View>
+                    <View style={[styles.tableCol, { width: '20%' }]}><Text style={styles.tableCell}>{formatValue(item.appointment_date)}</Text></View>
+                    <View style={[styles.tableCol, { width: '30%' }]}><Text style={styles.tableCell}>{formatValue(item.remarks)}</Text></View>
+                    <View style={[styles.tableCol, { width: '20%' }]}><Text style={styles.tableCell}>{formatValue(item.status)}</Text></View>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Litigation Alerts (Complete UI) */}
+          {(litigationAlerts.length > 0 || Object.keys(litigationSummaryCards).length > 0 || litigationSummaryTable.length > 0) && (
+            <View style={styles.section}>
+              <Text style={styles.heading2}>Litigation Alerts</Text>
+
+              {/* Summary Cards */}
+              {Object.keys(litigationSummaryCards).length > 0 && (
+                <View style={styles.kpiContainer}>
+                  {[
+                    { label: "Cases Filed By Company", value: litigationSummaryCards.cases_filed_by, variant: 'variant1' },
+                    { label: "Cases Filed Against Company", value: litigationSummaryCards.cases_filed_against, variant: 'variant4' },
+                    { label: "Pending Cases", value: litigationSummaryCards.pending_cases, variant: 'variant3' }
+                  ].map((item, i) => (
+                    <View key={i} style={[styles.kpiCard, styles[item.variant], { width: '32%' }]}>
+                      <Text style={styles.kpiLabel}>{item.label}</Text>
+                      <Text style={styles.kpiValue}>{formatValue(item.value)}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Summary Table */}
+              {litigationSummaryTable.length > 0 && (
+                <View style={{ marginBottom: 15 }}>
+                  <Text style={[styles.tableCellHeader, { marginBottom: 5 }]}>Summary by Court Type</Text>
+                  <View style={styles.table}>
+                    <View style={styles.tableRow}>
+                      <View style={[styles.tableColHeader, { width: '20%' }]}><Text style={styles.tableCellHeader}>Court Type</Text></View>
+                      <View style={[styles.tableColHeader, { width: '20%' }]}><Text style={styles.tableCellHeader}>Cases Filed By</Text></View>
+                      <View style={[styles.tableColHeader, { width: '20%' }]}><Text style={styles.tableCellHeader}>Cases Against</Text></View>
+                      <View style={[styles.tableColHeader, { width: '20%' }]}><Text style={styles.tableCellHeader}>Pending</Text></View>
+                      <View style={[styles.tableColHeader, { width: '20%' }]}><Text style={styles.tableCellHeader}>Total</Text></View>
+                    </View>
+                    {litigationSummaryTable.map((item, index) => (
+                      <View style={styles.tableRow} key={index} wrap={false}>
+                        <View style={[styles.tableCol, { width: '20%' }]}><Text style={styles.tableCell}>{formatValue(item.court_type)}</Text></View>
+                        <View style={[styles.tableCol, { width: '20%' }]}><Text style={styles.tableCell}>{formatValue(item.cases_filed_by)}</Text></View>
+                        <View style={[styles.tableCol, { width: '20%' }]}><Text style={styles.tableCell}>{formatValue(item.cases_against)}</Text></View>
+                        <View style={[styles.tableCol, { width: '20%' }]}><Text style={styles.tableCell}>{formatValue(item.pending)}</Text></View>
+                        <View style={[styles.tableCol, { width: '20%' }]}><Text style={styles.tableCell}>{formatValue(item.total)}</Text></View>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              )}
+
+              {/* Detailed Alerts */}
+              {litigationAlerts.length > 0 && (
+                <View>
+                  <Text style={[styles.tableCellHeader, { marginBottom: 5 }]}>Detailed Litigation Alerts</Text>
+                  <View style={styles.table}>
+                    <View style={styles.tableRow} fixed>
+                      <View style={[styles.tableColHeader, { width: '20%' }]}><Text style={styles.tableCellHeader}>Court</Text></View>
+                      <View style={[styles.tableColHeader, { width: '30%' }]}><Text style={styles.tableCellHeader}>Filed By</Text></View>
+                      <View style={[styles.tableColHeader, { width: '30%' }]}><Text style={styles.tableCellHeader}>Against</Text></View>
+                      <View style={[styles.tableColHeader, { width: '10%' }]}><Text style={styles.tableCellHeader}>Pending</Text></View>
+                      <View style={[styles.tableColHeader, { width: '10%' }]}><Text style={styles.tableCellHeader}>Severity</Text></View>
+                    </View>
+                    {litigationAlerts.map((item, index) => (
+                      <View style={styles.tableRow} key={index} wrap={false}>
+                        <View style={[styles.tableCol, { width: '20%' }]}><Text style={styles.tableCell}>{formatValue(item.court_type)}</Text></View>
+                        <View style={[styles.tableCol, { width: '30%' }]}><Text style={styles.tableCell}>{formatValue(item.filed_by)}</Text></View>
+                        <View style={[styles.tableCol, { width: '30%' }]}><Text style={styles.tableCell}>{formatValue(item.filed_against)}</Text></View>
+                        <View style={[styles.tableCol, { width: '10%' }]}><Text style={styles.tableCell}>{formatValue(item.pending_count)}</Text></View>
+                        <View style={[styles.tableCol, { width: '10%' }]}><Text style={styles.tableCell}>{formatValue(item.severity)}</Text></View>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              )}
+            </View>
+          )}
+
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
           </View>
-        
-        <View style={styles.watermarkContainer} fixed>
-          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-        </View>
-      </Page>
+        </Page>
       )}
 
       {/* Directors Overview Page */}
       {allDirectors.length > 0 && (
         <Page size="A4" style={styles.page}>
+          {renderCompactHeader()}
           <Text style={styles.heading2}>Directors & KMP Details</Text>
+
+          {(() => {
+            const dirStats = [
+              { label: 'Current Directors', count: directorsData?.summary?.current_directors ?? "-" },
+              { label: 'Past Directors', count: directorsData?.summary?.past_directors ?? "-" },
+              { label: 'Current KMPs', count: directorsData?.summary?.current_kmp ?? "-" },
+              { label: 'Past KMPs', count: directorsData?.summary?.past_kmp ?? "-" },
+            ];
+            return renderLitigationKPIs(dirStats);
+          })()}
+
           {renderDirectorTable(currentDirectors, "Current Directors & KMP")}
           {renderDirectorTable(pastDirectors, "Past Directors & KMP")}
-        
-        <View style={styles.watermarkContainer} fixed>
-          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-        </View>
-      </Page>
+
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
+        </Page>
       )}
 
       {/* Individual Director Data Page(s) */}
       {allDirectors.length > 0 && allDirectors.map((d, index) => (
         <Page size="A4" style={styles.page} key={`dir-detail-${index}`}>
-          <View style={styles.header}>
+          <View style={[styles.header, { marginBottom: 5 }]}>
             <View style={styles.titleContainer}>
               <Text style={styles.title}>{d.name}</Text>
               <Text style={styles.subtitle}>{d.designation} | DIN/PAN: {d.din_pan}</Text>
@@ -1736,29 +1904,37 @@ export const ReportDocument = ({
           </View>
 
           {/* Main Flat Data */}
-          {renderDictTable(d, "Primary Information")}
+          {renderDictTable(d, "Primary Information", null, 0)}
 
           {/* Details Dictionary */}
-          {d.details && renderDictTable(d.details, "Personal Details")}
+          {(() => {
+            const personalDetailsKeys = [
+              "din_pan", "pan", "dob", "nationality",
+              "gender", "residential_status", "email", "mobile",
+              "director_type", "din_status", "current_residential_address",
+              "permanent_address"
+            ];
+            return d.details && renderDictTable(d.details, "Personal Details", personalDetailsKeys);
+          })()}
 
           {/* Sub-tables Arrays */}
-          {renderDynamicTable(d.career_timeline, "Career Timeline")}
+          <View break>
+            {renderDynamicTable(d.career_timeline, "Career Timeline")}
+          </View>
           {renderDynamicTable(d.qualifications, "Qualifications")}
 
           {d.details?.current_positions && renderDynamicTable(d.details.current_positions.map(p => ({
-            "Company/LLP name": p.company_name,
-            "Designation": p.designation,
+            "Company/LLP name": p.company_name || "-",
+            "Designation": p.designation || "-",
             "Type": formatValue(p.category),
-            "Period": p.tenure,
-            "Appointment Date": p.appointment_date
+            "Period": p.tenure_years || p.tenure || "-",
+            "Appointment Date": p.appointment_date || "-"
           })), "Current Positions")}
 
           {d.details?.past_positions && renderDynamicTable(d.details.past_positions.map(p => ({
-            "Company/LLP name": p.company_name,
-            "Designation": p.designation,
-            "Type": formatValue(p.category),
-            "Period": p.tenure,
-            "Appointment Date": p.appointment_date
+            "Company/LLP name": p.company_name || "-",
+            "Designation": p.designation || "-",
+            "Tenure": p.tenure_years || p.tenure || "-"
           })), "Past Positions")}
 
           {renderDynamicTable(d.previous_companies ? d.previous_companies.map(p => ({
@@ -1777,11 +1953,11 @@ export const ReportDocument = ({
           {renderDynamicTable(d.banking_default_declarations, "Banking Default Declarations")}
           {renderDynamicTable(d.regulatory_compliance_history, "Regulatory Compliance History")}
           {renderDynamicTable(d.pep_sanctions_checks, "PEP & Sanctions Checks")}
-        
-        <View style={styles.watermarkContainer} fixed>
-          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-        </View>
-      </Page>
+
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
+        </Page>
       ))}
 
       {/* Phase 3: Control & Ownership - Shareholding (Moved to after directors) */}
@@ -2077,16 +2253,17 @@ export const ReportDocument = ({
             </View>
           )}
 
-        
-        <View style={styles.watermarkContainer} fixed>
-          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-        </View>
-      </Page>
+
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
+        </Page>
       )}
 
       {/* Phase 5: Landscape Balance Sheets */}
       {(bsStandalone || bsConsolidated) && (
         <Page size="A4" orientation="landscape" style={styles.page}>
+          {renderCompactHeader()}
           {bsStandalone && renderBalanceSheetTable(bsStandalone, "Standalone")}
           {bsConsolidated && (
             <View break>
@@ -2141,39 +2318,42 @@ export const ReportDocument = ({
               {renderAuditorsTable(audConsolidated, "Consolidated")}
             </View>
           )}
-        
-        <View style={styles.watermarkContainer} fixed>
-          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-        </View>
-      </Page>
+
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
+        </Page>
       )}
 
       {/* Phase 6: Charges Information (Portrait) */}
       {chargesData && (
         <Page size="A4" orientation="portrait" style={styles.page}>
+          {renderCompactHeader()}
           {renderChargesSection(chargesData)}
-        
-        <View style={styles.watermarkContainer} fixed>
-          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-        </View>
-      </Page>
+
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
+        </Page>
       )}
 
       {/* Phase 7: Peer Comparison & Business Activity (Portrait) */}
       {peerComparisonData && (
         <Page size="A4" orientation="portrait" style={styles.page}>
+          {renderCompactHeader()}
           {renderPeerComparisonSection(peerComparisonData)}
-        
-        <View style={styles.watermarkContainer} fixed>
-          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-        </View>
-      </Page>
+
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
+        </Page>
       )}
 
       {/* Phase 8: Compliance Details (Portrait) */}
       <Page size="A4" orientation="portrait" style={styles.page}>
+        {renderCompactHeader()}
         {renderComplianceSection(auditorRemarksData)}
-      
+
         <View style={styles.watermarkContainer} fixed>
           <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
         </View>
@@ -2182,12 +2362,13 @@ export const ReportDocument = ({
       {/* Phase 9: Litigation (Portrait) */}
       {litigationData && (
         <Page size="A4" orientation="portrait" style={styles.page}>
+          {renderCompactHeader()}
           {renderLitigationSection(litigationData)}
-        
-        <View style={styles.watermarkContainer} fixed>
-          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-        </View>
-      </Page>
+
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
+        </Page>
       )}
 
     </Document>

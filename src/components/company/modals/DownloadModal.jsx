@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { X, FileText } from 'lucide-react';
 import styles from './DownloadModal.module.css';
 
 const DownloadModal = ({ isOpen, onClose }) => {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (

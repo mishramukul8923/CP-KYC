@@ -74,15 +74,15 @@ const NameHistory = ({ companyData, loading, error }) => {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th className={styles.th}>Former Name</th>
-                <th className={styles.th}>Changed From</th>
+                <th className={styles.th}>Name</th>
+                <th className={styles.th}>Till Date</th>
               </tr>
             </thead>
             <tbody>
               {displayData.map((item, index) => (
                 <tr key={index} className={styles.tr}>
                   <td className={styles.td}>{item.name || "-"}</td>
-                  <td className={styles.td}>{item.tillDate || "-"}</td>
+                  <td className={styles.td}>{item.till_date || "-"}</td>
                 </tr>
               ))}
             </tbody>

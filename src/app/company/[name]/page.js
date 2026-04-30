@@ -402,6 +402,19 @@ export default function CompanyPage() {
             setAuditorRemarksData(auditorRemarks);
           } catch (e) { console.error("Error fetching auditor remarks for PDF:", e); }
 
+          // Fetch Alerts data for the report with size 1000
+          let finalAlertsData = alertsData;
+          const fetchAlerts = async () => {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/alerts?page=1&size=1000`,
+              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+            );
+            return await response.json();
+          };
+          try {
+            finalAlertsData = await fetchAlerts();
+          } catch (e) { console.error("Error fetching alerts for PDF:", e); }
+
           // Fetch Litigation data for the report
           let litigation = litigationData;
           const fetchLitigation = async () => {
@@ -424,7 +437,7 @@ export default function CompanyPage() {
 
           const blob = await pdf(<ReportDocument
             companyData={companyData}
-            alertsData={alertsData}
+            alertsData={finalAlertsData}
             directorsData={directors}
             shareholdingData={shareholding}
             securityAllotmentData={securityAllotment}

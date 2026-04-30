@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import styles from "./AlertOverview.module.css";
 import RowsPerPage from "@/components/common/RowsPerPage";
+import { useCompanySection } from "@/components/company/context/CompanySectionContext";
 
 const TruncatedText = ({ text }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -37,7 +38,7 @@ const TruncatedText = ({ text }) => {
         ref={textRef}
         style={{
           display: isExpanded ? 'block' : '-webkit-box',
-          WebkitLineClamp: isExpanded ? 'unset' : 4,
+          WebkitLineClamp: isExpanded ? 'unset' : 3,
           WebkitBoxOrient: 'vertical',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
@@ -60,6 +61,7 @@ const TruncatedText = ({ text }) => {
 };
 
 export default function AlertsOverview({ alertsData, alertsLoading, alertsError }) {
+  const { litigationPage, setLitigationPage } = useCompanySection();
 
   if (alertsError) {
     return (
@@ -71,7 +73,8 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
     );
   }
 
-  if (alertsLoading || !alertsData) {
+  // Only show skeletons on initial load (when alertsData is null)
+  if (alertsLoading && !alertsData) {
     return (
       <div className={styles.container}>
         <div className={styles.cards}>
@@ -106,8 +109,57 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
     dev: item.further_developments ?? "-",
     src: item.source ?? "-",
     sev: item.severity ?? "-",
-    // action: true
   }));
+
+  const litigationData = alertsData?.litigations || {};
+  const litigationSummary = alertsData?.summary?.court || { high: 0, medium: 0, low: 0, total: 0 };
+  const detailedCases = litigationData.detailed_cases || {};
+  const litigationDetailedRows = (detailedCases.items || []).map(item => ({
+    type: item.court_type ?? "-",
+    cType: item.case_type ?? "-",
+    by: item.filed_by ?? "-",
+    ag: item.filed_against ?? "-",
+    pen: item.pending_count ?? "-",
+    tot: item.total_count ?? "-",
+    sev: item.severity ?? "-"
+  }));
+
+  const litigationPagination = {
+    total: detailedCases.total || 0,
+    page: detailedCases.page || 1,
+    size: detailedCases.size || 10,
+    pages: detailedCases.pages || 1
+  };
+
+  const litigationSummaryTableRows = (litigationData.summary_table || []).map(item => ({
+    type: item.court_type ?? "-",
+    by: item.cases_filed_by ?? "-",
+    ag: item.cases_against ?? "-",
+    pen: item.pending ?? "-",
+    tot: item.total ?? "-"
+  }));
+
+  const auditorRows = (alertsData?.auditors || []).map(item => ({
+    name: item.auditor_name ?? "-",
+    date: item.appointment_date ?? "-",
+    tenure: item.tenure ?? "-",
+    remarks: item.remarks ?? "-",
+    status: item.status ?? "-",
+    sev: item.severity ?? "-"
+  }));
+
+  const statutoryRows = (alertsData?.statutory_compliance || []).map(item => ({
+    area: item.compliance_area ?? "-",
+    desc: item.description ?? "-",
+    auth: item.authority ?? "-",
+    date: item.effective_date ?? "-",
+    sev: item.severity ?? "-",
+    status: item.status ?? "-",
+    action: true
+  }));
+
+  const auditorSummary = alertsData?.summary?.auditors || { high: 0, medium: 0, low: 0, total: 0 };
+  const statutorySummary = alertsData?.summary?.statutory || { high: 0, medium: 0, low: 0, total: 0 };
 
   const [expandedRow, setExpandedRow] = useState(null);
 
@@ -127,11 +179,11 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
     {
       id: "statutory",
       label: "Statutory Compliance",
-      red: "-",
-      orange: "-",
-      yellow: "-",
+      red: statutorySummary.high ?? "-",
+      orange: statutorySummary.medium ?? "-",
+      yellow: statutorySummary.low ?? "-",
       blue: "-",
-      total: "-",
+      total: statutorySummary.total ?? "-",
       type: "table",
       headers: [
         "Compliance Area",
@@ -142,26 +194,7 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
         "Status",
         "",
       ],
-      rows: [
-        // {
-        //   area: "GST Registration",
-        //   desc: "Registration cancelled due to non-filing of return",
-        //   auth: "GST Council",
-        //   date: "15 Mar 2024",
-        //   sev: "High",
-        //   status: "Cancelled",
-        //   action: true,
-        // },
-        // {
-        //   area: "EPFO Compliance",
-        //   desc: "Establishment default in PF, pension & admin cor",
-        //   auth: "EPFO",
-        //   date: "25 Sep 2023",
-        //   sev: "High",
-        //   status: "Active Default",
-        //   action: true,
-        // },
-      ],
+      rows: statutoryRows,
     },
     {
       id: "regulatory",
@@ -198,24 +231,28 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
     {
       id: "litigation",
       label: "Litigations",
-      red: "-",
-      orange: "-",
-      yellow: "-",
+      red: litigationSummary.high ?? "-",
+      orange: litigationSummary.medium ?? "-",
+      yellow: litigationSummary.low ?? "-",
       blue: "-",
-      total: "-",
+      total: litigationSummary.total ?? "-",
       type: "litigation",
       summary: [
         {
           label: "Cases Filed By Company",
-          val: "- ",
+          val: litigationData.summary_cards?.cases_filed_by ?? "-",
           style: styles.litCardBlue,
         },
         {
           label: "Cases Filed Against Company",
-          val: "- ",
+          val: litigationData.summary_cards?.cases_filed_against ?? "-",
           style: styles.litCardRed,
         },
-        { label: "Pending Cases", val: "-", style: styles.litCardOrange },
+        { 
+          label: "Pending Cases", 
+          val: litigationData.summary_cards?.pending_cases ?? "-", 
+          style: styles.litCardOrange 
+        },
       ],
       table1: {
         headers: [
@@ -225,19 +262,7 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
           "Pending",
           "Total",
         ],
-        rows: [
-          {
-            type: "District Court",
-            by: "-",
-            ag: "-",
-            pen: "-",
-            tot: "-",
-          },
-          { type: "High Court", by: "-", ag: "-", pen: "-", tot: "-" },
-          { type: "Supreme Court", by: "-", ag: "-", pen: "-", tot: "-" },
-          { type: "NCLT", by: "-", ag: "-", pen: "-", tot: "-" },
-          { type: "DRT", by: "-", ag: "-", pen: "-", tot: "-" },
-        ],
+        rows: litigationSummaryTableRows,
       },
       table2: {
         headers: [
@@ -249,45 +274,17 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
           "Total Count",
           "Severity",
         ],
-        rows: [
-          // {
-          //   type: "Supreme Court",
-          //   cType: "Tax Dispute",
-          //   by: "Tax Dispute",
-          //   ag: "Dabur India Limited",
-          //   pen: "1",
-          //   tot: "1",
-          //   sev: "High",
-          // },
-          // {
-          //   type: "High Court Delhi",
-          //   cType: "Product Liability",
-          //   by: "Consumer Forum",
-          //   ag: "Dabur India Limited",
-          //   pen: "15",
-          //   tot: "28",
-          //   sev: "Medium",
-          // },
-          // {
-          //   type: "District Court Mumbai",
-          //   cType: "Contract Dispute",
-          //   by: "Dabur India Limited",
-          //   ag: "Vendor XYZ Pvt Ltd",
-          //   pen: "3",
-          //   tot: "5",
-          //   sev: "Medium",
-          // },
-        ],
+        rows: litigationDetailedRows,
       },
     },
     {
       id: "auditors",
       label: "Auditors",
-      red: "-",
-      orange: "-",
-      yellow: "-",
+      red: auditorSummary.high ?? "-",
+      orange: auditorSummary.medium ?? "-",
+      yellow: auditorSummary.low ?? "-",
       blue: "-",
-      total: "-",
+      total: auditorSummary.total ?? "-",
       type: "table",
       headers: [
         "Auditor Name",
@@ -297,16 +294,7 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
         "Status",
         "Severity",
       ],
-      rows: [
-        // {
-        //   name: "B S R & Co. LLP",
-        //   date: "15 Sep 2020",
-        //   tenure: "3 years",
-        //   rem: "Resigned citing disagreement...",
-        //   stat: "Resigned",
-        //   sev: "High",
-        // },
-      ],
+      rows: auditorRows,
     },
     {
       id: "credit",
@@ -789,9 +777,11 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
                         </table>
                       </div>
                       {/* Pagination Footer based on image data */}
+                      {/* Pagination Footer */}
                       <div className={styles.paginationRow}>
                         <span className={styles.showingText}>
-                          Showing 1-10 of 20
+                          Showing {(litigationPagination.page - 1) * litigationPagination.size + 1}-
+                          {Math.min(litigationPagination.page * litigationPagination.size, litigationPagination.total)} of {litigationPagination.total}
                         </span>
                         <div className={styles.paginationControls}>
                           <div className={styles.paginationInfo}>
@@ -800,38 +790,54 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
                             </span>
                             <RowsPerPage
                               openTop={true}
-                              value={rowsPerPage}
-                              onChange={setRowsPerPage}
+                              value={litigationPagination.size}
+                              onChange={() => {}} // Handle if needed
                             />
                           </div>
 
-                          <span className={styles.pageLabel}>Page 1 of 10</span>
+                          <span className={styles.pageLabel}>Page {litigationPagination.page} of {litigationPagination.pages}</span>
                           <div className={styles.navButtons}>
-                            <button className={styles.navBtnDisabled}>
+                            <button 
+                              className={litigationPagination.page === 1 ? styles.navBtnDisabled : styles.navBtn}
+                              onClick={() => setLitigationPage(1)}
+                              disabled={litigationPagination.page === 1}
+                            >
                               <img
                                 src="/icons/chevrons-left.svg"
                                 alt="First page"
                                 className={styles.navIcon}
                               />
                             </button>
-                            <button className={styles.navBtnDisabled}>
+                            <button 
+                              className={litigationPagination.page === 1 ? styles.navBtnDisabled : styles.navBtn}
+                              onClick={() => setLitigationPage(prev => Math.max(1, prev - 1))}
+                              disabled={litigationPagination.page === 1}
+                            >
                               <img
                                 src="/icons/chevron-left.svg"
-                                alt="First page"
+                                alt="Previous page"
                                 className={styles.navIcon}
                               />
                             </button>
-                            <button className={styles.navBtn}>
+                            <button 
+                              className={litigationPagination.page === litigationPagination.pages ? styles.navBtnDisabled : styles.navBtn}
+                              onClick={() => setLitigationPage(prev => Math.min(litigationPagination.pages, prev + 1))}
+                              disabled={litigationPagination.page === litigationPagination.pages}
+                            >
                               <img
                                 src="/icons/chevron-right-black.svg"
-                                alt="First page"
+                                alt="Next page"
                                 className={styles.navIcon}
                               />
                             </button>
-                            <button className={styles.navBtn}>
+                            <button 
+                              className={litigationPagination.page === litigationPagination.pages ? styles.navBtnDisabled : styles.navBtn}
+                              onClick={() => setLitigationPage(litigationPagination.pages)}
+                              disabled={litigationPagination.page === litigationPagination.pages}
+                            >
                               <img
                                 src="/icons/chevrons-right.svg"
-                                alt="First page"
+                                alt="Last page"
                                 className={styles.navIcon}
                               />
                             </button>

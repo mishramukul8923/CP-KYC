@@ -1,5 +1,5 @@
 import styles from "./Charges.module.css";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import RowsPerPage from "@/components/common/RowsPerPage";
 import { useState } from "react";
 import { useEffect, useRef } from "react";
@@ -9,6 +9,33 @@ import { formatDateToIST } from "@/utils/dateFormatter";
 
 
 export default function ChargesPage({ charges, loading, error, openPage, closedPage, limit, setOpenPage, setClosedPage, setLimit }) {
+  const { activeSubSection, scrollTrigger } = useCompanySection();
+  const containerRef = useRef(null);
+  const closedChargesRef = useRef(null);
+
+  useEffect(() => {
+    if (!activeSubSection) return;
+
+    const scroll = (ref) => {
+      if (ref?.current) {
+        scrollToElementWithOffset(ref.current, 140);
+      }
+    };
+
+
+    switch (activeSubSection) {
+      case "Open Charges":
+        scroll(containerRef);
+        break;
+
+      case "Closed Charges":
+        scroll(closedChargesRef);
+        break;
+
+      default:
+        break;
+    }
+  }, [activeSubSection, scrollTrigger]);
 
   if (loading) {
     return (
@@ -57,35 +84,6 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
   if (!charges) {
     return <div className={styles.container}>No data available</div>;
   }
-
-  const { activeSubSection, scrollTrigger } = useCompanySection();
-
-  const containerRef = useRef(null);
-  const closedChargesRef = useRef(null);
-
-  useEffect(() => {
-    if (!activeSubSection) return;
-
-    const scroll = (ref) => {
-      if (ref?.current) {
-        scrollToElementWithOffset(ref.current, 140);
-      }
-    };
-
-
-    switch (activeSubSection) {
-      case "Open Charges":
-        scroll(containerRef);
-        break;
-
-      case "Closed Charges":
-        scroll(closedChargesRef);
-        break;
-
-      default:
-        break;
-    }
-  }, [scrollTrigger]);
 
   const closedCharges = [
     // {
@@ -249,6 +247,14 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
           <div className={styles.chartWrapper}>
             <ResponsiveContainer width={200} height={200}>
               <PieChart>
+                <Tooltip
+                  formatter={(value, name) => {
+                    const total = openChartData.reduce((acc, curr) => acc + curr.value, 0);
+                    const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                    return [`${value} Cr (${percent}%)`, name];
+                  }}
+                  contentStyle={{ borderRadius: '8px', border: '1px solid #E4E4E7', fontSize: '12px' }}
+                />
                 <Pie
                   data={openChartData}
                   dataKey="value"
@@ -274,12 +280,11 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
                   <span className={styles.legendValue}>{charges?.summary?.open_amount ?? "-"}</span>
                 </div>
               </div>
-              {/* <div className={styles.legendDivider}></div> */}
               <div className={styles.legendItem}>
                 <div className={styles.legendDot} style={{ backgroundColor: COLORS[1] }}></div>
                 <div style={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
-                  <span className={styles.legendText}>Total Charges:</span>
-                  <span className={styles.legendValue}>{totalAmt > 0 ? formatNumber(totalAmt) : "-"} Cr</span>
+                  <span className={styles.legendText}>Closed Charges:</span>
+                  <span className={styles.legendValue}>{charges?.summary?.closed_amount ?? "-"}</span>
                 </div>
               </div>
             </div>

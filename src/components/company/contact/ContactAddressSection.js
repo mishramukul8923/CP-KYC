@@ -55,7 +55,24 @@ const ContactAddressSection = ({ companyData, loading, error }) => {
       value: contact.registered_address || "-",
     },
     {
-      label: "Official Website",
+      label: "Country",
+      value: contact.country || "-",
+    },
+    {
+      label: "Telephone",
+      value: contact.telephone || "-",
+
+    },
+    {
+      label: "Email Address",
+      value: (cleanedEmail !== "-") ? (
+        <a href={`mailto:${cleanedEmail}`} className={styles.link}>
+          {cleanedEmail}
+        </a>
+      ) : "-",
+    },
+    {
+      label: "Website",
       value: (
         <a
           href={contact.website ? (contact.website.match(/^https?:\/\//) ? contact.website : `https://${contact.website}`) : undefined}
@@ -66,20 +83,7 @@ const ContactAddressSection = ({ companyData, loading, error }) => {
           {contact.website || "-"}
         </a>
       ),
-    },
-
-    {
-      label: "Country",
-      value: contact.country || "-",
-    },
-    {
-      label: "Email Address",
-      value: (cleanedEmail !== "-") ? (
-        <a href={`mailto:${cleanedEmail}`} className={styles.link}>
-          {cleanedEmail}
-        </a>
-      ) : "-",
-    },
+    }
 
   ];
 

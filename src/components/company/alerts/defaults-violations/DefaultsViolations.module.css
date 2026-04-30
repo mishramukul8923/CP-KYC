@@ -38,10 +38,10 @@
 .table td {
   padding: 16px;
   font-size: 14px;
-  line-height: 20px;
+  /* line-height: 20px; */
   color: rgba(39, 39, 42, 1);
   border-bottom: 1px solid rgba(228, 228, 231, 1);
-  /* vertical-align: top; */
+  vertical-align: top;
   font-weight: 400;
 }
 
@@ -64,6 +64,7 @@
   .tableContainer {
     overflow-x: auto;
   }
+
   .table {
     min-width: 1000px;
   }
@@ -73,6 +74,7 @@
   .container {
     padding: 16px;
   }
+
   .sectionTitle {
     font-size: 18px;
   }
@@ -89,6 +91,7 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }

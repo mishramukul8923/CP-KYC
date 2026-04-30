@@ -13,7 +13,7 @@ import { scrollToElementWithOffset } from "@/utils/scrollUtils";
 import { formatDateToIST } from "@/utils/dateFormatter";
 
 
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 const OwnershipSection = ({
   companyHighlights,
@@ -145,9 +145,9 @@ const OwnershipSection = ({
 
   if (totalHolding < 100 && totalHolding > 0) {
     promoterHoldingData.push({
-      name: "Remaining",
+      name: "Promoter Holding",
       value: parseFloat((100 - totalHolding).toFixed(2)),
-      color: "#F1F5F9" // A light gray for remaining
+      color: "#f4f4f5"
     });
   }
 
@@ -398,6 +398,10 @@ const OwnershipSection = ({
                     <div className={styles.donutWrapper}>
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
+                          <Tooltip
+                            formatter={(value, name) => [`${value}%`, name]}
+                            contentStyle={{ borderRadius: '8px', border: '1px solid #E4E4E7', fontSize: '12px' }}
+                          />
                           <Pie
                             data={promoterHoldingData}
                             innerRadius={55}
@@ -415,8 +419,20 @@ const OwnershipSection = ({
                     </div>
 
                     <div className={styles.chartLegendGrid}>
+                      <div className={styles.chartLegendItem}>
+                        <div className={styles.legendLeft}>
+                          <div
+                            className={styles.legendColor}
+                            style={{ backgroundColor: "#f4f4f5" }}
+                          ></div>
+                          <span className={styles.legendName}>Promoter Holding:</span>
+                        </div>
+                        <span className={styles.legendPercent}>
+                          {shareholdingData?.promoter_holding_section?.promoter_holding_percentage_of_total_equity || "-"}
+                        </span>
+                      </div>
                       {promoterHoldingData
-                        .filter(item => item.name !== "Remaining")
+                        .filter(item => item.name !== "Remaining" && item.name !== "Promoter Holding")
                         .map((item, idx) => (
                           <div key={idx} className={styles.chartLegendItem}>
                             <div className={styles.legendLeft}>

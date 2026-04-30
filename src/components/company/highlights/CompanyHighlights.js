@@ -349,7 +349,7 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
                 ))) : (
                   <tr>
                     <td colSpan="5" className={styles.noData}>
-                      No open charges found on this page
+                      No open charges found.
                     </td>
                   </tr>
                 )}
