@@ -41,11 +41,11 @@ const CompanyDetails = ({ companyData, loading, error }) => {
 
   const data = [
     { label: 'CIN/LLPIN', value: info.cin ?? '-' },
-    { 
-      label: 'PAN', 
+    {
+      label: 'PAN',
       value: info.pan ?? '-',
       isProtected: !info.pan || String(info.pan).trim() === '' || String(info.pan).trim() === '-',
-      protectedText: "Pan not available. Need MCA document"
+      protectedText: "Pan not available. Need MCA document."
     },
     { label: 'LEI Number', value: info.lei_number ?? '-' },
     { label: 'Company Legal Name', value: info.legal_name ?? '-' },
@@ -62,8 +62,8 @@ const CompanyDetails = ({ companyData, loading, error }) => {
     { label: 'Stock Symbol', value: info.stock_symbol ?? '-' },
     { label: 'Industry', value: info.industry ?? '-' },
     { label: 'Segment', value: info.segment ?? '-' },
-    { 
-      label: 'Market Capitalization (Cr)', 
+    {
+      label: 'Market Capitalization (Cr)',
       value: info.market_cap ?? 'PDF Parsing(MCA Documents)',
       isProtected: !info.market_cap || info.market_cap === 'PDF Parsing(MCA Documents)',
       protectedText: "Need MCA Docs"
@@ -86,7 +86,7 @@ const CompanyDetails = ({ companyData, loading, error }) => {
               className={`${styles.infoBox} ${item.isProtected ? styles.infoBoxWithLock : ''} ${item.fullWidth ? styles.fullWidth : ''}`}
             >
               <div className={styles.label}>{item.label}</div>
-              
+
               {item.isProtected ? (
                 <div style={{ position: 'relative' }}>
                   <div className={styles.blurValue}>{item.value}</div>
