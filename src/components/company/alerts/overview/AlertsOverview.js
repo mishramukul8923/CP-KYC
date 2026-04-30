@@ -248,10 +248,10 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
           val: litigationData.summary_cards?.cases_filed_against ?? "-",
           style: styles.litCardRed,
         },
-        { 
-          label: "Pending Cases", 
-          val: litigationData.summary_cards?.pending_cases ?? "-", 
-          style: styles.litCardOrange 
+        {
+          label: "Pending Cases",
+          val: litigationData.summary_cards?.pending_cases ?? "-",
+          style: styles.litCardOrange
         },
       ],
       table1: {
@@ -791,13 +791,13 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
                             <RowsPerPage
                               openTop={true}
                               value={litigationPagination.size}
-                              onChange={() => {}} // Handle if needed
+                              onChange={() => { }} // Handle if needed
                             />
                           </div>
 
                           <span className={styles.pageLabel}>Page {litigationPagination.page} of {litigationPagination.pages}</span>
                           <div className={styles.navButtons}>
-                            <button 
+                            <button
                               className={litigationPagination.page === 1 ? styles.navBtnDisabled : styles.navBtn}
                               onClick={() => setLitigationPage(1)}
                               disabled={litigationPagination.page === 1}
@@ -808,7 +808,7 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
                                 className={styles.navIcon}
                               />
                             </button>
-                            <button 
+                            <button
                               className={litigationPagination.page === 1 ? styles.navBtnDisabled : styles.navBtn}
                               onClick={() => setLitigationPage(prev => Math.max(1, prev - 1))}
                               disabled={litigationPagination.page === 1}
@@ -819,7 +819,7 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
                                 className={styles.navIcon}
                               />
                             </button>
-                            <button 
+                            <button
                               className={litigationPagination.page === litigationPagination.pages ? styles.navBtnDisabled : styles.navBtn}
                               onClick={() => setLitigationPage(prev => Math.min(litigationPagination.pages, prev + 1))}
                               disabled={litigationPagination.page === litigationPagination.pages}
@@ -830,7 +830,7 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
                                 className={styles.navIcon}
                               />
                             </button>
-                            <button 
+                            <button
                               className={litigationPagination.page === litigationPagination.pages ? styles.navBtnDisabled : styles.navBtn}
                               onClick={() => setLitigationPage(litigationPagination.pages)}
                               disabled={litigationPagination.page === litigationPagination.pages}
@@ -906,22 +906,22 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
 
                             <div className={styles.regulatoryTags}>
                               {[
-                                "EPFO (9)",
-                                "BSE (10)",
-                                "CDSL (5)",
-                                "NSDL (4)",
-                                "SEBI (8)",
-                                "BANKS (1)",
-                                "MSEI (1)",
-                                "NSE (1)",
-                                "DRT (1)",
-                                "DSE (2)",
-                                "NCLT (2)",
-                                "NHB (6)",
-                                "CLB (1)",
-                                "IRDA (26)",
-                                "RBI (1)",
-                                "FIU (1)",
+                                "EPFO (-)",
+                                "BSE (-)",
+                                "CDSL (-)",
+                                "NSDL (-)",
+                                "SEBI (-)",
+                                "BANKS (-)",
+                                "MSEI (-)",
+                                "NSE (-)",
+                                "DRT (-)",
+                                "DSE (-)",
+                                "NCLT (-)",
+                                "NHB (-)",
+                                "CLB (-)",
+                                "IRDA (-)",
+                                "RBI (-)",
+                                "FIU (-)",
                               ].map((tag, i) => (
                                 <span key={i} className={styles.regTag}>
                                   {tag}
@@ -1106,11 +1106,11 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
 
                             <div className={styles.regulatoryTags}>
                               {[
-                                "MCA (37)",
-                                "SEBI (16)",
-                                "Banks (6)",
-                                "BSL (2)",
-                                "DRT (2)",
+                                "MCA (-)",
+                                "SEBI (-)",
+                                "Banks (-)",
+                                "BSL (-)",
+                                "DRT (-)",
                               ].map((tag, i) => (
                                 <span key={i} className={styles.regTag}>
                                   {tag}

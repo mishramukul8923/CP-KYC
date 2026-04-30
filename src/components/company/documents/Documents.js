@@ -550,10 +550,10 @@ const Documents = ({ companyName }) => {
   }, [modalStep]);
   */
 
-  // Default category "MCA Documents" that should always be present
+  // Default category "MCA Documents"
   const defaultCategory = {
     name: "MCA Documents",
-    count: mcaHeaderInfo.totalDocuments > 0 ? mcaHeaderInfo.totalDocuments : "100+"
+    count: mcaHeaderInfo.totalDocuments > 0 ? mcaHeaderInfo.totalDocuments : null,
   };
 
   // Combine default with API categories, filtered to avoid duplicates
@@ -714,9 +714,11 @@ const Documents = ({ companyName }) => {
                           />
                         )}
                       </div>
-                      <span className={styles.countBadge}>
-                        {cat.count || "-"}
-                      </span>
+                      {cat.count > 0 && (
+                        <span className={styles.countBadge}>
+                          {cat.count}
+                        </span>
+                      )}
                     </label>
                   ))}
                 </div>
@@ -789,7 +791,7 @@ const Documents = ({ companyName }) => {
                         <div className={styles.labelWrapper}>
                           <span className={styles.checkboxLabel}>{yearValue}</span>
                         </div>
-                        {yearCount !== null && (
+                        {yearCount > 0 && (
                           <span className={styles.countBadge}>{yearCount}</span>
                         )}
                       </label>

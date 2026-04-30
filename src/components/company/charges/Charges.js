@@ -251,7 +251,7 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
                   formatter={(value, name) => {
                     const total = openChartData.reduce((acc, curr) => acc + curr.value, 0);
                     const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                    return [`${value} Cr (${percent}%)`, name];
+                    return [`${value.toLocaleString("en-IN")} Cr (${percent}%)`, name];
                   }}
                   contentStyle={{ borderRadius: '8px', border: '1px solid #E4E4E7', fontSize: '12px' }}
                 />
