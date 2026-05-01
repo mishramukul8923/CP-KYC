@@ -201,7 +201,7 @@ export default function CompanyStickyHeader({ visible, companyData, loading }) {
                           Refresh Company
                         </button>
                       )}
-                      <button className={styles.dropdownItem}>View Company</button>
+                      {/* <button className={styles.dropdownItem}>View Company</button> */}
                       <button
                         className={styles.dropdownItem}
                         onClick={() => setPdfDownloadTrigger(prev => prev + 1)}

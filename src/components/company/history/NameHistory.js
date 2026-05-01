@@ -46,6 +46,29 @@ const NameHistory = ({ companyData, loading, error }) => {
   }
 
 
+  const handleDownload = async (url) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}${url}`, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
+
+      if (!response.ok) throw new Error("Download failed");
+
+      const blob = await response.blob();
+      const objectUrl = window.URL.createObjectURL(blob);
+      window.open(objectUrl, '_blank');
+
+      // Revoke the URL after a short delay to ensure the browser has time to open it
+      setTimeout(() => window.URL.revokeObjectURL(objectUrl), 100);
+    } catch (error) {
+      console.error("Download Error:", error);
+      alert("Failed to open document. Please try again.");
+    }
+  };
+
   const historyData = companyData?.name_history || [];
   const hasData = historyData.length > 0;
 
@@ -81,7 +104,19 @@ const NameHistory = ({ companyData, loading, error }) => {
             <tbody>
               {displayData.map((item, index) => (
                 <tr key={index} className={styles.tr}>
-                  <td className={styles.td}>{item.name || "-"}</td>
+                  <td className={styles.td}>
+                    {item.document_url ? (
+                      <span
+                        onClick={() => handleDownload(item.document_url)}
+                        className={styles.link}
+                        style={{ cursor: 'pointer', textDecoration: 'none', color: "#27272a" }}
+                      >
+                        {item.name || "-"}
+                      </span>
+                    ) : (
+                      item.name || "-"
+                    )}
+                  </td>
                   <td className={styles.td}>{item.till_date || "-"}</td>
                 </tr>
               ))}

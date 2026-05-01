@@ -227,7 +227,7 @@ export default function CompanyPage() {
 
           const fetchPNL = async (type) => {
             const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/screener/profit-loss?result_type=${type}`,
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/profit-loss?type=${type}`,
               { headers: { Authorization: token ? `Bearer ${token}` : "" } }
             );
             return await response.json();
@@ -534,7 +534,7 @@ export default function CompanyPage() {
     if (!companyName) return;
 
     const fetchPnlData = async () => {
-      const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${encodeURIComponent(companyName)}/screener/profit-loss?result_type=${pnlViewType}`;
+      const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${encodeURIComponent(companyName)}/profit-loss?type=${pnlViewType}`;
 
       setPnlLoading(true);
       setPnlError(null);
@@ -1310,7 +1310,7 @@ export default function CompanyPage() {
 
       {/* Company Highlights */}
       {activeSection === "companyHighlights" && (
-        <>
+        <div id="companyHighlights">
           <CompanyHighlights
             companyHighlights={companyHighlights}
             page={highlightsPage}
@@ -1359,128 +1359,147 @@ export default function CompanyPage() {
             layout="column"
           />
           <ProductDetails />
-        </>
+        </div>
       )}
 
       {/* Financials */}
       {activeSection === "financials" && (
-        <FinancialHighlights
-          financialHighlights={financialHighlights}
-          revenueProfitTrend={revenueProfitTrend}
-          financialLoading={financialLoading}
-          financialError={financialError}
-          revenueLoading={trendLoading}
-          revenueError={trendError}
-          pnlApiData={pnlApiData}
-          pnlLoading={pnlLoading}
-          pnlError={pnlError}
-          pnlViewType={pnlViewType}
-          setPnlViewType={setPnlViewType}
-          auditorsData={auditorsData}
-          auditorsLoading={auditorsLoading}
-          auditorsError={auditorsError}
-          audType={audType}
-          setAudType={setAudType}
-          balanceSheetData={balanceSheetData}
-          balanceSheetLoading={balanceSheetLoading}
-          balanceSheetError={balanceSheetError}
-          bsType={bsType}
-          setBsType={setBsType}
-          cashFlowData={cashFlowData}
-          cashFlowLoading={cashFlowLoading}
-          cashFlowError={cashFlowError}
-          cfType={cfType}
-          setCfType={setCfType}
-          ratiosData={ratiosData}
-          ratiosLoading={ratiosLoading}
-          ratiosError={ratiosError}
-          ratiosType={ratiosType}
-          setRatiosType={setRatiosType}
-        />
+        <div id="financials">
+          <FinancialHighlights
+            financialHighlights={financialHighlights}
+            revenueProfitTrend={revenueProfitTrend}
+            financialLoading={financialLoading}
+            financialError={financialError}
+            revenueLoading={trendLoading}
+            revenueError={trendError}
+            pnlApiData={pnlApiData}
+            pnlLoading={pnlLoading}
+            pnlError={pnlError}
+            pnlViewType={pnlViewType}
+            setPnlViewType={setPnlViewType}
+            auditorsData={auditorsData}
+            auditorsLoading={auditorsLoading}
+            auditorsError={auditorsError}
+            audType={audType}
+            setAudType={setAudType}
+            balanceSheetData={balanceSheetData}
+            balanceSheetLoading={balanceSheetLoading}
+            balanceSheetError={balanceSheetError}
+            bsType={bsType}
+            setBsType={setBsType}
+            cashFlowData={cashFlowData}
+            cashFlowLoading={cashFlowLoading}
+            cashFlowError={cashFlowError}
+            cfType={cfType}
+            setCfType={setCfType}
+            ratiosData={ratiosData}
+            ratiosLoading={ratiosLoading}
+            ratiosError={ratiosError}
+            ratiosType={ratiosType}
+            setRatiosType={setRatiosType}
+          />
+        </div>
       )}
 
       {/* Directors & KMP */}
-      {activeSection === "directorsKmp" && <DirectorsSection directorsData={directorsData} directorsLoading={directorsLoading} directorsError={directorsError} />}
+      {activeSection === "directorsKmp" && (
+        <div id="directorsKmp">
+          <DirectorsSection directorsData={directorsData} directorsLoading={directorsLoading} directorsError={directorsError} />
+        </div>
+      )}
 
       {/* Control & Ownership */}
-
       {activeSection === "controlOwnership" && (
-        <OwnershipSection
-          companyHighlights={companyHighlights}
-          highlightsLoading={highlightsLoading}
-          highlightsError={highlightsError}
-          shareholdingData={shareholdingData}
-          shareholdingLoading={shareholdingLoading}
-          shareholdingError={shareholdingError}
-          securityAllotmentData={securityAllotmentData}
-          securityAllotmentLoading={securityAllotmentLoading}
-          groupStructureData={groupStructureData}
-          groupStructureLoading={groupStructureLoading}
-          overseasInvestmentData={overseasInvestmentData}
-          overseasInvestmentLoading={overseasInvestmentLoading}
-        />
+        <div id="controlOwnership">
+          <OwnershipSection
+            companyHighlights={companyHighlights}
+            highlightsLoading={highlightsLoading}
+            highlightsError={highlightsError}
+            shareholdingData={shareholdingData}
+            shareholdingLoading={shareholdingLoading}
+            shareholdingError={shareholdingError}
+            securityAllotmentData={securityAllotmentData}
+            securityAllotmentLoading={securityAllotmentLoading}
+            groupStructureData={groupStructureData}
+            groupStructureLoading={groupStructureLoading}
+            overseasInvestmentData={overseasInvestmentData}
+            overseasInvestmentLoading={overseasInvestmentLoading}
+          />
+        </div>
       )}
 
       {/* Charges */}
       {activeSection === "charges" && (
-        <ChargesPage charges={chargesData} loading={chargesLoading}
-          error={chargesError}
-          openPage={openPage}
-          closedPage={closedPage}
-          limit={chargesLimit}
-          setOpenPage={setOpenPage}
-          setClosedPage={setClosedPage}
-          setLimit={setChargesLimit} />
+        <div id="charges">
+          <ChargesPage charges={chargesData} loading={chargesLoading}
+            error={chargesError}
+            openPage={openPage}
+            closedPage={closedPage}
+            limit={chargesLimit}
+            setOpenPage={setOpenPage}
+            setClosedPage={setClosedPage}
+            setLimit={setChargesLimit} />
+        </div>
       )}
 
       {/* Peer Comparison */}
       {activeSection === "peerComparison" && (
-        <PeerComparison
-          data={peerComparisonData}
-          loading={peerComparisonLoading}
-          error={peerComparisonError}
-          page={peerPage}
-          perPage={peerLimit}
-          setPage={setPeerPage}
-          setPerPage={setPeerLimit}
-        />
+        <div id="peerComparison">
+          <PeerComparison
+            data={peerComparisonData}
+            loading={peerComparisonLoading}
+            error={peerComparisonError}
+            page={peerPage}
+            perPage={peerLimit}
+            setPage={setPeerPage}
+            setPerPage={setPeerLimit}
+          />
+        </div>
       )}
 
       {/* Related Corporates */}
       {activeSection === "relatedCorporates" && (
-        <RelatedCorporates commonDirectorship={commonDirectorship}
-          loading={directorshipLoading}
-          error={directorshipError} />
+        <div id="relatedCorporates">
+          <RelatedCorporates commonDirectorship={commonDirectorship}
+            loading={directorshipLoading}
+            error={directorshipError} />
+        </div>
       )}
 
       {activeSection === "alerts" && <AlertsContainer companyName={companyName} alertsData={alertsData} alertsLoading={alertsLoading} alertsError={alertsError} />}
 
       {activeSection === "litigation" && (
-        <LigilationDetails
-          data={litigationData}
-          loading={litigationLoading}
-          error={litigationError}
-          paPage={paPage}
-          paSize={paSize}
-          setPaPage={setPaPage}
-          setPaSize={setPaSize}
-          pbPage={pbPage}
-          pbSize={pbSize}
-          setPbPage={setPbPage}
-          setPbSize={setPbSize}
-          daPage={daPage}
-          daSize={daSize}
-          setDaPage={setDaPage}
-          setDaSize={setDaSize}
-          dbPage={dbPage}
-          dbSize={dbSize}
-          setDbPage={setDbPage}
-          setDbSize={setDbSize}
-        />
+        <div id="litigation">
+          <LigilationDetails
+            data={litigationData}
+            loading={litigationLoading}
+            error={litigationError}
+            paPage={paPage}
+            paSize={paSize}
+            setPaPage={setPaPage}
+            setPaSize={setPaSize}
+            pbPage={pbPage}
+            pbSize={pbSize}
+            setPbPage={setPbPage}
+            setPbSize={setPbSize}
+            daPage={daPage}
+            daSize={daSize}
+            setDaPage={setDaPage}
+            setDaSize={setDaSize}
+            dbPage={dbPage}
+            dbSize={dbSize}
+            setDbPage={setDbPage}
+            setDbSize={setDbSize}
+          />
+        </div>
       )}
       {activeSection === "documents" && <Documents companyName={companyName} />}
 
-      {activeSection === "compliance" && <ComplianceDetails />}
+      {activeSection === "compliance" && (
+        <div id="compliance">
+          <ComplianceDetails />
+        </div>
+      )}
     </>
   );
 }

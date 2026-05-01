@@ -269,7 +269,7 @@ const Documents = ({ companyName }) => {
       setDocYears(data.years || []);
       setMcaHeaderInfo({
         source: data.source || "-",
-        lastUpdated: data.last_updated || "-",
+        lastUpdated: (formatDateToIST(data.last_updated)) || "-",
         totalDocuments: data.total_documents || 0
       });
     } catch (error) {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatDateToIST } from '@/utils/dateFormatter';
 import { Document, Page, Text, View, StyleSheet, Image, Link, Svg, Rect, G, Line, Path } from '@react-pdf/renderer';
 
 // Create styles
@@ -408,19 +409,20 @@ export const ReportDocument = ({
       top: 10,
       left: 30,
       right: 30,
-      borderBottomWidth: 1,
-      borderBottomColor: '#f1f1f1',
-      paddingBottom: 5,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
       zIndex: 100
     }} fixed render={({ pageNumber }) => (
       pageNumber > 1 ? (
-        <>
+        <View style={{
+          borderBottomWidth: 1,
+          borderBottomColor: '#f1f1f1',
+          paddingBottom: 5,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
           <Text style={{ fontSize: 8, fontFamily: 'Helvetica-Bold', color: '#041e42' }}>{ci.legal_name || "Company Report"}</Text>
           <Image src="/icons/pdfLogocompanyWiki.png" style={{ width: 50 }} />
-        </>
+        </View>
       ) : null
     )} />
   );
@@ -439,7 +441,7 @@ export const ReportDocument = ({
             <View style={[styles.tableColHeader, { width: '15%' }]}><Text style={styles.tableCellHeader}>Appt Date</Text></View>
           </View>
           {directorsList.map((d, i) => (
-            <View style={styles.tableRow} key={i}>
+            <View style={styles.tableRow} key={i} wrap={false}>
               <View style={[styles.tableCol, { width: '20%' }]}><Text style={styles.tableCell}>{formatValue(d.din_pan)}</Text></View>
               <View style={[styles.tableCol, { width: '30%' }]}><Text style={styles.tableCell}>{formatValue(d.name)} {d.is_kmp ? '(KMP)' : ''}</Text></View>
               <View style={[styles.tableCol, { width: '20%' }]}><Text style={styles.tableCell}>{formatValue(d.designation)}</Text></View>
@@ -622,7 +624,7 @@ export const ReportDocument = ({
             ))}
           </View>
           {dataArray.map((row, rowIndex) => (
-            <View style={styles.tableRow} key={rowIndex}>
+            <View style={styles.tableRow} key={rowIndex} wrap={false}>
               {headers.map((h, colIndex) => (
                 <View key={colIndex} style={[styles.tableCol, { width: colWidths[colIndex] }]}>
                   <Text style={styles.tableCell}>{formatValue(row[h])}</Text>
@@ -645,7 +647,7 @@ export const ReportDocument = ({
         <Text style={styles.heading2}>{title}</Text>
         <View style={styles.table}>
           {flatKeys.map((k, i) => (
-            <View style={styles.tableRow} key={i}>
+            <View style={styles.tableRow} key={i} wrap={false}>
               <View style={[styles.tableColHeader, { width: '30%' }]}><Text style={styles.tableCellHeader}>{formatValue(k.replace(/_/g, ' ').toUpperCase())}</Text></View>
               <View style={[styles.tableCol, { width: '70%' }]}><Text style={styles.tableCell}>{formatValue(dictObj[k])}</Text></View>
             </View>
@@ -701,7 +703,7 @@ export const ReportDocument = ({
             return (
               <React.Fragment key={idx}>
                 {/* Section Header */}
-                <View style={[styles.tableRow, { backgroundColor: '#e5e7eb' }]}>
+                <View style={[styles.tableRow, { backgroundColor: '#e5e7eb' }]} wrap={false}>
                   <View style={[styles.tableCol, { width: '100%', borderRightWidth: 0 }]}>
                     <Text style={[styles.tableCell, { fontFamily: 'Helvetica-Bold', fontSize: 8 }]}>{section.label}</Text>
                   </View>
@@ -713,7 +715,7 @@ export const ReportDocument = ({
                   if (!rowData || !rowData.values) return null;
 
                   return (
-                    <View style={styles.tableRow} key={`${idx}-${rowIdx}`}>
+                    <View style={styles.tableRow} key={`${idx}-${rowIdx}`} wrap={false}>
                       <View style={[styles.tableCol, { width: `${particularsWidth}%` }]}>
                         <Text style={[styles.tableCell, { textTransform: 'capitalize', fontSize: 7 }]}>
                           {rowKey.replace(/_/g, ' ')}
@@ -782,7 +784,7 @@ export const ReportDocument = ({
             return (
               <React.Fragment key={idx}>
                 {/* Section Header */}
-                <View style={[styles.tableRow, { backgroundColor: '#f9fafb' }]}>
+                <View style={[styles.tableRow, { backgroundColor: '#f9fafb' }]} wrap={false}>
                   <View style={[styles.tableCol, { width: '100%', borderRightWidth: 0 }]}>
                     <Text style={[styles.tableCell, { fontFamily: 'Helvetica-Bold', fontSize: 8, color: '#4b5563' }]}>{section.label}</Text>
                   </View>
@@ -796,7 +798,7 @@ export const ReportDocument = ({
                   const isTotal = isTotalRows.includes(rowKey);
 
                   return (
-                    <View style={[styles.tableRow, isTotal && { backgroundColor: '#f3f4f6' }]} key={`${idx}-${rowIdx}`}>
+                    <View style={[styles.tableRow, isTotal && { backgroundColor: '#f3f4f6' }]} key={`${idx}-${rowIdx}`} wrap={false}>
                       <View style={[styles.tableCol, { width: `${particularsWidth}%` }]}>
                         <Text style={[
                           styles.tableCell,
@@ -871,7 +873,7 @@ export const ReportDocument = ({
             const isTotal = row.type === "total";
 
             return (
-              <View style={[styles.tableRow, isTotal && { backgroundColor: '#f3f4f6' }]} key={idx}>
+              <View style={[styles.tableRow, isTotal && { backgroundColor: '#f3f4f6' }]} key={idx} wrap={false}>
                 <View style={[styles.tableCol, { width: `${particularsWidth}%` }]}>
                   <Text style={[styles.tableCell, { fontSize: 7 }, isTotal && { fontFamily: 'Helvetica-Bold' }]}>
                     {row.label}
@@ -937,7 +939,7 @@ export const ReportDocument = ({
             return (
               <React.Fragment key={idx}>
                 {/* Section Header */}
-                <View style={[styles.tableRow, { backgroundColor: '#f9fafb' }]}>
+                <View style={[styles.tableRow, { backgroundColor: '#f9fafb' }]} wrap={false}>
                   <View style={[styles.tableCol, { width: '100%', borderRightWidth: 0 }]}>
                     <Text style={[styles.tableCell, { fontFamily: 'Helvetica-Bold', fontSize: 8, color: '#4b5563' }]}>{section.label}</Text>
                   </View>
@@ -948,7 +950,7 @@ export const ReportDocument = ({
                   if (!row || !row.values) return null;
 
                   return (
-                    <View style={styles.tableRow} key={`${idx}-${rowIdx}`}>
+                    <View style={styles.tableRow} key={`${idx}-${rowIdx}`} wrap={false}>
                       <View style={[styles.tableCol, { width: `${particularsWidth}%` }]}>
                         <Text style={[styles.tableCell, { fontSize: 7 }]}>
                           {row.particular_name}
@@ -1002,7 +1004,7 @@ export const ReportDocument = ({
 
           {/* Data Rows */}
           {audData.map((row, idx) => (
-            <View style={styles.tableRow} key={idx}>
+            <View style={styles.tableRow} key={idx} wrap={false}>
               {columns.map((col, i) => (
                 <View key={i} style={[styles.tableCol, { width: `${col.width}%` }]}>
                   <Text style={[styles.tableCell, { fontSize: 7 }]}>
@@ -1032,10 +1034,10 @@ export const ReportDocument = ({
     return (
       <View style={{ marginTop: 20 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-          <Text style={[styles.title, { fontSize: 16, marginBottom: 0 }]}>Peer Comparison & Business Activity</Text>
+          <Text style={[styles.title, { fontSize: 18, marginBottom: 0 }]}>Peer Comparison & Business Activity</Text>
           <View style={{ textAlign: 'right' }}>
             <Text style={{ fontSize: 8, color: '#6b7280' }}>Source: {formatValue(data.source)}</Text>
-            <Text style={{ fontSize: 8, color: '#6b7280' }}>Updated: {formatValue(data.last_updated)}</Text>
+            <Text style={{ fontSize: 8, color: '#6b7280' }}>Updated: {formatDateToIST(data.last_updated)}</Text>
           </View>
         </View>
 
@@ -1098,13 +1100,13 @@ export const ReportDocument = ({
 
           {/* Activity Table */}
           <View style={styles.table}>
-            <View style={[styles.tableRow, { backgroundColor: '#f3f4f6' }]}>
+            <View style={[styles.tableRow, { backgroundColor: '#f3f4f6' }]} wrap={false}>
               <View style={[styles.tableColHeader, { width: '60%' }]}><Text style={styles.tableCellHeader}>Business Activity</Text></View>
               <View style={[styles.tableColHeader, { width: '20%', textAlign: 'center' }]}><Text style={styles.tableCellHeader}>Turnover %</Text></View>
               <View style={[styles.tableColHeader, { width: '20%', textAlign: 'right' }]}><Text style={styles.tableCellHeader}>Turnover</Text></View>
             </View>
             {activityRows.map((row, idx) => (
-              <View key={idx} style={styles.tableRow}>
+              <View key={idx} style={styles.tableRow} wrap={false}>
                 <View style={[styles.tableCol, { width: '60%' }]}><Text style={styles.tableCell}>{formatValue(row.business_activity)}</Text></View>
                 <View style={[styles.tableCol, { width: '20%', textAlign: 'center' }]}><Text style={styles.tableCell}>{formatValue(row.turnover_percentage)}</Text></View>
                 <View style={[styles.tableCol, { width: '20%', textAlign: 'right' }]}><Text style={styles.tableCell}>{formatValue(row.turnover)}</Text></View>
@@ -1250,7 +1252,7 @@ export const ReportDocument = ({
 
           {/* Data Rows */}
           {rows.map((row, idx) => (
-            <View style={styles.tableRow} key={idx}>
+            <View style={styles.tableRow} key={idx} wrap={false}>
               <View style={[styles.tableCol, { width: `${particularsWidth}%` }]}>
                 <Text style={styles.tableCell}>{formatValue(row.row_label)}</Text>
               </View>
@@ -1278,8 +1280,8 @@ export const ReportDocument = ({
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
           <Text style={[styles.title, { fontSize: 18, marginBottom: 0 }]}>Compliance Details</Text>
           <View style={{ textAlign: 'right' }}>
-            <Text style={{ fontSize: 8, color: '#6b7280' }}>Source: {formatValue(data?.source || "MCA")}</Text>
-            <Text style={{ fontSize: 8, color: '#6b7280' }}>Updated: {formatValue(data?.last_updated)}</Text>
+            <Text style={{ fontSize: 8, color: '#6b7280' }}>Source: {formatValue(data?.source || "-")}</Text>
+            <Text style={{ fontSize: 8, color: '#6b7280' }}>Updated: {(formatDateToIST(data?.last_updated)) || "-"}</Text>
           </View>
         </View>
 
@@ -1328,7 +1330,7 @@ export const ReportDocument = ({
           {tableData.tableTitle || "Litigation Table"}
         </Text>
         <View style={styles.table}>
-          <View style={[styles.tableRow, { backgroundColor: '#f9fafb' }]}>
+          <View style={[styles.tableRow, { backgroundColor: '#f9fafb' }]} wrap={false}>
             {columns.map((col, i) => (
               <View key={i} style={[styles.tableColHeader, { width: colWidth }]}>
                 <Text style={styles.tableCellHeader}>{col.label}</Text>
@@ -1337,7 +1339,7 @@ export const ReportDocument = ({
           </View>
           {rows.length > 0 ? (
             rows.map((row, rowIndex) => (
-              <View style={styles.tableRow} key={rowIndex}>
+              <View style={styles.tableRow} key={rowIndex} wrap={false}>
                 {columns.map((col, colIndex) => (
                   <View key={colIndex} style={[styles.tableCol, { width: colWidth }]}>
                     <Text style={styles.tableCell}>{formatValue(row[col.key])}</Text>
@@ -1346,7 +1348,7 @@ export const ReportDocument = ({
               </View>
             ))
           ) : (
-            <View style={styles.tableRow}>
+            <View style={styles.tableRow} wrap={false}>
               <View style={[styles.tableCol, { width: '100%', alignItems: 'center' }]}>
                 <Text style={styles.tableCell}>No data available for this section.</Text>
               </View>
@@ -1390,12 +1392,12 @@ export const ReportDocument = ({
       <View style={styles.section}>
         <Text style={styles.heading2}>Name History</Text>
         <View style={styles.table}>
-          <View style={[styles.tableRow, { backgroundColor: '#f9fafb' }]}>
+          <View style={[styles.tableRow, { backgroundColor: '#f9fafb' }]} wrap={false}>
             <View style={[styles.tableColHeader, { width: '70%' }]}><Text style={styles.tableCellHeader}>Name</Text></View>
             <View style={[styles.tableColHeader, { width: '30%' }]}><Text style={styles.tableCellHeader}>Till Date</Text></View>
           </View>
           {history.map((h, i) => (
-            <View style={styles.tableRow} key={i}>
+            <View style={styles.tableRow} key={i} wrap={false}>
               <View style={[styles.tableCol, { width: '70%' }]}><Text style={styles.tableCell}>{formatValue(h.name)}</Text></View>
               <View style={[styles.tableCol, { width: '30%' }]}><Text style={styles.tableCell}>{formatValue(h.till_date)}</Text></View>
             </View>
@@ -1461,7 +1463,7 @@ export const ReportDocument = ({
             ))}
           </View>
           {openItems.length > 0 ? openItems.map((item, idx) => (
-            <View style={styles.tableRow} key={idx}>
+            <View style={styles.tableRow} key={idx} wrap={false}>
               <View style={[styles.tableCol, { width: '16.25%' }]}><Text style={[styles.tableCell, { fontSize: 7 }]}>{formatValue(item.charge_id)}</Text></View>
               <View style={[styles.tableCol, { width: '35%' }]}><Text style={[styles.tableCell, { fontSize: 7 }]}>{formatValue(item.lender)}</Text></View>
               <View style={[styles.tableCol, { width: '16.25%' }]}><Text style={[styles.tableCell, { fontSize: 7 }]}>{formatValue(item.amount_cr)}</Text></View>
@@ -1469,7 +1471,7 @@ export const ReportDocument = ({
               <View style={[styles.tableCol, { width: '16.25%' }]}><Text style={[styles.tableCell, { fontSize: 7 }]}>{formatValue(item.modification_date)}</Text></View>
             </View>
           )) : (
-            <View style={styles.tableRow}><Text style={[styles.tableCell, { fontSize: 7, textAlign: 'center', width: '100%', padding: 10 }]}>No open charges found</Text></View>
+            <View style={styles.tableRow} wrap={false}><Text style={[styles.tableCell, { fontSize: 7, textAlign: 'center', width: '100%', padding: 10 }]}>No open charges found</Text></View>
           )}
         </View>
 
@@ -1484,7 +1486,7 @@ export const ReportDocument = ({
             ))}
           </View>
           {closedItems.length > 0 ? closedItems.map((item, idx) => (
-            <View style={styles.tableRow} key={idx}>
+            <View style={styles.tableRow} key={idx} wrap={false}>
               <View style={[styles.tableCol, { width: '14%' }]}><Text style={[styles.tableCell, { fontSize: 7 }]}>{formatValue(item.charge_id)}</Text></View>
               <View style={[styles.tableCol, { width: '30%' }]}><Text style={[styles.tableCell, { fontSize: 7 }]}>{formatValue(item.lender)}</Text></View>
               <View style={[styles.tableCol, { width: '14%' }]}><Text style={[styles.tableCell, { fontSize: 7 }]}>{formatValue(item.amount_cr)}</Text></View>
@@ -1493,7 +1495,7 @@ export const ReportDocument = ({
               <View style={[styles.tableCol, { width: '14%' }]}><Text style={[styles.tableCell, { fontSize: 7 }]}>{formatValue(item.satisfaction_date)}</Text></View>
             </View>
           )) : (
-            <View style={styles.tableRow}><Text style={[styles.tableCell, { fontSize: 7, textAlign: 'center', width: '100%', padding: 10 }]}>No closed charges found</Text></View>
+            <View style={styles.tableRow} wrap={false}><Text style={[styles.tableCell, { fontSize: 7, textAlign: 'center', width: '100%', padding: 10 }]}>No closed charges found</Text></View>
           )}
         </View>
       </View>
@@ -1706,8 +1708,8 @@ export const ReportDocument = ({
         {/* Footer Info */}
         <View style={{ marginTop: 'auto', borderTopWidth: 1, borderTopColor: '#f1f1f1', paddingTop: 10 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ fontSize: 8, color: '#9ca3af' }}>Source: {formatValue(headerInfo.source)}</Text>
-            <Text style={{ fontSize: 8, color: '#9ca3af' }}>Last Updated: {formatValue(headerInfo.last_updated)}</Text>
+            <Text style={{ fontSize: 8, color: '#9ca3af' }}>Source: {formatValue(headerInfo.source) || "-"}</Text>
+            <Text style={{ fontSize: 8, color: '#9ca3af' }}>Last Updated: {formatDateToIST(headerInfo.last_updated) || "-"}</Text>
           </View>
         </View>
       </Page>
@@ -1815,7 +1817,7 @@ export const ReportDocument = ({
                 <View style={{ marginBottom: 15 }}>
                   <Text style={[styles.tableCellHeader, { marginBottom: 5 }]}>Summary by Court Type</Text>
                   <View style={styles.table}>
-                    <View style={styles.tableRow}>
+                    <View style={styles.tableRow} wrap={false}>
                       <View style={[styles.tableColHeader, { width: '20%' }]}><Text style={styles.tableCellHeader}>Court Type</Text></View>
                       <View style={[styles.tableColHeader, { width: '20%' }]}><Text style={styles.tableCellHeader}>Cases Filed By</Text></View>
                       <View style={[styles.tableColHeader, { width: '20%' }]}><Text style={styles.tableCellHeader}>Cases Against</Text></View>
@@ -1963,7 +1965,13 @@ export const ReportDocument = ({
       {/* Phase 3: Control & Ownership - Shareholding (Moved to after directors) */}
       {shareholdingData && (
         <Page size="A4" style={styles.page}>
-          <Text style={[styles.title, { marginBottom: 15 }]}>Control & Ownership - Shareholding</Text>
+          <Text style={[styles.title, { fontSize: 18, marginBottom: 0 }]}>Control & Ownership - Shareholding</Text>
+          <View style={{ textAlign: 'right', marginBottom: 10 }}>
+            <Text style={{ fontSize: 8, color: '#6b7280' }}>Source: {formatValue(shareholdingData?.source ?? "-")}</Text>
+            <Text style={{ fontSize: 8, color: '#6b7280' }}>Updated: {formatDateToIST(shareholdingData?.last_updated ?? "-")}</Text>
+          </View>
+
+
 
           {/* Shareholding Overview Stats */}
           <View style={styles.shareholdingCard}>
@@ -2169,7 +2177,7 @@ export const ReportDocument = ({
                   "Guarantee Issued": formatValue(o.guarantee_issued),
                   "Total": formatValue(o.total)
                 }));
-                return renderDynamicTable(mappedItems, "ODI Records");
+                return renderDynamicTable(mappedItems, "Overseas Direct Investment Records");
               })()}
             </View>
           )}
@@ -2178,6 +2186,10 @@ export const ReportDocument = ({
           {financialHighlights && (
             <View style={{ marginTop: 20 }}>
               <Text style={[styles.title, { fontSize: 16, marginBottom: 0 }]}>Financial Highlights</Text>
+              <View style={{ textAlign: 'right' }}>
+                <Text style={{ fontSize: 8, color: '#6b7280' }}>Source: {formatValue(headerInfo.source)}</Text>
+                <Text style={{ fontSize: 8, color: '#6b7280' }}>Updated: {formatDateToIST(headerInfo.last_updated)}</Text>
+              </View>
 
               {/* Table 1: Primary Metrics */}
               {(() => {
@@ -2290,7 +2302,7 @@ export const ReportDocument = ({
             </View>
           )}
           {cfConsolidated && (
-            <View break>
+            <View break={!cfStandalone}>
               {renderCashFlowTable(cfConsolidated, "Consolidated")}
             </View>
           )}

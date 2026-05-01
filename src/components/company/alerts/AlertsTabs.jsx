@@ -2,8 +2,17 @@
 
 import styles from "./AlertsTabs.module.css";
 import { formatDateToIST } from "@/utils/dateFormatter";
+import { scrollToElementWithOffset } from "@/utils/scrollUtils";
+import { useEffect, useRef } from "react";
 
 export default function AlertsTabs({ activeTab, setActiveTab, alertsData  }) {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      scrollToElementWithOffset(containerRef.current, 140);
+    }
+  }, []);
   const tabs = [
     { key: "overview", label: "Alert Overview" },
     { key: "observation", label: "Observation" },
@@ -13,7 +22,7 @@ export default function AlertsTabs({ activeTab, setActiveTab, alertsData  }) {
   ];
 
   return (
-    <div className={styles.container}>
+    <div id="alerts" ref={containerRef} className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.headerTitle}>Alerts</h1>
         <div className={styles.headerInfo}>
@@ -33,7 +42,10 @@ export default function AlertsTabs({ activeTab, setActiveTab, alertsData  }) {
           <div
             key={tab.key}
             className={activeTab === tab.key ? styles.active : styles.tab}
-            onClick={() => setActiveTab(tab.key)}
+            onClick={() => {
+              setActiveTab(tab.key);
+              scrollToElementWithOffset(containerRef.current, 140);
+            }}
           >
             {tab.label}
           </div>

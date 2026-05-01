@@ -195,17 +195,17 @@ const CompanyNewHeader = ({ companyData, loading }) => {
               ) : (
                 <Image
                   src={
-                    companyData?.header?.logo_url && 
-                    companyData.header.logo_url !== "-" && 
-                    companyData.header.logo_url !== "null"
+                    companyData?.header?.logo_url &&
+                      companyData.header.logo_url !== "-" &&
+                      companyData.header.logo_url !== "null"
                       ? companyData.header.logo_url
                       : "/icons/Image.svg"
                   }
                   alt={(companyData?.company_information?.legal_name || "Company") + " logo"}
                   className={
-                    companyData?.header?.logo_url && 
-                    companyData.header.logo_url !== "-" && 
-                    companyData.header.logo_url !== "null"
+                    companyData?.header?.logo_url &&
+                      companyData.header.logo_url !== "-" &&
+                      companyData.header.logo_url !== "null"
                       ? styles.logoImage
                       : styles.logoCircle
                   }
@@ -442,9 +442,9 @@ const CompanyNewHeader = ({ companyData, loading }) => {
                     </>
                   ) : (
                     <>
-                      {alertsData?.summary?.litigation?.total > 0 && (
+                      {alertsData?.summary?.court?.total > 0 && (
                         <div className={`${styles.alertBadge} ${styles.legalAlert}`}>
-                          <img src="/icons/scale.svg" alt="" /> <strong>{alertsData.summary.litigation.total}</strong> Legal Cases
+                          <img src="/icons/scale.svg" alt="" /> <strong>{alertsData.summary.court.total}</strong> Legal Cases
                         </div>
                       )}
                       {alertsData?.summary?.adverse?.total > 0 && (
@@ -463,7 +463,7 @@ const CompanyNewHeader = ({ companyData, loading }) => {
                           <img src="/icons/activity.svg" alt="" /> <strong>-</strong> Risk
                         </div>
                       )}
-                      {alertsData?.summary && (alertsData.summary.litigation?.total > 0 || alertsData.summary.adverse?.total > 0 || alertsData.summary.regulatory?.total > 0) && (
+                      {alertsData?.summary && (alertsData.summary.court?.total > 0 || alertsData.summary.adverse?.total > 0 || alertsData.summary.regulatory?.total > 0) && (
                         <button
                           className={styles.viewAllBtn}
                           onClick={() =>

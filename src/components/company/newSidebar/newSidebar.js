@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import styles from "./newSidebar.module.css";
 import { useRef, useLayoutEffect, useEffect } from "react";
+import { scrollToElementWithOffset } from "@/utils/scrollUtils";
 
 import { useCompanySection } from "@/components/company/context/CompanySectionContext";
 
@@ -119,9 +120,12 @@ const CompanyNewSidebar = () => {
     }
 
     // Scroll to top of section content area
-    if (section.id === "documents") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    setTimeout(() => {
+      const el = document.getElementById(section.id);
+      if (el) {
+        scrollToElementWithOffset(el, 140);
+      }
+    }, 100);
   };
   const [indicatorTop, setIndicatorTop] = useState(0);
 
