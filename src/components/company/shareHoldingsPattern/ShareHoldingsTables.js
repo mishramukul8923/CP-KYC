@@ -61,19 +61,19 @@ const ShareHoldingsTables = ({ shareholdingData, promoters_table_totals = {}, pu
   return (
     <div className={styles.container}>
       {/* ---------------- PROMOTERS TABLE ---------------- */}
-      <div 
-        className={styles.headerRow} 
+      <div
+        className={styles.headerRow}
         onClick={() => setIsPromotersOpen(!isPromotersOpen)}
       >
         <div className={styles.headerContent}>
           <span className={styles.title}>Promoters</span>
-          <span className={styles.date}>{formatDateToIST(shareholdingData?.last_updated)||"-"}</span>
+          <span className={styles.date}>{formatDateToIST(shareholdingData?.last_updated) || "-"}</span>
         </div>
         <div className={styles.headerActions}>
-           <img 
-            src="/icons/chevron-down-dark.svg" 
-            alt="Expand" 
-            className={`${styles.expandIcon} ${isPromotersOpen ? styles.rotateIcon : ""}`} 
+          <img
+            src="/icons/chevron-down-dark.svg"
+            alt="Expand"
+            className={`${styles.expandIcon} ${isPromotersOpen ? styles.rotateIcon : ""}`}
           />
         </div>
       </div>
@@ -101,9 +101,9 @@ const ShareHoldingsTables = ({ shareholdingData, promoters_table_totals = {}, pu
                   <tr key={index}>
                     <td className={styles.categoryName}>{row.category}</td>
                     <td className={styles.valueCell}>{row.equity_number_of_shares || "-"}</td>
-                    <td className={styles.valueCell}>{row.equity_percentage && row.equity_percentage !== "-" ? `${row.equity_percentage}%` : "-"}</td>
+                    <td className={styles.valueCell}>{row.equity_percentage && row.equity_percentage !== "-" ? `${row.equity_percentage}` : "-"}</td>
                     <td className={styles.valueCell}>{row.preference_number_of_shares || "-"}</td>
-                    <td className={styles.valueCell}>{row.preference_percentage && row.preference_percentage !== "-" ? `${row.preference_percentage}%` : "-"}</td>
+                    <td className={styles.valueCell}>{row.preference_percentage && row.preference_percentage !== "-" ? `${row.preference_percentage}` : "-"}</td>
                   </tr>
                 ))
               ) : (
@@ -116,9 +116,9 @@ const ShareHoldingsTables = ({ shareholdingData, promoters_table_totals = {}, pu
               <tr className={styles.footerRow}>
                 <td className={styles.categoryName}>Total</td>
                 <td className={styles.valueCell}>{promoters_table_totals.equity_number_of_shares || "-"}</td>
-                <td className={styles.valueCell}>{promoters_table_totals.equity_percentage && promoters_table_totals.equity_percentage !== "-" ? `${promoters_table_totals.equity_percentage}%` : "-"}</td>
+                <td className={styles.valueCell}>{promoters_table_totals.equity_percentage && promoters_table_totals.equity_percentage !== "-" ? `${promoters_table_totals.equity_percentage}` : "-"}</td>
                 <td className={styles.valueCell}>{promoters_table_totals.preference_number_of_shares || "-"}</td>
-                <td className={styles.valueCell}>{promoters_table_totals.preference_percentage && promoters_table_totals.preference_percentage !== "-" ? `${promoters_table_totals.preference_percentage}%` : "-"}</td>
+                <td className={styles.valueCell}>{promoters_table_totals.preference_percentage && promoters_table_totals.preference_percentage !== "-" ? `${promoters_table_totals.preference_percentage}` : "-"}</td>
               </tr>
             </tfoot>
           </table>
@@ -128,7 +128,7 @@ const ShareHoldingsTables = ({ shareholdingData, promoters_table_totals = {}, pu
       {/* ---------------- PUBLIC / OTHER THAN PROMOTERS TABLE ---------------- */}
       <div style={{ margin: "32px 0" }} />
 
-      <div 
+      <div
         className={styles.headerRow}
         onClick={() => setIsPublicOpen(!isPublicOpen)}
       >
@@ -137,10 +137,10 @@ const ShareHoldingsTables = ({ shareholdingData, promoters_table_totals = {}, pu
           <span className={styles.date}>{formatDateToIST(shareholdingData?.last_updated)}</span>
         </div>
         <div className={styles.headerActions}>
-           <img 
-            src="/icons/chevron-down-dark.svg" 
-            alt="Expand" 
-            className={`${styles.expandIcon} ${isPublicOpen ? styles.rotateIcon : ""}`} 
+          <img
+            src="/icons/chevron-down-dark.svg"
+            alt="Expand"
+            className={`${styles.expandIcon} ${isPublicOpen ? styles.rotateIcon : ""}`}
           />
         </div>
       </div>
@@ -167,9 +167,9 @@ const ShareHoldingsTables = ({ shareholdingData, promoters_table_totals = {}, pu
                   <tr key={`pub-${index}`}>
                     <td className={styles.categoryName}>{row.category}</td>
                     <td className={styles.valueCell}>{row.equity_number_of_shares || "-"}</td>
-                    <td className={styles.valueCell}>{row.equity_percentage && row.equity_percentage !== "-" ? `${row.equity_percentage}%` : "-"}</td>
+                    <td className={styles.valueCell}>{row.equity_percentage && row.equity_percentage !== "-" ? `${row.equity_percentage}` : "-"}</td>
                     <td className={styles.valueCell}>{row.preference_number_of_shares || "-"}</td>
-                    <td className={styles.valueCell}>{row.preference_percentage && row.preference_percentage !== "-" ? `${row.preference_percentage}%` : "-"}</td>
+                    <td className={styles.valueCell}>{row.preference_percentage && row.preference_percentage !== "-" ? `${row.preference_percentage}` : "-"}</td>
                   </tr>
                 ))
               ) : (
@@ -182,9 +182,9 @@ const ShareHoldingsTables = ({ shareholdingData, promoters_table_totals = {}, pu
               <tr className={styles.footerRow}>
                 <td className={styles.categoryName}>Total</td>
                 <td className={styles.valueCell}>{public_table_totals.equity_number_of_shares || "-"}</td>
-                <td className={styles.valueCell}>{public_table_totals.equity_percentage && public_table_totals.equity_percentage !== "-" ? `${public_table_totals.equity_percentage}%` : "-"}</td>
+                <td className={styles.valueCell}>{public_table_totals.equity_percentage && public_table_totals.equity_percentage !== "-" ? `${public_table_totals.equity_percentage}` : "-"}</td>
                 <td className={styles.valueCell}>{public_table_totals.preference_number_of_shares || "-"}</td>
-                <td className={styles.valueCell}>{public_table_totals.preference_percentage && public_table_totals.preference_percentage !== "-" ? `${public_table_totals.preference_percentage}%` : "-"}</td>
+                <td className={styles.valueCell}>{public_table_totals.preference_percentage && public_table_totals.preference_percentage !== "-" ? `${public_table_totals.preference_percentage}` : "-"}</td>
               </tr>
             </tfoot>
           </table>
