@@ -79,7 +79,7 @@ export default function SubsidiaryAccordion({ groupStructureData }) {
                 <div className={styles.itemRight}>
                   <div className={styles.ownershipInfo}>
                     <span className={styles.ownershipValue}>
-                      {item.ownership_percentage && item.ownership_percentage !== "-" ? `${item.ownership_percentage}%` : "-"}
+                      {item.ownership_percentage && item.ownership_percentage !== "-" ? `${item.ownership_percentage}` : "-"}
                     </span>
                     <span className={styles.ownershipLabel}>{item.ownership_type || "Ownership"}</span>
                   </div>
