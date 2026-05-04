@@ -28,10 +28,10 @@ export default function PeopleDatabase({ onRowClick }) {
 
   const getCleanDisplay = (companies, originalDisplay) => {
     if (!companies || companies.length === 0) return originalDisplay || "-";
-    
+
     const cleaned = [...new Set(companies.map(cleanCompanyName))];
     if (cleaned.length === 0) return "-";
-    
+
     if (cleaned.length === 1) return cleaned[0];
     if (cleaned.length === 2) return `${cleaned[0]}, ${cleaned[1]}`;
     return `${cleaned[0]}, ${cleaned[1]} +${cleaned.length - 2} more`;
@@ -52,7 +52,7 @@ export default function PeopleDatabase({ onRowClick }) {
       });
       if (!response.ok) throw new Error("Failed to fetch people data");
       const data = await response.json();
-      
+
       const processedItems = (data.items || []).map(item => ({
         ...item,
         current: getCleanDisplay(item.current_companies, item.current_companies_display),
@@ -72,7 +72,7 @@ export default function PeopleDatabase({ onRowClick }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchPeople();
-    }, 500); // debounce search
+    }); // debounce search
     return () => clearTimeout(timer);
   }, [searchQuery, currentPage, rowsPerPage]);
 

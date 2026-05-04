@@ -79,8 +79,10 @@ const CompanyNews = ({ companyName }) => {
             setHasFetched(true);
             return;
         }
+        const fetchId = `NewsFetch-${pageNum}-${Date.now()}`;
         try {
             setIsLoading(true);
+            console.time(fetchId);
             const formatDate = (date) => {
                 if (!date) return "";
                 const d = new Date(date);
@@ -101,7 +103,8 @@ const CompanyNews = ({ companyName }) => {
             const response = await fetch(url, {
                 headers: {
                     Authorization: `Bearer ${token}`
-                }
+                },
+                cache: "no-store"
             });
             if (!response.ok) throw new Error("Failed to fetch news");
 
@@ -115,13 +118,10 @@ const CompanyNews = ({ companyName }) => {
             }
 
             setTotalNews(data.total || 0);
-            // setApiInfo({
-            //     source: data.source || "-",
-            //     lastUpdated: data.last_updated || "-"
-            // });
         } catch (error) {
             console.error("News API Error:", error);
         } finally {
+            console.timeEnd(fetchId);
             setIsLoading(false);
             setHasFetched(true);
         }
@@ -129,6 +129,12 @@ const CompanyNews = ({ companyName }) => {
 
     // Initial load and filter changes
     useEffect(() => {
+        // Skip debounce for initial load
+        if (!hasFetched && companyName && companyName !== "undefined") {
+            fetchNews(1, false);
+            return;
+        }
+
         const timer = setTimeout(() => {
             fetchNews(1, false);
         }, 500); // Debounce search/date changes
