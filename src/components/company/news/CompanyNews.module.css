@@ -183,15 +183,17 @@
 }
 
 /* Reset margins for any nested HTML content to prevent height issues */
-.description p, 
-.description div, 
+.description p,
+.description div,
 .description span {
   margin: 0;
-  display: inline; /* Keep content inline for better clamping */
+  display: inline;
+  /* Keep content inline for better clamping */
 }
 
 .clamped {
-  max-height: 40px; /* Strictly 2 lines */
+  max-height: 40px;
+  /* Strictly 2 lines */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -207,7 +209,7 @@
   right: 0;
   /* Fade effect to cover text behind the button */
   background: linear-gradient(to right, transparent, #ffffff 40%, #ffffff);
-  padding-left: 48px; 
+  padding-left: 48px;
   color: #041E42;
   font-weight: 600;
   cursor: pointer;
@@ -326,7 +328,7 @@
 .loadMoreWrapper {
   display: flex;
   justify-content: flex-start;
-  margin-top: 24px;
+  margin-top: 4px;
   width: 100%;
 }
 
@@ -439,6 +441,7 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }

@@ -32,17 +32,23 @@ import AlertsContainer from "@/components/company/alerts/AlertsContainer";
 import { useParams } from "next/navigation";
 
 export default function CompanyPage() {
-  const { activeSection, activeSubSection, scrollTrigger } = useCompanySection();
+  const { 
+    activeSection, 
+    activeSubSection, 
+    scrollTrigger,
+    setCompanyData,
+    setCompanyLoading,
+    setCompanyError,
+    companyData,
+    companyLoading,
+    companyError
+  } = useCompanySection();
   const params = useParams();
   const rawCompanyName = (params.name.replaceAll("-", " ")).toUpperCase(); // from /company/dabur because route is [name]
 
 
   const [companyName, setCompanyName] = useState("");
 
-  // Company Details
-  const [companyData, setCompanyData] = useState(null);
-  const [companyLoading, setCompanyLoading] = useState(true);
-  const [companyError, setCompanyError] = useState(null);
 
   // Profit & Loss
   const [pnlViewType, setPnlViewType] = useState("Standalone");
@@ -526,7 +532,7 @@ export default function CompanyPage() {
     };
 
     getCompanyDetails();
-  }, [companyName]);
+  }, [companyName, setCompanyData, setCompanyLoading, setCompanyError]);
 
   /* ================= PROFIT & LOSS ================= */
 

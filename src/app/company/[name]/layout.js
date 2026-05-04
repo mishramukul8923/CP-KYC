@@ -14,16 +14,15 @@ export default function CompanyLayout({ children }) {
     setAlertsData,
     setAlertsLoading,
     setAlertsError,
-    litigationPage
+    litigationPage,
+    companyData,
+    companyLoading,
+    companyError
   } = useCompanySection() || {};
   const [showStickyHeader, setShowStickyHeader] = useState(false);
   const params = useParams();
   const rawCompanyName = (params.name.replaceAll("-", " ")).toUpperCase(); // from /company/dabur because route is [name]
   const [companyName, setCompanyName] = useState("");
-  // Company Details
-  const [companyData, setCompanyData] = useState(null);
-  const [companyLoading, setCompanyLoading] = useState(true);
-  const [companyError, setCompanyError] = useState(null);
 
   useEffect(() => {
     const onScroll = () => {
@@ -45,53 +44,6 @@ export default function CompanyLayout({ children }) {
   }, [rawCompanyName]);
 
 
-  /* ================= GET COMPANY DETAILS ================= */
-
-  useEffect(() => {
-    if (!companyName) return;
-
-    const getCompanyDetails = async () => {
-      try {
-        setCompanyLoading(true);
-        setCompanyError(null);
-
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company-details/${encodeURIComponent(companyName)}`,
-          {
-            headers: {
-              Authorization: token ? `Bearer ${token}` : "",
-            },
-          }
-        );
-
-        let data;
-        try {
-          data = await response.json();
-        } catch {
-          throw new Error("Invalid server response");
-        }
-
-        if (!response.ok) {
-          throw new Error(
-            data?.detail ||
-            data?.message ||
-            `Company Details Error ${response.status}: ${response.statusText}`
-          );
-        }
-
-        setCompanyData(data);
-
-      } catch (error) {
-        console.log("Error fetching company details rahul :", error);
-        setCompanyError(error.message);
-      } finally {
-        setCompanyLoading(false);
-      }
-    };
-
-    getCompanyDetails();
-  }, [companyName]);
 
   /* ================= GET ALERTS DATA ================= */
   useEffect(() => {
