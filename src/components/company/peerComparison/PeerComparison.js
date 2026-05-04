@@ -2,14 +2,14 @@ import styles from "./PeerComparison.module.css";
 import { formatDateToIST } from "@/utils/dateFormatter";
 import CompanyCharts from "../charts/CompanyCharts";
 
-export default function PeerComparison({ 
-  data, 
-  loading, 
-  error, 
-  page, 
-  perPage, 
-  setPage, 
-  setPerPage 
+export default function PeerComparison({
+  data,
+  loading,
+  error,
+  page,
+  perPage,
+  setPage,
+  setPerPage
 }) {
   if (loading || (!data && !error)) {
     // ... skeleton rendering stays the same (I'll keep it for now)
@@ -23,7 +23,7 @@ export default function PeerComparison({
             <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '150px' }} />
           </div>
         </div>
-        
+
         <section className={styles.sectionCard}>
           <div className={`${styles.skeleton} ${styles.skeletonChart}`}></div>
         </section>
@@ -72,7 +72,7 @@ export default function PeerComparison({
   }
 
   if (!data) {
-    return null; 
+    return null;
   }
 
   const peerData = data?.peer_companies?.items || [];
@@ -94,8 +94,8 @@ export default function PeerComparison({
         </div>
       </div>
 
-      <CompanyCharts 
-        businessActivity={data?.business_activity} 
+      <CompanyCharts
+        businessActivity={data?.business_activity}
         peerComparisonData={data}
         peerComparisonLoading={loading}
       />

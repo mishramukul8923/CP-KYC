@@ -54,6 +54,13 @@ const CustomXAxisTick = ({ x, y, payload }) => {
 };
 
 const CompanyCharts = ({ businessActivity, peerComparisonData, loading, layout = "row" }) => {
+  const formatIndianNumber = (val) => {
+    if (val === undefined || val === null || val === "-") return val;
+    const num = typeof val === "string" ? parseFloat(val.replace(/,/g, "")) : val;
+    if (isNaN(num)) return val;
+    return new Intl.NumberFormat("en-IN").format(num);
+  };
+
   // ... rest of data processing
   // Data for Business Activity Pie Chart
   const pieData = (businessActivity?.chart_segments || [
@@ -68,7 +75,7 @@ const CompanyCharts = ({ businessActivity, peerComparisonData, loading, layout =
   // Data for Peer Comparison Bar Chart
   const barData = (peerComparisonData?.peer_turnover_chart?.items || []).map((item) => ({
     name: item.company_name,
-    value: item.turnover_numeric,
+    value: (item.turnover_numeric),
     is_selected: item.is_selected_company
   }));
 
@@ -262,7 +269,7 @@ const CompanyCharts = ({ businessActivity, peerComparisonData, loading, layout =
                     axisLine={{ stroke: "#E5E7EB" }}
                     tickLine={false}
                     tick={{ fontSize: 12, fill: "rgba(55, 65, 81, 1)" }}
-                    tickFormatter={(val) => `${val} ${peerComparisonData.peer_turnover_chart?.metric_unit || ""}`}
+                    tickFormatter={(val) => `${formatIndianNumber(val)} ${peerComparisonData.peer_turnover_chart?.metric_unit || ""}`}
                     width={90}
                   />
                   <Tooltip
@@ -272,7 +279,7 @@ const CompanyCharts = ({ businessActivity, peerComparisonData, loading, layout =
                         return (
                           <div style={{ backgroundColor: "#fff", padding: "10px", border: "1px solid #ccc", borderRadius: "8px", boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}>
                             <p style={{ margin: 0, fontWeight: "600", color: '#111827' }}>{payload[0].payload.name}</p>
-                            <p style={{ margin: '4px 0 0', color: '#4B5563' }}>Turnover: {payload[0].value} {peerComparisonData.peer_turnover_chart?.metric_unit}</p>
+                             <p style={{ margin: '4px 0 0', color: '#4B5563' }}>Turnover: {formatIndianNumber(payload[0].value)} {peerComparisonData.peer_turnover_chart?.metric_unit}</p>
                           </div>
                         );
                       }

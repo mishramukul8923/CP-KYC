@@ -16,7 +16,7 @@ export default function CompanyDatabase() {
   const [bulkOpen, setBulkOpen] = useState(false);
   const [bulkDirection, setBulkDirection] = useState("down");
 
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [selectedRows, setSelectedRows] = useState([]);
@@ -598,6 +598,7 @@ export default function CompanyDatabase() {
               <span className={styles.rowsPerPageText}>Rows per page</span>
               <RowsPerPage
                 value={rowsPerPage}
+                options={[20, 50, 100]}
                 onChange={(val) => {
                   setRowsPerPage(val);
                   setCurrentPage(1);

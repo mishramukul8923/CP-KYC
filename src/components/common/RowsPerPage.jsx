@@ -3,7 +3,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import styles from "./RowsPerPage.module.css";
 
-export default function RowsPerPage({ openTop, value, onChange }) {
+export default function RowsPerPage({ openTop, value, onChange, options = [10, 20, 50, 100] }) {
   const [open, setOpen] = useState(false);
   const [direction, setDirection] = useState("down"); // down | up
   const wrapperRef = useRef(null);
@@ -47,7 +47,7 @@ export default function RowsPerPage({ openTop, value, onChange }) {
           ${openTop ? styles.openOntop : ""}
           `}
         >
-          {[10, 20, 50, 100].map((val) => (
+          {options.map((val) => (
             <button
               key={val}
               className={styles.rowsOption}

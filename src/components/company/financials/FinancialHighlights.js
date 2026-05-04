@@ -113,7 +113,7 @@ const FinancialHighlights = ({
             <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '150px' }} />
           </div>
         </div>
-        
+
         <div className={styles.sectionHeader}>
           <div className={`${styles.skeleton} ${styles.skeletonHeader}`} style={{ marginTop: '20px' }} />
         </div>
@@ -181,27 +181,6 @@ const FinancialHighlights = ({
 
 
 
-  if ((financialLoading && !financialError) || (revenueLoading && !revenueError)) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <h1 className={styles.headerTitle}>Financials</h1>
-          <div className={styles.headerInfo}>
-            <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100px' }} />
-            <div className={styles.infoDivider}></div>
-            <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '150px' }} />
-          </div>
-        </div>
-        <div className={styles.topGrid}>
-          {[1, 2, 3, 4, 5, 6].map(i => (
-            <div key={i} className={`${styles.skeleton} ${styles.skeletonStatCard}`} />
-          ))}
-        </div>
-        <div className={`${styles.skeleton} ${styles.skeletonChartSection}`} style={{ marginTop: '20px' }} />
-      </div>
-    );
-  }
-
   const financialHighlightsData = financialHighlights;
 
   const parseChange = (value) => {
@@ -210,7 +189,7 @@ const FinancialHighlights = ({
     return number < 0;
   };
 
-  
+
 
   const formatIndianNumber = (val) => {
     if (val === undefined || val === null || val === "-") return val;
@@ -329,22 +308,22 @@ const FinancialHighlights = ({
       isNegative: parseChange(financialHighlightsData?.equity_multiplier?.change_pct),
     },
     {
-      label:"PE Ratio",
-      value:formatValue(financialHighlightsData?.pe_ratio),
-      change:financialHighlightsData?.pe_ratio?.change_pct || "-",
-      isNegative:parseChange(financialHighlightsData?.pe_ratio?.change_pct),
+      label: "PE Ratio",
+      value: formatValue(financialHighlightsData?.pe_ratio),
+      change: financialHighlightsData?.pe_ratio?.change_pct || "-",
+      isNegative: parseChange(financialHighlightsData?.pe_ratio?.change_pct),
     },
     {
-      label:"Book Value",
-      value:formatValue(financialHighlightsData?.book_value),
-      change:financialHighlightsData?.book_value?.change_pct || "-",
-      isNegative:parseChange(financialHighlightsData?.book_value?.change_pct),
+      label: "Book Value",
+      value: formatValue(financialHighlightsData?.book_value),
+      change: financialHighlightsData?.book_value?.change_pct || "-",
+      isNegative: parseChange(financialHighlightsData?.book_value?.change_pct),
     },
     {
-      label:"Reserves",
-      value:formatValue(financialHighlightsData?.reserves),
-      change:financialHighlightsData?.reserves?.change_pct || "-",
-      isNegative:parseChange(financialHighlightsData?.reserves?.change_pct),
+      label: "Reserves",
+      value: formatValue(financialHighlightsData?.reserves),
+      change: financialHighlightsData?.reserves?.change_pct || "-",
+      isNegative: parseChange(financialHighlightsData?.reserves?.change_pct),
     }
 
   ];
@@ -426,58 +405,74 @@ const FinancialHighlights = ({
         </Link> */}
       </div>
       <div className={styles.topGrid}>
-        {topCards.map((card, idx) => (
-          <div key={idx} className={styles.statCard}>
-            <div className={styles.statHeader}>
-              <span className={styles.statLabel}>{card.label}</span>
-              <span
-                className={`${styles.badge} ${card.isNegative ? styles.negativeBadge : styles.positiveBadge}`}
-              >
-                {card.change}
-              </span>
+        {financialLoading ? (
+          [1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className={`${styles.skeleton} ${styles.skeletonStatCard}`} />
+          ))
+        ) : (
+          topCards.map((card, idx) => (
+            <div key={idx} className={styles.statCard}>
+              <div className={styles.statHeader}>
+                <span className={styles.statLabel}>{card.label}</span>
+                <span
+                  className={`${styles.badge} ${card.isNegative ? styles.negativeBadge : styles.positiveBadge}`}
+                >
+                  {card.change}
+                </span>
+              </div>
+              <div className={styles.statValue}>{card.value}</div>
             </div>
-            <div className={styles.statValue}>{card.value}</div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       <div className={styles.tableSection}>
-        {ratioData.map((item, idx) => (
-          <div key={idx} className={styles.tableRow}>
-            <span className={styles.rowLabel}>{item.label}</span>
-            <span className={styles.rowValue}>{item.value}</span>
-            <span
-              className={`${styles.rowBadge} ${item.change === '-' || item.change === null || item.change === undefined
-                ? styles.rowNegative
-                : item.isNegative
-                  ? styles.rowNegative
-                  : styles.rowPositive
-                }`}
-            >
-              {item.change === '-' || item.change === null || item.change === undefined ? (
-                '-'
-              ) : (
-                <>
-                  <img
-                    src={
-                      item.isNegative
-                        ? "/icons/arrow-down.svg"
-                        : "/icons/arrow-up-green.svg"
-                    }
-                    alt=""
-                    className={styles.arrowIcon}
-                  />
-                  {item.change}
-                </>
-              )}
-            </span>
-          </div>
-        ))}
+        {financialLoading ? (
+          [1, 2, 3, 4, 5, 6, 7].map(i => (
+            <div key={i} className={styles.tableRow} style={{ padding: '8px 0' }}>
+              <div className={`${styles.skeleton} ${styles.skeletonText}`} />
+              <div className={`${styles.skeleton} ${styles.skeletonText}`} />
+              <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '80px' }} />
+            </div>
+          ))
+        ) : (
+          ratioData.map((item, idx) => (
+            <div key={idx} className={styles.tableRow}>
+              <span className={styles.rowLabel}>{item.label}</span>
+              <span className={styles.rowValue}>{item.value}</span>
+              <span
+                className={`${styles.rowBadge} ${item.change === '-' || item.change === null || item.change === undefined
+                  ? ''
+                  : item.isNegative
+                    ? styles.rowNegative
+                    : styles.rowPositive
+                  }`}
+              >
+                {item.change === '-' || item.change === null || item.change === undefined ? (
+                  '-'
+                ) : (
+                  <>
+                    <img
+                      src={
+                        item.isNegative
+                          ? "/icons/arrow-down.svg"
+                          : "/icons/arrow-up-green.svg"
+                      }
+                      alt=""
+                      className={styles.arrowIcon}
+                    />
+                    {item.change}
+                  </>
+                )}
+              </span>
+            </div>
+          ))
+        )}
       </div>
 
       <div className={styles.chartSection}>
         <div className={styles.chartHeader}>
-          <h3 className={styles.chartTitle}>Revenue & Profit Trend</h3>
+          <h3 className={styles.chartTitle}>Revenue & Profit Trend </h3>
           <div className={styles.customLegend}>
             <div className={styles.legendItem}>
               <span className={styles.blueDot}></span> Revenue
@@ -489,7 +484,9 @@ const FinancialHighlights = ({
           </div>
         </div>
         <div className={styles.chartContainer}>
-          {chartData.length > 0 ? (
+          {revenueLoading ? (
+            <div className={`${styles.skeleton} ${styles.skeletonChartSection}`} style={{ height: '400px', width: '100%' }} />
+          ) : chartData.length > 0 ? (
             <ResponsiveContainer width="100%" height={400}>
               <BarChart
                 data={chartData}
