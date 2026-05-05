@@ -2,6 +2,7 @@
 import { useRef, useEffect, useState } from "react";
 import { useCompanySection } from "@/components/company/context/CompanySectionContext";
 import { scrollToElementWithOffset } from "@/utils/scrollUtils";
+import { convertWebpToPng } from "@/utils/imageUtils";
 
 
 import CompanyOverview from "@/components/company/overview/CompanyOverview";
@@ -438,11 +439,23 @@ export default function CompanyPage() {
           // Small delay to allow state and UI to settle
           await new Promise(resolve => setTimeout(resolve, 800));
 
+          // Convert WebP logo to PNG if necessary before passing to PDF component
+          const originalLogoUrl = companyData?.header?.logo_url;
+          const pngLogoUrl = await convertWebpToPng(originalLogoUrl);
+          
+          const processedCompanyData = {
+            ...companyData,
+            header: {
+              ...companyData?.header,
+              logo_url: pngLogoUrl
+            }
+          };
+
           const { pdf } = await import("@react-pdf/renderer");
           const { default: ReportDocument } = await import("@/components/company/pdf/ReportDocument");
 
           const blob = await pdf(<ReportDocument
-            companyData={companyData}
+            companyData={processedCompanyData}
             alertsData={finalAlertsData}
             directorsData={directors}
             shareholdingData={shareholding}
