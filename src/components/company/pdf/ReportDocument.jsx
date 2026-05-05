@@ -395,9 +395,9 @@ export const ReportDocument = ({
   const alerts = alertsData?.regulatory_alerts || [];
   const statutoryAlerts = alertsData?.statutory_compliance || [];
   const auditorAlerts = alertsData?.auditors || [];
-  const litigationAlerts = alertsData?.litigations?.detailed_cases?.items || [];
+  const litigationAlerts = Array.isArray(alertsData?.litigations?.detailed_cases?.items) ? alertsData.litigations.detailed_cases.items : [];
   const litigationSummaryCards = alertsData?.litigations?.summary_cards || {};
-  const litigationSummaryTable = alertsData?.litigations?.summary_table || [];
+  const litigationSummaryTable = Array.isArray(alertsData?.litigations?.summary_table) ? alertsData.litigations.summary_table : [];
 
   const allDirectors = directorsData?.directors || [];
   const currentDirectors = allDirectors.filter(d => !d.cessation_date || d.cessation_date === '-');
@@ -1025,8 +1025,8 @@ export const ReportDocument = ({
     const businessActivity = data.business_activity || {};
     const activityRows = businessActivity.table_rows || [];
     const turnoverChart = data.peer_turnover_chart || {};
-    const peerItems = turnoverChart.items || [];
-    const peerCompanies = data.peer_companies?.items || [];
+    const peerItems = Array.isArray(turnoverChart.items) ? turnoverChart.items : [];
+    const peerCompanies = Array.isArray(data.peer_companies?.items) ? data.peer_companies.items : [];
 
     // Colors similar to web UI
     const colors = ["#D8B4FE", "#BBF7D8", "#93C5FD", "#FDBA74", "#F9A8D4", "#A5F3FC", "#C7D2FE", "#FEF08A"];
@@ -2066,7 +2066,7 @@ export const ReportDocument = ({
           {/* Directors Shareholdings Table */}
           {(() => {
             const dsObj = shareholdingData?.directors_shareholdings;
-            const dsData = Array.isArray(dsObj) ? dsObj : (dsObj?.data || dsObj?.items || []);
+            const dsData = Array.isArray(dsObj) ? dsObj : (Array.isArray(dsObj?.data) ? dsObj.data : (Array.isArray(dsObj?.items) ? dsObj.items : []));
             const mappedDs = dsData.map(d => ({
               "Director Name": formatValue(d.director_name),
               "Share Type": formatValue(d.share_type),
@@ -2079,7 +2079,7 @@ export const ReportDocument = ({
           {/* Foreign Institutional Investor Table */}
           {(() => {
             const fiiObj = shareholdingData?.foreign_institutional_investor;
-            const fiiData = Array.isArray(fiiObj) ? fiiObj : (fiiObj?.data || fiiObj?.items || []);
+            const fiiData = Array.isArray(fiiObj) ? fiiObj : (Array.isArray(fiiObj?.data) ? fiiObj.data : (Array.isArray(fiiObj?.items) ? fiiObj.items : []));
             const mappedFii = fiiData.map(f => ({
               "Name of the FII": formatValue(f.name_of_the_fii),
               "Share Type": formatValue(f.share_type),
@@ -2108,7 +2108,7 @@ export const ReportDocument = ({
               }, "Trading Details")}
 
               {(() => {
-                const items = securityAllotmentData.allotment_records?.items || [];
+                const items = Array.isArray(securityAllotmentData.allotment_records?.items) ? securityAllotmentData.allotment_records.items : [];
                 const mappedItems = items.map(a => ({
                   "Allotment Date": formatValue(a.allotment_date),
                   "Allotment Type": formatValue(a.allotment_type),
@@ -2141,7 +2141,7 @@ export const ReportDocument = ({
               }, "Parent Company Details")}
 
               {(() => {
-                const items = groupStructureData.group_entities || [];
+                const items = Array.isArray(groupStructureData.group_entities) ? groupStructureData.group_entities : [];
                 const mappedItems = items.map(e => ({
                   "Subsidiary Name": formatValue(e.subsidiary_name),
                   "Country": formatValue(e.country),
@@ -2165,7 +2165,7 @@ export const ReportDocument = ({
               }, "ODI Summary")}
 
               {(() => {
-                const items = overseasInvestmentData.overseas_direct_investments?.items || [];
+                const items = Array.isArray(overseasInvestmentData.overseas_direct_investments?.items) ? overseasInvestmentData.overseas_direct_investments.items : [];
                 const mappedItems = items.map(o => ({
                   "Year": formatValue(o.year),
                   "Month": formatValue(o.month),
