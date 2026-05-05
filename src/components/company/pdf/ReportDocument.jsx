@@ -2141,7 +2141,7 @@ export const ReportDocument = ({
               }, "Parent Company Details")}
 
               {(() => {
-                const items = Array.isArray(groupStructureData.group_entities) ? groupStructureData.group_entities : [];
+                const items = Array.isArray(groupStructureData.group_entities) ? groupStructureData.group_entities : (groupStructureData.group_entities?.items || []);
                 const mappedItems = items.map(e => ({
                   "Subsidiary Name": formatValue(e.subsidiary_name),
                   "Country": formatValue(e.country),

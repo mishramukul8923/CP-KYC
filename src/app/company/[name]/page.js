@@ -149,10 +149,14 @@ export default function CompanyPage() {
   const [securityAllotmentData, setSecurityAllotmentData] = useState(null);
   const [securityAllotmentLoading, setSecurityAllotmentLoading] = useState(false);
   const [securityAllotmentError, setSecurityAllotmentError] = useState(null);
+  const [allotmentPage, setAllotmentPage] = useState(1);
+  const [allotmentLimit, setAllotmentLimit] = useState(10);
 
   const [groupStructureData, setGroupStructureData] = useState(null);
   const [groupStructureLoading, setGroupStructureLoading] = useState(false);
   const [groupStructureError, setGroupStructureError] = useState(null);
+  const [groupPage, setGroupPage] = useState(1);
+  const [groupLimit, setGroupLimit] = useState(10);
 
   const [overseasInvestmentData, setOverseasInvestmentData] = useState(null);
   const [overseasInvestmentLoading, setOverseasInvestmentLoading] = useState(false);
@@ -335,7 +339,7 @@ export default function CompanyPage() {
           let securityAllotment = securityAllotmentData;
           const fetchSecurityAllotment = async () => {
             const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/security-allotment?limit=1000`,
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/security-allotment?page=1&per_page=1000`,
               { headers: { Authorization: token ? `Bearer ${token}` : "" } }
             );
             return await response.json();
@@ -346,7 +350,7 @@ export default function CompanyPage() {
           let groupStructure = groupStructureData;
           const fetchGroupStructure = async () => {
             const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/group-structure?limit=1000`,
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/group-structure?page=1&per_page=1000`,
               { headers: { Authorization: token ? `Bearer ${token}` : "" } }
             );
             return await response.json();
@@ -940,7 +944,7 @@ export default function CompanyPage() {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${encodeURIComponent(
             companyName
-          )}/control-ownership/security-allotment`,
+          )}/control-ownership/security-allotment?page=${allotmentPage}&per_page=${allotmentLimit}`,
           {
             headers: {
               Authorization: token ? `Bearer ${token}` : "",
@@ -960,7 +964,7 @@ export default function CompanyPage() {
     };
 
     getSecurityAllotment();
-  }, [companyName]);
+  }, [companyName, allotmentPage, allotmentLimit]);
 
   /* ================= GROUP STRUCTURE DETAILS ================= */
   useEffect(() => {
@@ -975,7 +979,7 @@ export default function CompanyPage() {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${encodeURIComponent(
             companyName
-          )}/control-ownership/group-structure`,
+          )}/control-ownership/group-structure?page=${groupPage}&per_page=${groupLimit}`,
           {
             headers: {
               Authorization: token ? `Bearer ${token}` : "",
@@ -995,7 +999,7 @@ export default function CompanyPage() {
     };
 
     getGroupStructure();
-  }, [companyName]);
+  }, [companyName, groupPage, groupLimit]);
 
   /* ================= OVERSEAS DIRECT INVESTMENT DETAILS ================= */
   useEffect(() => {
@@ -1441,6 +1445,14 @@ export default function CompanyPage() {
             securityAllotmentLoading={securityAllotmentLoading}
             groupStructureData={groupStructureData}
             groupStructureLoading={groupStructureLoading}
+            groupPage={groupPage}
+            setGroupPage={setGroupPage}
+            groupLimit={groupLimit}
+            setGroupLimit={setGroupLimit}
+            allotmentPage={allotmentPage}
+            setAllotmentPage={setAllotmentPage}
+            allotmentLimit={allotmentLimit}
+            setAllotmentLimit={setAllotmentLimit}
             overseasInvestmentData={overseasInvestmentData}
             overseasInvestmentLoading={overseasInvestmentLoading}
           />

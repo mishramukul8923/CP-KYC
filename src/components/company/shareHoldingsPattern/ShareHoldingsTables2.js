@@ -5,10 +5,16 @@ import RowsPerPage from "@/components/common/RowsPerPage";
 import { useState } from "react";
 import { useCompanySection } from "@/components/company/context/CompanySectionContext";
 
-const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
+const ShareHoldingsTables2 = ({ 
+  shareholdingData, 
+  securityAllotmentData,
+  allotmentPage,
+  setAllotmentPage,
+  allotmentLimit,
+  setAllotmentLimit
+}) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [fiiPage, setFiiPage] = useState(1);
-  const [allotmentPage, setAllotmentPage] = useState(1);
 
   const rawDirectors = shareholdingData?.directors_shareholdings;
   const directorsData = (Array.isArray(rawDirectors) ? rawDirectors : []).map(d => ({
@@ -275,7 +281,10 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
                 </thead>
                 <tbody>
                   {displayAllotment.length > 0 ? (
-                    displayAllotment.slice((allotmentPage - 1) * rowsPerPage, allotmentPage * rowsPerPage).map((item, index) => (
+                    (isAllotmentEmpty 
+                      ? displayAllotment.slice((allotmentPage - 1) * allotmentLimit, allotmentPage * allotmentLimit)
+                      : displayAllotment
+                    ).map((item, index) => (
                       <tr key={index}>
                         <td className={styles.tdName}>{item.date || "-"}</td>
                         <td className={styles.tdName}>{item.type || "-"}</td>
@@ -298,21 +307,22 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
             {displayAllotment.length > 0 && (
               <div className={styles.paginationRow}>
                 <span className={styles.showingText}>
-                  Showing {Math.min((allotmentPage - 1) * rowsPerPage + 1, displayAllotment.length)}-{Math.min(allotmentPage * rowsPerPage, displayAllotment.length)} of {displayAllotment.length}
+                  Showing {isAllotmentEmpty ? Math.min((allotmentPage - 1) * allotmentLimit + 1, displayAllotment.length) : (allotmentPage - 1) * allotmentLimit + 1}-
+                  {isAllotmentEmpty ? Math.min(allotmentPage * allotmentLimit, displayAllotment.length) : Math.min(allotmentPage * allotmentLimit, securityAllotmentData?.allotment_records?.total || 0)} of {isAllotmentEmpty ? displayAllotment.length : (securityAllotmentData?.allotment_records?.total || 0)}
                 </span>
                 <div className={styles.paginationControls}>
                   <div className={styles.paginationInfo}>
                     <span className={styles.rowsLabel}>Rows per page</span>
                     <RowsPerPage
-                      value={rowsPerPage}
+                      value={allotmentLimit}
                       onChange={(val) => {
-                        setRowsPerPage(val);
+                        setAllotmentLimit(val);
                         setAllotmentPage(1);
                         setFiiPage(1); // Reset both to be consistent
                       }}
                     />
                   </div>
-                  <span className={styles.pageLabel}>Page {allotmentPage} of {Math.ceil(displayAllotment.length / rowsPerPage)}</span>
+                  <span className={styles.pageLabel}>Page {allotmentPage} of {isAllotmentEmpty ? Math.ceil(displayAllotment.length / allotmentLimit) : (securityAllotmentData?.allotment_records?.pages || 1)}</span>
                   <div className={styles.navButtons}>
                     <button
                       className={allotmentPage === 1 ? styles.navBtnDisabled : styles.navBtn}
@@ -339,9 +349,9 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
                     </button>
 
                     <button
-                      className={allotmentPage === Math.ceil(displayAllotment.length / rowsPerPage) ? styles.navBtnDisabled : styles.navBtn}
-                      onClick={() => setAllotmentPage(prev => Math.min(Math.ceil(displayAllotment.length / rowsPerPage), prev + 1))}
-                      disabled={allotmentPage === Math.ceil(displayAllotment.length / rowsPerPage) || displayAllotment.length === 0}
+                      className={allotmentPage === (isAllotmentEmpty ? Math.ceil(displayAllotment.length / allotmentLimit) : (securityAllotmentData?.allotment_records?.pages || 1)) ? styles.navBtnDisabled : styles.navBtn}
+                      onClick={() => setAllotmentPage(prev => Math.min((isAllotmentEmpty ? Math.ceil(displayAllotment.length / allotmentLimit) : (securityAllotmentData?.allotment_records?.pages || 1)), prev + 1))}
+                      disabled={allotmentPage === (isAllotmentEmpty ? Math.ceil(displayAllotment.length / allotmentLimit) : (securityAllotmentData?.allotment_records?.pages || 1)) || displayAllotment.length === 0}
                     >
                       <img
                         src="/icons/chevron-right-black.svg"
@@ -351,9 +361,9 @@ const ShareHoldingsTables2 = ({ shareholdingData, securityAllotmentData }) => {
                     </button>
 
                     <button
-                      className={allotmentPage === Math.ceil(displayAllotment.length / rowsPerPage) ? styles.navBtnDisabled : styles.navBtn}
-                      onClick={() => setAllotmentPage(Math.ceil(displayAllotment.length / rowsPerPage))}
-                      disabled={allotmentPage === Math.ceil(displayAllotment.length / rowsPerPage) || displayAllotment.length === 0}
+                      className={allotmentPage === (isAllotmentEmpty ? Math.ceil(displayAllotment.length / allotmentLimit) : (securityAllotmentData?.allotment_records?.pages || 1)) ? styles.navBtnDisabled : styles.navBtn}
+                      onClick={() => setAllotmentPage(isAllotmentEmpty ? Math.ceil(displayAllotment.length / allotmentLimit) : (securityAllotmentData?.allotment_records?.pages || 1))}
+                      disabled={allotmentPage === (isAllotmentEmpty ? Math.ceil(displayAllotment.length / allotmentLimit) : (securityAllotmentData?.allotment_records?.pages || 1)) || displayAllotment.length === 0}
                     >
                       <img
                         src="/icons/chevrons-right.svg"
