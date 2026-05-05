@@ -11,6 +11,7 @@ import { useCompanySection } from "@/components/company/context/CompanySectionCo
 import { useEffect, useRef } from "react";
 import { scrollToElementWithOffset } from "@/utils/scrollUtils";
 import { formatDateToIST } from "@/utils/dateFormatter";
+import RowsPerPage from "@/components/common/RowsPerPage";
 
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
@@ -24,6 +25,14 @@ const OwnershipSection = ({
   securityAllotmentLoading,
   groupStructureData,
   groupStructureLoading,
+  groupPage,
+  setGroupPage,
+  groupLimit,
+  setGroupLimit,
+  allotmentPage,
+  setAllotmentPage,
+  allotmentLimit,
+  setAllotmentLimit,
   overseasInvestmentData,
   overseasInvestmentLoading
 }) => {
@@ -152,9 +161,13 @@ const OwnershipSection = ({
   }
 
   const [isPromoterOpen, setIsPromoterOpen] = React.useState(true);
+  const [isGroupExpanded, setIsGroupExpanded] = React.useState(true);
 
-  const isGroupStructureEmpty = !groupStructureData || !groupStructureData.group_entities || groupStructureData.group_entities.length === 0 || (
-    groupStructureData.group_entities.length === 1 && Object.entries(groupStructureData.group_entities[0]).every(([key, value]) => {
+  const rawGroupEntities = groupStructureData?.group_entities?.items || groupStructureData?.group_entities || [];
+  const groupEntities = Array.isArray(rawGroupEntities) ? rawGroupEntities : [];
+
+  const isGroupStructureEmpty = !groupStructureData || groupEntities.length === 0 || (
+    groupEntities.length === 1 && Object.entries(groupEntities[0]).every(([key, value]) => {
       if (key === 'ownership_type') return true;
       return !value || value === '-';
     })
@@ -472,27 +485,28 @@ const OwnershipSection = ({
         <ShareHoldingsTables2
           shareholdingData={shareholdingData}
           securityAllotmentData={securityAllotmentData}
+          allotmentPage={allotmentPage}
+          setAllotmentPage={setAllotmentPage}
+          allotmentLimit={allotmentLimit}
+          setAllotmentLimit={setAllotmentLimit}
         />
       )}
 
-      {groupStructureLoading ? (
-        <section className={styles.section}>
-          <div className={styles.sectionWrapper}>
-            <h2 className={styles.sectionTitle}>Group Structure</h2>
-          </div>
-          <div className={styles.statsGrid}>
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className={`${styles.skeleton} ${styles.skeletonStat}`} style={{ height: '80px' }} />
-            ))}
-          </div>
-          <div className={`${styles.skeleton} ${styles.skeletonProgress}`} style={{ height: '200px' }} />
-        </section>
-      ) : (
-        <section ref={groupStructureRef} className={styles.section} id="Group Structure">
-          <div className={styles.sectionWrapper}>
-            <h2 className={styles.sectionTitle}>Group Structure</h2>
-          </div>
+      <section ref={groupStructureRef} className={styles.section} id="Group Structure">
+        <div className={styles.sectionWrapper}>
+          <h2 className={styles.sectionTitle}>Group Structure</h2>
+        </div>
 
+        {groupStructureLoading ? (
+          <>
+            <div className={styles.statsGrid}>
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className={`${styles.skeleton} ${styles.skeletonStat}`} style={{ height: '80px' }} />
+              ))}
+            </div>
+            <div className={`${styles.skeleton} ${styles.skeletonProgress}`} style={{ height: '200px' }} />
+          </>
+        ) : (
           <div className={styles.blurContainer}>
             {!groupStructureLoading && isGroupStructureEmpty && (
               <div className={styles.overlay}>
@@ -517,11 +531,88 @@ const OwnershipSection = ({
                   ))}
                 </div>
               )}
-              <SubsidiaryAccordion groupStructureData={groupDataToUse} />
+              <SubsidiaryAccordion 
+                groupStructureData={groupDataToUse} 
+                isExpanded={isGroupExpanded}
+                onToggle={() => setIsGroupExpanded(!isGroupExpanded)}
+              />
+              
+              {!isGroupStructureEmpty && groupStructureData?.group_entities?.pages > 0 && (
+                <div className={styles.paginationRow}>
+                  <span className={styles.showingText}>
+                    Showing {(groupPage - 1) * groupLimit + 1}-
+                    {Math.min(groupPage * groupLimit, groupStructureData?.group_entities?.total || 0)} of{" "}
+                    {groupStructureData?.group_entities?.total || 0}
+                  </span>
+                  <div className={styles.paginationControls}>
+                    <div className={styles.paginationInfo}>
+                      <span className={styles.rowsLabel}>Rows per page</span>
+                      <RowsPerPage 
+                        value={groupLimit}
+                        onChange={(value) => {
+                          setGroupLimit(value);
+                          setGroupPage(1);
+                        }} 
+                      />
+                    </div>
+                    <span className={styles.pageLabel}>
+                      Page {groupPage} of{" "}
+                      {groupStructureData?.group_entities?.pages || 1}
+                    </span>
+                    <div className={styles.navButtons}>
+                      <button
+                        className={groupPage === 1 ? styles.navBtnDisabled : styles.navBtn}
+                        disabled={groupPage === 1}
+                        onClick={() => setGroupPage(1)}
+                      >
+                        <img
+                          src="/icons/chevrons-left.svg"
+                          alt="First page"
+                          className={styles.navIcon}
+                        />
+                      </button>
+
+                      <button
+                        className={groupPage === 1 ? styles.navBtnDisabled : styles.navBtn}
+                        disabled={groupPage === 1}
+                        onClick={() => setGroupPage(prev => Math.max(1, prev - 1))}
+                      >
+                        <img
+                          src="/icons/chevron-left.svg"
+                          alt="Previous page"
+                          className={styles.navIcon}
+                        />
+                      </button>
+                      <button
+                        className={groupPage >= (groupStructureData?.group_entities?.pages || 1) ? styles.navBtnDisabled : styles.navBtn}
+                        disabled={groupPage >= (groupStructureData?.group_entities?.pages || 1)}
+                        onClick={() => setGroupPage((prev) => prev + 1)}
+                      >
+                        <img
+                          src="/icons/chevron-right.svg"
+                          alt="Next page"
+                          className={styles.navIcon}
+                        />
+                      </button>
+                      <button
+                        className={groupPage >= (groupStructureData?.group_entities?.pages || 1) ? styles.navBtnDisabled : styles.navBtn}
+                        disabled={groupPage >= (groupStructureData?.group_entities?.pages || 1)}
+                        onClick={() => setGroupPage(groupStructureData?.group_entities?.pages || 1)}
+                      >
+                        <img
+                          src="/icons/chevrons-right.svg"
+                          alt="Last page"
+                          className={styles.navIcon}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
       {overseasInvestmentLoading ? (
         <section className={styles.section}>

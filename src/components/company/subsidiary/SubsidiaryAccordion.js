@@ -16,11 +16,9 @@ const subsidiaries = [
   // { id: 10, name: "Dabur Lanka Pvt Ltd", location: "Sri Lanka", ownership: "100%" }
 ];
 
-export default function SubsidiaryAccordion({ groupStructureData }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-
+export default function SubsidiaryAccordion({ groupStructureData, isExpanded, onToggle }) {
   const parent = groupStructureData?.parent_company;
-  const rawEntities = groupStructureData?.group_entities;
+  const rawEntities = groupStructureData?.group_entities?.items || groupStructureData?.group_entities;
   const entities = Array.isArray(rawEntities) ? rawEntities : [];
 
   const isEntitiesEmpty = entities.length === 1 && Object.entries(entities[0]).every(([key, value]) => {
@@ -29,7 +27,7 @@ export default function SubsidiaryAccordion({ groupStructureData }) {
   });
 
   const toggleAccordion = () => {
-    setIsExpanded(!isExpanded);
+    onToggle?.();
   };
 
   return (

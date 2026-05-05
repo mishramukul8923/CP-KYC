@@ -839,3 +839,82 @@
   width: 60px;
   height: 16px;
 }
+/* Pagination Styles */
+.paginationRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  padding: 0 4px;
+}
+
+.paginationInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.showingText {
+  font-size: 14px;
+  color: rgba(113, 113, 122, 1);
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.rowsLabel,
+.pageLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(30, 41, 59, 1);
+}
+
+.navButtons {
+  display: flex;
+  gap: 4px;
+}
+
+.navBtn,
+.navBtnDisabled {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(228, 228, 231, 1);
+  border-radius: 6px;
+  background-color: #ffffff;
+  cursor: pointer;
+  color: rgba(39, 39, 42, 1);
+  font-size: 16px;
+}
+
+.navBtnDisabled {
+  color: rgba(161, 161, 170, 1);
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.navIcon {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .paginationRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .paginationControls {
+    width: 100%;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+}
