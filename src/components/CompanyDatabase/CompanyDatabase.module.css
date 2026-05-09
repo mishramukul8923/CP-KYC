@@ -231,7 +231,7 @@
 .companyCell {
   display: flex;
   align-items: center;
-  gap: 12px;
+  /* gap: 12px; */
   font-weight: 500;
 }
 
@@ -240,6 +240,28 @@
   object-fit: contain;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
+}
+
+.companyClassTag {
+  border-radius: 100px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.tagPublic {
+  color: #EA580C;
+  background: #FFEDD5;
+}
+
+.tagPrivate {
+  color: #2563EB;
+  background: #DBEAFE;
 }
 
 .statusBadge {
