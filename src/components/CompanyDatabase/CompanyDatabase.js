@@ -24,9 +24,12 @@ export default function CompanyDatabase() {
   const [endDate, setEndDate] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [classFilter, setClassFilter] = useState("");
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const [isClassOpen, setIsClassOpen] = useState(false);
   const calendarRef = useRef(null);
+  const classRef = useRef(null);
 
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -63,6 +66,10 @@ export default function CompanyDatabase() {
           company_name: searchQuery,
           company_status: statusFilter,
         });
+
+        if (classFilter) {
+          params.append("company_class", classFilter);
+        }
 
         if (sortConfig.key && sortConfig.direction) {
           params.append("sort_by", sortConfig.key);
@@ -109,7 +116,7 @@ export default function CompanyDatabase() {
     };
 
     fetchCompanies();
-  }, [rowsPerPage, currentPage, searchQuery, sortConfig, statusFilter, startDate, endDate]);
+  }, [rowsPerPage, currentPage, searchQuery, sortConfig, statusFilter, classFilter, startDate, endDate]);
 
   const handleSort = (key) => {
     let direction = "asc";
@@ -137,6 +144,9 @@ export default function CompanyDatabase() {
       if (!statusRef.current?.contains(e.target)) {
         setIsStatusOpen(false);
       }
+      if (!classRef.current?.contains(e.target)) {
+        setIsClassOpen(false);
+      }
       if (!calendarRef.current?.contains(e.target)) {
         setIsCalendarOpen(false);
       }
@@ -149,10 +159,9 @@ export default function CompanyDatabase() {
   // Search filter (keep for client-side search if needed, but primary is server-side)
   const filteredData = companies; // Now server-side filtered
 
-  // Reset page when search or filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, rowsPerPage, statusFilter, startDate, endDate]);
+  }, [searchQuery, rowsPerPage, statusFilter, classFilter, startDate, endDate]);
 
   // Basic client-side filtering and slicing as a fallback/secondary filter
   const visibleData = filteredData;
@@ -208,6 +217,16 @@ export default function CompanyDatabase() {
   const handleStatusSelect = (status) => {
     setStatusFilter(status);
     setIsStatusOpen(false);
+    setCurrentPage(1);
+  };
+
+  const toggleClass = () => {
+    setIsClassOpen((prev) => !prev);
+  };
+
+  const handleClassSelect = (cls) => {
+    setClassFilter(cls);
+    setIsClassOpen(false);
     setCurrentPage(1);
   };
 
@@ -290,21 +309,50 @@ export default function CompanyDatabase() {
                 >
                   Inactive
                 </button>
-                {/* <button 
-                  className={styles.dropdownItem} 
-                  onClick={() => handleStatusSelect("Liquidated")}
-                >
-                  Liquidated
-                </button>
-                <button 
-                  className={styles.dropdownItem} 
-                  onClick={() => handleStatusSelect("Strike Off")}
-                >
-                  Strike Off
-                </button> */}
               </div>
             )}
           </div>
+
+          <div
+            ref={classRef}
+            className={styles.bulkWrapper}
+          >
+            <div
+              className={styles.filterDropdown}
+              onClick={toggleClass}
+            >
+              <span>{classFilter || "All"}</span>
+              <img
+                src="/icons/chevron-down-dark.svg"
+                alt=""
+                className={`${styles.chevron} ${isClassOpen ? styles.rotated : ""}`}
+              />
+            </div>
+
+            {isClassOpen && (
+              <div className={`${styles.bulkDropdown} ${styles.dropdownDown}`}>
+                <button
+                  className={styles.dropdownItem}
+                  onClick={() => handleClassSelect("")}
+                >
+                  All
+                </button>
+                <button
+                  className={styles.dropdownItem}
+                  onClick={() => handleClassSelect("Public")}
+                >
+                  Public
+                </button>
+                <button
+                  className={styles.dropdownItem}
+                  onClick={() => handleClassSelect("Private")}
+                >
+                  Private
+                </button>
+              </div>
+            )}
+          </div>
+
         </div>
 
         <div className={styles.rightTools}>
@@ -533,6 +581,11 @@ export default function CompanyDatabase() {
                       priority
                     />
                     <Link href={`/company/${(company.company_name || "").toLowerCase().replace(/\s+/g, "-")}`} className={styles.companyLink}>{company.company_name || "-"}</Link>
+                    {company.company_class && company.company_class !== "-" && (
+                      <span className={`${styles.companyClassTag} ${company.company_class.toLowerCase() === 'public' ? styles.tagPublic : styles.tagPrivate}`}>
+                        {company.company_class}
+                      </span>
+                    )}
                   </td>
                   <td>
                     {company.market_cap
