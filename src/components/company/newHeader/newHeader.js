@@ -382,7 +382,7 @@ const CompanyNewHeader = ({ companyData, loading }) => {
                       </div>
                       <div className={styles.metaItem}>
                         <img src="/icons/profile-2user.svg" className={styles.icon} />
-                        <span>{companyData?.employees?.[0]?.employees || "-"}</span>
+                        <span>{companyData?.company_information?.employee_count || "0"}</span>
                       </div>
                       <div className={styles.metaItem}>
                         <img src="/icons/global.svg" className={styles.icon} />
