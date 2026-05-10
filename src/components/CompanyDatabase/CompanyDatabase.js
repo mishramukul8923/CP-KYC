@@ -24,7 +24,7 @@ export default function CompanyDatabase() {
   const [endDate, setEndDate] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [classFilter, setClassFilter] = useState("");
+  const [classFilter, setClassFilter] = useState("Public");
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isClassOpen, setIsClassOpen] = useState(false);
@@ -305,10 +305,34 @@ export default function CompanyDatabase() {
                 </button>
                 <button
                   className={styles.dropdownItem}
+                  onClick={() => handleStatusSelect("Under Liquidation")}
+                >
+                  Under Liquidation
+                </button>
+                <button
+                  className={styles.dropdownItem}
+                  onClick={() => handleStatusSelect("Under CIRP")}
+                >
+                  Under CIRP
+                </button>
+                <button
+                  className={styles.dropdownItem}
+                  onClick={() => handleStatusSelect("Inactive for e-filing")}
+                >
+                  Inactive for e-filing
+                </button>
+                <button
+                  className={styles.dropdownItem}
+                  onClick={() => handleStatusSelect("Dissolved (Liquidated)")}
+                >
+                  Dissolved (Liquidated)
+                </button>
+                {/* <button
+                  className={styles.dropdownItem}
                   onClick={() => handleStatusSelect("Inactive")}
                 >
                   Inactive
-                </button>
+                </button> */}
               </div>
             )}
           </div>
