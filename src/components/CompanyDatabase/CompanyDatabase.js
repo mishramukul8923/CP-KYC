@@ -337,44 +337,25 @@ export default function CompanyDatabase() {
             )}
           </div>
 
-          <div
-            ref={classRef}
-            className={styles.bulkWrapper}
-          >
+          <div className={styles.toggleContainer}>
             <div
-              className={styles.filterDropdown}
-              onClick={toggleClass}
+              className={`${styles.toggleIndicator} ${classFilter === "Private" ? styles.indicatorRight : styles.indicatorLeft
+                }`}
+            />
+            <button
+              className={`${styles.toggleBtn} ${classFilter === "Public" || classFilter === "" ? styles.activeTab : ""
+                }`}
+              onClick={() => handleClassSelect("Public")}
             >
-              <span>{classFilter || "All"}</span>
-              <img
-                src="/icons/chevron-down-dark.svg"
-                alt=""
-                className={`${styles.chevron} ${isClassOpen ? styles.rotated : ""}`}
-              />
-            </div>
-
-            {isClassOpen && (
-              <div className={`${styles.bulkDropdown} ${styles.dropdownDown}`}>
-                <button
-                  className={styles.dropdownItem}
-                  onClick={() => handleClassSelect("")}
-                >
-                  All
-                </button>
-                <button
-                  className={styles.dropdownItem}
-                  onClick={() => handleClassSelect("Public")}
-                >
-                  Public
-                </button>
-                <button
-                  className={styles.dropdownItem}
-                  onClick={() => handleClassSelect("Private")}
-                >
-                  Private
-                </button>
-              </div>
-            )}
+              Public
+            </button>
+            <button
+              className={`${styles.toggleBtn} ${classFilter === "Private" ? styles.activeTab : ""
+                }`}
+              onClick={() => handleClassSelect("Private")}
+            >
+              Private
+            </button>
           </div>
 
         </div>
@@ -549,7 +530,7 @@ export default function CompanyDatabase() {
 
           <tbody>
             {loading ? (
-              Array.from({ length: 10 }).map((_, i) => (
+              Array.from({ length: 20 }).map((_, i) => (
                 <tr key={`skeleton-${i}`}>
                   <td className={styles.checkboxCol}>
                     <div className={styles.checkboxOuter}>

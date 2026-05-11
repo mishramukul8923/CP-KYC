@@ -589,3 +589,54 @@
   height: 24px;
   border-radius: 9999px;
 }
+
+.toggleContainer {
+  display: flex;
+  background: #F4F4F5;
+  border-radius: 100px;
+  padding: 4px;
+  align-items: center;
+  position: relative;
+  height: 36px;
+  box-sizing: border-box;
+}
+
+.toggleIndicator {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: calc(50% - 4px);
+  background: #FFFFFF;
+  border-radius: 100px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.indicatorLeft {
+  transform: translateX(0);
+}
+
+.indicatorRight {
+  transform: translateX(100%);
+}
+
+.toggleBtn {
+  position: relative;
+  z-index: 1;
+  padding: 6px 16px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: #71717A;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  border-radius: 100px;
+  white-space: nowrap;
+  flex: 1;
+  text-align: center;
+}
+
+.toggleBtn.activeTab {
+  color: #0F172A;
+}
