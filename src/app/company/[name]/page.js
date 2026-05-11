@@ -33,9 +33,9 @@ import AlertsContainer from "@/components/company/alerts/AlertsContainer";
 import { useParams } from "next/navigation";
 
 export default function CompanyPage() {
-  const { 
-    activeSection, 
-    activeSubSection, 
+  const {
+    activeSection,
+    activeSubSection,
     scrollTrigger,
     setCompanyData,
     setCompanyLoading,
@@ -258,7 +258,7 @@ export default function CompanyPage() {
           const fetchCF = async (type) => {
             const response = await fetch(
               `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/cash-flow?type=${type}`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+              { headers: { Authorization: token ? `Bearer ${token}` : "" }, accept: 'application/json' }
             );
             return await response.json();
           };
@@ -446,7 +446,7 @@ export default function CompanyPage() {
           // Convert WebP logo to PNG if necessary before passing to PDF component
           const originalLogoUrl = companyData?.header?.logo_url;
           const pngLogoUrl = await convertWebpToPng(originalLogoUrl);
-          
+
           const processedCompanyData = {
             ...companyData,
             header: {
@@ -606,7 +606,8 @@ export default function CompanyPage() {
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${encodeURIComponent(companyName)}/highlights`,
           {
             headers: {
-              Authorization: token ? `Bearer ${token}` : "",
+              Authorization: token ? `Bearer ${token}` : ""
+              , accept: 'application/json'
             },
           }
         );
@@ -653,7 +654,8 @@ export default function CompanyPage() {
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${encodeURIComponent(companyName)}/revenue-profit-trend`,
           {
             headers: {
-              Authorization: token ? `Bearer ${token}` : "",
+              Authorization: token ? `Bearer ${token}` : ""
+              , accept: 'application/json'
             },
           }
         );
@@ -746,7 +748,7 @@ export default function CompanyPage() {
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${encodeURIComponent(companyName)}/cash-flow?type=${cfType}`,
           {
             headers: {
-              Authorization: token ? `Bearer ${token}` : "",
+              Authorization: token ? `Bearer ${token}` : "", accept: 'application/json'
             },
           }
         );
@@ -788,7 +790,8 @@ export default function CompanyPage() {
           )}/highlights?page=${highlightsPage}&limit=${highlightsLimit}`,
           {
             headers: {
-              Authorization: token ? `Bearer ${token}` : "",
+              Authorization: token ? `Bearer ${token}` : ""
+              , accept: 'application/json'
             },
           }
         );
@@ -1231,7 +1234,8 @@ export default function CompanyPage() {
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${encodeURIComponent(companyName)}/balance-sheet?type=${bsType}`,
           {
             headers: {
-              Authorization: token ? `Bearer ${token}` : "",
+              Authorization: token ? `Bearer ${token}` : ""
+              , accept: 'application/json'
             },
           }
         );
@@ -1264,7 +1268,8 @@ export default function CompanyPage() {
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${encodeURIComponent(companyName)}/ratios?type=${ratiosType}`,
           {
             headers: {
-              Authorization: token ? `Bearer ${token}` : "",
+              Authorization: token ? `Bearer ${token}` : ""
+              , accept: 'application/json'
             },
           }
         );
