@@ -91,7 +91,7 @@ const ProductDetails = ({ companyData }) => {
               </div>
             ))
           ) : (
-            <div className={styles.noData}>No products found.</div>
+            <div className={styles.noData}>Data not available.</div>
           )}
         </div>
       </div>
