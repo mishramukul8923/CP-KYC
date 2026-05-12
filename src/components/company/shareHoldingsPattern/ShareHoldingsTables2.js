@@ -5,8 +5,8 @@ import RowsPerPage from "@/components/common/RowsPerPage";
 import { useState } from "react";
 import { useCompanySection } from "@/components/company/context/CompanySectionContext";
 
-const ShareHoldingsTables2 = ({ 
-  shareholdingData, 
+const ShareHoldingsTables2 = ({
+  shareholdingData,
   securityAllotmentData,
   allotmentPage,
   setAllotmentPage,
@@ -148,7 +148,7 @@ const ShareHoldingsTables2 = ({
                       <td className={styles.tdName}>{fii.name || "-"}</td>
                       <td className={styles.tdValue}>{fii.type || "-"}</td>
                       <td className={styles.tdValue}>{fii.held || "-"}</td>
-                      <td className={styles.tdValue}>{fii.percent && fii.percent !== "-" ? `${fii.percent}%` : "-"}</td>
+                      <td className={styles.tdValue}>{fii.percent && fii.percent !== "-" ? `${fii.percent}` : "-"}</td>
                     </tr>
                   ))
                 ) : (
@@ -281,7 +281,7 @@ const ShareHoldingsTables2 = ({
                 </thead>
                 <tbody>
                   {displayAllotment.length > 0 ? (
-                    (isAllotmentEmpty 
+                    (isAllotmentEmpty
                       ? displayAllotment.slice((allotmentPage - 1) * allotmentLimit, allotmentPage * allotmentLimit)
                       : displayAllotment
                     ).map((item, index) => (
