@@ -583,7 +583,8 @@ export default function CompanyDatabase() {
                       className={styles.companyIcon}
                       width={32}
                       height={32}
-                      priority
+                      unoptimized={true}
+                    // priority
                     />
                     <Link href={`/company/${(company.company_name || "").toLowerCase().replace(/\s+/g, "-")}`} className={styles.companyLink}>{company.company_name || "-"}</Link>
                     {company.company_class && company.company_class !== "-" && (
