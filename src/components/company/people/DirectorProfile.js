@@ -28,6 +28,37 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
     return new Date(0);
   };
 
+  const calculateTenure = (appointmentDate, cessationDate, status) => {
+    const start = parseTimelineDate(appointmentDate);
+    if (start.getTime() === 0) return "-";
+
+    let end;
+    if (status === "Active") {
+      end = new Date();
+    } else {
+      end = parseTimelineDate(cessationDate);
+      if (end.getTime() === 0) return "-";
+    }
+
+    if (end < start) return "-";
+
+    let years = end.getFullYear() - start.getFullYear();
+    let months = end.getMonth() - start.getMonth();
+
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+
+    const yearText = years > 0 ? `${years} yr${years > 1 ? 's' : ''}` : "";
+    const monthText = months > 0 ? `${months} mo${months > 1 ? 's' : ''}` : "";
+
+    if (yearText && monthText) return `${yearText} ${monthText}`;
+    if (yearText) return yearText;
+    if (monthText) return monthText;
+    return "0 months";
+  };
+
   const toggleNewsExpand = (id) => {
     setExpandedNewsIds(prev => ({
       ...prev,
@@ -732,18 +763,22 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
                         {selectedDirector.details?.career_timeline?.length > 0 ? (
                           [...(selectedDirector.details?.career_timeline || [])]
                             .sort((a, b) => {
+                              // Prioritize Active status
+                              if (a.status === "Active" && b.status !== "Active") return -1;
+                              if (a.status !== "Active" && b.status === "Active") return 1;
+
                               const dateA = parseTimelineDate(a.appointment_date);
                               const dateB = parseTimelineDate(b.appointment_date);
                               if (dateA.getTime() === dateB.getTime()) {
-                                // If appointment dates are same/missing, sort by cessation date
+                                // If dates are same, sort by cessation date descending
                                 return parseTimelineDate(b.cessation_date) - parseTimelineDate(a.cessation_date);
                               }
                               return dateB - dateA;
                             })
                             .map((item, idx) => {
-                              const cleanTenure = (item.tenure && item.tenure !== "N/A")
+                              let cleanTenure = (item.tenure && item.tenure !== "N/A")
                                 ? item.tenure.replace(/,/g, "")
-                                : "-";
+                                : calculateTenure(item.appointment_date, item.cessation_date, item.status);
 
                               return (
                                 <TimelineItem
