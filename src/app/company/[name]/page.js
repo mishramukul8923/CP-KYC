@@ -200,6 +200,13 @@ export default function CompanyPage() {
     setCompanyName(companyNamee);
   }, [rawCompanyName]);
 
+  // Scroll to top when company name changes
+  useEffect(() => {
+    if (companyName) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [companyName]);
+
 
   /* ================= PDF GENERATION LISTENER ================= */
 
