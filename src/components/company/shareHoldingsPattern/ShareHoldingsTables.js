@@ -108,7 +108,7 @@ const ShareHoldingsTables = ({ shareholdingData, promoters_table_totals = {}, pu
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className={styles.valueCell} style={{ textAlign: "center", padding: "20px" }}>No data available</td>
+                  <td colSpan="5" className={styles.valueCell} style={{ textAlign: "center", padding: "20px" }}>Data not available.</td>
                 </tr>
               )}
             </tbody>
@@ -174,7 +174,7 @@ const ShareHoldingsTables = ({ shareholdingData, promoters_table_totals = {}, pu
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className={styles.valueCell} style={{ textAlign: "center", padding: "20px" }}>No data available</td>
+                  <td colSpan="5" className={styles.valueCell} style={{ textAlign: "center", padding: "20px" }}>Data not available.</td>
                 </tr>
               )}
             </tbody>

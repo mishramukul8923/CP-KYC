@@ -100,7 +100,7 @@ const ShareHoldingsTables2 = ({
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4" className={styles.tdValue} style={{ textAlign: "center", padding: "20px" }}>No data available</td>
+                  <td colSpan="4" className={styles.tdValue} style={{ textAlign: "center", padding: "20px" }}>Data not available.</td>
                 </tr>
               )}
             </tbody>
@@ -153,7 +153,7 @@ const ShareHoldingsTables2 = ({
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="4" className={styles.tdValue} style={{ textAlign: "center", padding: "20px" }}>No data available</td>
+                    <td colSpan="4" className={styles.tdValue} style={{ textAlign: "center", padding: "20px" }}>Data not available.</td>
                   </tr>
                 )}
               </tbody>
@@ -297,7 +297,7 @@ const ShareHoldingsTables2 = ({
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="7" className={styles.tdValue} style={{ textAlign: "center", padding: "20px" }}>No data available</td>
+                      <td colSpan="7" className={styles.tdValue} style={{ textAlign: "center", padding: "20px" }}>Data not available.</td>
                     </tr>
                   )}
                 </tbody>

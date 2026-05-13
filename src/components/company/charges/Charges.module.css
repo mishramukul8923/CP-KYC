@@ -179,6 +179,7 @@
 
 .summaryCardAlt {
   display: flex;
+  justify-content: center;
   flex-direction: column;
   gap: 8px;
 }
@@ -459,7 +460,29 @@
   border-radius: 20px;
 }
 
-.skeletonTable {
-  height: 400px;
+.noDataStats {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  /* color: #71717a; */
+  font-size: 14px;
+  font-weight: 500;
+  /* background-color: #f9fafb; */
   border-radius: 12px;
+  /* border: 1px dashed #e4e4e7; */
+  /* width: 100%; */
+}
+
+.noDataChart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 200px;
+  color: #71717a;
+  font-size: 14px;
+  font-weight: 500;
+  /* background-color: #f9fafb; */
+  border-radius: 12px;
+  /* border: 1px dashed #e4e4e7; */
 }

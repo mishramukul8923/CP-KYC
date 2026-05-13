@@ -250,15 +250,21 @@ const LigilationDetails = ({
 
         {/* KPI SECTION */}
         <div className={styles.kpiSection}>
-          {kpis.map((kpi, idx) => (
-            <div
-              key={idx}
-              className={`${styles.kpiCard} ${styles[`variant${idx + 1}`] || styles.variant1}`}
-            >
-              <span className={styles.kpiLabel}>{kpi.label}</span>
-              <span className={styles.kpiValue}>{kpi.count}</span>
+          {kpis.length > 0 ? (
+            kpis.map((kpi, idx) => (
+              <div
+                key={idx}
+                className={`${styles.kpiCard} ${styles[`variant${idx + 1}`] || styles.variant1}`}
+              >
+                <span className={styles.kpiLabel}>{kpi.label}</span>
+                <span className={styles.kpiValue}>{kpi.count}</span>
+              </div>
+            ))
+          ) : (
+            <div className={styles.noDataStats} style={{ width: '100%', textAlign: 'center', padding: '20px', color: '#71717a' }}>
+              Data not available.
             </div>
-          ))}
+          )}
         </div>
 
         {litigationSections.map((section, index) => {
@@ -292,7 +298,7 @@ const LigilationDetails = ({
                   </thead>
 
                   <tbody>
-                    {rows.length > 0 ? (
+                    {rows.length > 0 && (pagination.total > 0 || rows.some(r => r.caseNumber !== "-" && r.caseNumber !== "")) ? (
                       rows.map((row, idx) => (
                         <tr key={idx}>
                           {columns.map((col) => (
@@ -312,8 +318,8 @@ const LigilationDetails = ({
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={columns.length || 1} className={styles.noData}>
-                          Data not found
+                        <td colSpan={columns.length || 1} className={styles.noData} style={{ textAlign: 'center', padding: '20px' }}>
+                          Data not available.
                         </td>
                       </tr>
                     )}
@@ -322,62 +328,64 @@ const LigilationDetails = ({
               </div>
 
               {/* Footer */}
-              <div className={styles.tableFooter}>
-                <span className={styles.entriesInfo}>
-                  Showing {((section.page - 1) * section.size) + 1}–{Math.min(section.page * section.size, pagination.total || 0)} of {pagination.total || 0}
-                </span>
+              {rows.length > 0 && (pagination.total > 0 || rows.some(r => r.caseNumber !== "-" && r.caseNumber !== "")) && (
+                <div className={styles.tableFooter}>
+                  <span className={styles.entriesInfo}>
+                    Showing {((section.page - 1) * section.size) + 1}–{Math.min(section.page * section.size, pagination.total || 0)} of {pagination.total || 0}
+                  </span>
 
-                <div className={styles.pagination}>
-                  <div className={styles.rowsPerpage}>
-                    <span>Rows per page</span>
-                    <RowsPerPage
-                      forceUp={index === litigationSections.length - 1}
-                      value={section.size}
-                      onChange={(val) => section.setSize(val)}
-                    />
-                  </div>
-                  <div className={styles.controls}>
-                    <span className={styles.pageInfo}>
-                      Page {pagination.currentPage || 1} of {pagination.totalPages || 1}
-                    </span>
+                  <div className={styles.pagination}>
+                    <div className={styles.rowsPerpage}>
+                      <span>Rows per page</span>
+                      <RowsPerPage
+                        forceUp={index === litigationSections.length - 1}
+                        value={section.size}
+                        onChange={(val) => section.setSize(val)}
+                      />
+                    </div>
+                    <div className={styles.controls}>
+                      <span className={styles.pageInfo}>
+                        Page {pagination.currentPage || 1} of {pagination.totalPages || 1}
+                      </span>
 
-                    <div className={styles.pageControls}>
-                      <button
-                        disabled={pagination.currentPage <= 1 || loading}
-                        onClick={() => section.setPage(1)}
-                      >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                          <path d="M7.33333 11.3346L4 8.0013L7.33333 4.66797M12 11.3346L8.66667 8.0013L12 4.66797" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </button>
-                      <button
-                        disabled={pagination.currentPage <= 1 || loading}
-                        onClick={() => section.setPage(section.page - 1)}
-                      >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                          <path d="M10 12L6 8L10 4" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </button>
-                      <button
-                        disabled={pagination.currentPage >= pagination.totalPages || loading}
-                        onClick={() => section.setPage(section.page + 1)}
-                      >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                          <path d="M6 12L10 8L6 4" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </button>
-                      <button
-                        disabled={pagination.currentPage >= pagination.totalPages || loading}
-                        onClick={() => section.setPage(pagination.totalPages)}
-                      >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                          <path d="M4 11.3346L7.33333 8.0013L4 4.66797M8.66667 11.3346L12 8.0013L8.66667 4.66797" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </button>
+                      <div className={styles.pageControls}>
+                        <button
+                          disabled={pagination.currentPage <= 1 || loading}
+                          onClick={() => section.setPage(1)}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M7.33333 11.3346L4 8.0013L7.33333 4.66797M12 11.3346L8.66667 8.0013L12 4.66797" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                        <button
+                          disabled={pagination.currentPage <= 1 || loading}
+                          onClick={() => section.setPage(section.page - 1)}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M10 12L6 8L10 4" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                        <button
+                          disabled={pagination.currentPage >= pagination.totalPages || loading}
+                          onClick={() => section.setPage(section.page + 1)}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M6 12L10 8L6 4" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                        <button
+                          disabled={pagination.currentPage >= pagination.totalPages || loading}
+                          onClick={() => section.setPage(pagination.totalPages)}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M4 11.3346L7.33333 8.0013L4 4.66797M8.66667 11.3346L12 8.0013L8.66667 4.66797" stroke="#041E42" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           );
         })}

@@ -148,9 +148,8 @@
 
 .checkboxCol {
   width: 32px;
+
   text-align: right;
-  padding-right: 0 !important;
-  padding-left: 0 !important;
 }
 
 .table td,
@@ -229,10 +228,13 @@
 
 
 .companyCell {
+  font-weight: 500;
+}
+
+.companyCellWrapper {
   display: flex;
   align-items: center;
-  /* gap: 12px; */
-  font-weight: 500;
+  gap: 8px;
 }
 
 .companyIcon {

@@ -96,7 +96,7 @@ const CompanyCharts = ({ businessActivity, peerComparisonData, loading, layout =
   return (
     <div className={styles.mainWrapper}>
       {/* BUSINESS ACTIVITY SECTION */}
-      <section className={styles.section}>
+      <section className={styles.section} style={{ marginTop: "24px" }}>
         <h2 className={styles.sectionTitle}>Business Activity </h2>
 
         <div className={`${styles.businessActivityWrapper} ${layout === "column" ? styles.columnLayout : ""}`}>
@@ -148,94 +148,130 @@ const CompanyCharts = ({ businessActivity, peerComparisonData, loading, layout =
           ) : (
             <>
               <div className={styles.card}>
-                <div className={styles.pieChartContainer}>
-                  <div className={styles.pieWrapper}>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <PieChart>
-                        <Tooltip
-                          content={({ active, payload }) => {
-                            if (active && payload && payload.length) {
-                              return (
-                                <div style={{
-                                  backgroundColor: "#fff",
-                                  padding: "10px",
-                                  border: "1px solid #ccc",
-                                  borderRadius: "8px",
-                                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
-                                }}>
-                                  <p style={{ margin: 0, fontWeight: "600", color: '#111827' }}>{payload[0].name}</p>
-                                  <p style={{ margin: '4px 0 0', color: '#4B5563' }}>{payload[0].value.toFixed(2)}%</p>
-                                </div>
-                              );
-                            }
-                            return null;
-                          }}
-                        />
-                        <Pie
-                          data={pieData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={0}
-                          outerRadius={110}
-                          paddingAngle={0}
-                          dataKey="value"
-                          stroke="none"
-                        >
-                          {pieData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-
-                  <div className={styles.pieLegend}>
-                    {pieData.map((item, idx) => (
-                      <div key={idx} className={styles.legendContainer}>
-                        <div className={styles.legendRow}>
-                          <div className={styles.legendIndicator}>
-                            <div className={styles.dot} style={{ backgroundColor: item.color }}></div>
-                            <span className={styles.legendText}>{item.name}</span>
-                          </div>
-                          <span className={styles.legendValue}>{item.value.toFixed(2)}%</span>
-                        </div>
-                        {idx < pieData.length - 1 && <div className={styles.legendDivider}></div>}
+                <div className={styles.pieChartContainer} style={{ position: "relative" }}>
+                  {businessActivity?.available === false ? (
+                    <>
+                      {/* 
+                        // Skeleton layout preserved but commented out as requested. 
+                        // Can be removed if completely unnecessary.
+                      <div className={styles.pieWrapper}>
+                        <div className={`${styles.skeleton} ${styles.skeletonCircle}`} />
                       </div>
-                    ))}
-                  </div>
+                      <div className={styles.pieLegend}>
+                        {[...Array(4)].map((_, i) => (
+                          <div key={i} className={styles.legendContainer}>
+                            <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '80%' }} />
+                            {i < 3 && <div className={styles.legendDivider}></div>}
+                          </div>
+                        ))}
+                      </div> 
+                      */}
+                      <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        height: "90px",
+                        color: "#4B5563",
+                        fontWeight: "500",
+                        fontSize: "14px",
+                        gridColumn: "1 / -1" // Ensure it spans the full container if it's a grid
+                      }}>
+                        Data not available.
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className={styles.pieWrapper}>
+                        <ResponsiveContainer width="100%" height={300}>
+                          <PieChart>
+                            <Tooltip
+                              content={({ active, payload }) => {
+                                if (active && payload && payload.length) {
+                                  return (
+                                    <div style={{
+                                      backgroundColor: "#fff",
+                                      padding: "10px",
+                                      border: "1px solid #ccc",
+                                      borderRadius: "8px",
+                                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                                    }}>
+                                      <p style={{ margin: 0, fontWeight: "600", color: '#111827' }}>{payload[0].name}</p>
+                                      <p style={{ margin: '4px 0 0', color: '#4B5563' }}>{payload[0].value.toFixed(2)}%</p>
+                                    </div>
+                                  );
+                                }
+                                return null;
+                              }}
+                            />
+                            <Pie
+                              data={pieData}
+                              cx="50%"
+                              cy="50%"
+                              innerRadius={0}
+                              outerRadius={110}
+                              paddingAngle={0}
+                              dataKey="value"
+                              stroke="none"
+                            >
+                              {pieData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                              ))}
+                            </Pie>
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+
+                      <div className={styles.pieLegend}>
+                        {pieData.map((item, idx) => (
+                          <div key={idx} className={styles.legendContainer}>
+                            <div className={styles.legendRow}>
+                              <div className={styles.legendIndicator}>
+                                <div className={styles.dot} style={{ backgroundColor: item.color }}></div>
+                                <span className={styles.legendText}>{item.name}</span>
+                              </div>
+                              <span className={styles.legendValue}>{item.value.toFixed(2)}%</span>
+                            </div>
+                            {idx < pieData.length - 1 && <div className={styles.legendDivider}></div>}
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
-              <div className={styles.tableWrapper}>
-                <div className={styles.tableHeader}>
-                  <div className={styles.headerLeft}>
-                    Financial Year: <span className={styles.headerValue}>{businessActivity?.financial_year || "-"}</span>
+              {businessActivity?.available !== false && (
+                <div className={styles.tableWrapper}>
+                  <div className={styles.tableHeader}>
+                    <div className={styles.headerLeft}>
+                      Financial Year: <span className={styles.headerValue}>{businessActivity?.financial_year || "-"}</span>
+                    </div>
+                    <div className={styles.headerRight}>
+                      Turnover: <span className={styles.greenText}>{businessActivity?.total_turnover ? businessActivity?.total_turnover + " Cr" : (businessActivity?.financial_year ? businessActivity?.financial_year : "-")}</span>
+                    </div>
                   </div>
-                  <div className={styles.headerRight}>
-                    Turnover: <span className={styles.greenText}>{businessActivity?.total_turnover ? businessActivity?.total_turnover + " Cr" : (businessActivity?.financial_year ? businessActivity?.financial_year : "-")}</span>
-                  </div>
-                </div>
-                <div className={styles.tableScroll}>
-                  <table className={styles.activityTable}>
-                    <thead>
-                      <tr>
-                        <th className={styles.textleft}>Business Activity</th>
-                        <th className={styles.textCenter}>Turnover %</th>
-                        <th className={styles.textRight}>Turnover (Cr)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {activityTable.map((row, idx) => (
-                        <tr key={idx}>
-                          <td className={styles.textleft}>{row.business_activity}</td>
-                          <td className={styles.textCenter}>{row.turnover_percentage}</td>
-                          <td className={styles.textRight}>₹{row.turnover}</td>
+                  <div className={styles.tableScroll}>
+                    <table className={styles.activityTable}>
+                      <thead>
+                        <tr>
+                          <th className={styles.textleft}>Business Activity</th>
+                          <th className={styles.textCenter}>Turnover %</th>
+                          <th className={styles.textRight}>Turnover (Cr)</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {activityTable.map((row, idx) => (
+                          <tr key={idx}>
+                            <td className={styles.textleft}>{row.business_activity}</td>
+                            <td className={styles.textCenter}>{row.turnover_percentage}</td>
+                            <td className={styles.textRight}>₹{row.turnover}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
+              )}
             </>
           )}
         </div>
@@ -279,7 +315,7 @@ const CompanyCharts = ({ businessActivity, peerComparisonData, loading, layout =
                         return (
                           <div style={{ backgroundColor: "#fff", padding: "10px", border: "1px solid #ccc", borderRadius: "8px", boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}>
                             <p style={{ margin: 0, fontWeight: "600", color: '#111827' }}>{payload[0].payload.name}</p>
-                             <p style={{ margin: '4px 0 0', color: '#4B5563' }}>Turnover: {formatIndianNumber(payload[0].value)} {peerComparisonData.peer_turnover_chart?.metric_unit}</p>
+                            <p style={{ margin: '4px 0 0', color: '#4B5563' }}>Turnover: {formatIndianNumber(payload[0].value)} {peerComparisonData.peer_turnover_chart?.metric_unit}</p>
                           </div>
                         );
                       }

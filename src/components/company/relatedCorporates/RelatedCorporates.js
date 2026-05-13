@@ -67,9 +67,9 @@ export default function RelatedCorporates({ commonDirectorship, loading, error }
             Related Corporates
           </h1>
         </div>
-        <p>No related corporates found.</p>
+        <p className={styles.notAvailable}>Data not available.</p>
       </div>
-    );
+    )
   }
 
 

@@ -573,25 +573,27 @@ export default function CompanyDatabase() {
                   </td>
 
                   <td className={styles.companyCell}>
-                    <Image
-                      src={
-                        company.logo_url && company.logo_url !== "-"
-                          ? company.logo_url
-                          : "/icons/Image.svg"
-                      }
-                      alt={company.company_name || ""}
-                      className={styles.companyIcon}
-                      width={32}
-                      height={32}
-                      unoptimized={true}
-                    // priority
-                    />
-                    <Link href={`/company/${(company.company_name || "").toLowerCase().replace(/\s+/g, "-")}`} className={styles.companyLink}>{company.company_name || "-"}</Link>
-                    {company.company_class && company.company_class !== "-" && (
-                      <span className={`${styles.companyClassTag} ${company.company_class.toLowerCase() === 'public' ? styles.tagPublic : styles.tagPrivate}`}>
-                        {company.company_class}
-                      </span>
-                    )}
+                    <div className={styles.companyCellWrapper}>
+                      <Image
+                        src={
+                          company.logo_url && company.logo_url !== "-"
+                            ? company.logo_url
+                            : "/icons/Image.svg"
+                        }
+                        alt={company.company_name || ""}
+                        className={styles.companyIcon}
+                        width={32}
+                        height={32}
+                        unoptimized={true}
+                      // priority
+                      />
+                      <Link href={`/company/${(company.company_name || "").toLowerCase().replace(/\s+/g, "-")}`} className={styles.companyLink}>{company.company_name || "-"}</Link>
+                      {company.company_class && company.company_class !== "-" && (
+                        <span className={`${styles.companyClassTag} ${company.company_class.toLowerCase() === 'public' ? styles.tagPublic : styles.tagPrivate}`}>
+                          {company.company_class}
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td>
                     {company.market_cap

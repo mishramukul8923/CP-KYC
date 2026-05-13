@@ -12,6 +12,7 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
   const { activeSubSection, scrollTrigger } = useCompanySection();
   const containerRef = useRef(null);
   const closedChargesRef = useRef(null);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     if (!activeSubSection) return;
@@ -82,7 +83,7 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
   }
 
   if (!charges) {
-    return <div className={styles.container}>No data available</div>;
+    return <div className={styles.container}>Data not available.</div>;
   }
 
   const closedCharges = [
@@ -178,8 +179,6 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
 
   const COLORS = ["#0EA5E9", "rgba(244, 244, 245, 1)"];
 
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
   const parseAmount = (amt) => {
     if (!amt || amt === "-") return 0;
     return parseFloat(String(amt).replace(/,/g, "")) || 0;
@@ -205,6 +204,13 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
   ];
 
 
+  const isEmpty =
+    (!charges?.summary || (Array.isArray(charges.summary) ? charges.summary.length === 0 : Object.keys(charges.summary).length === 0)) &&
+    (!charges?.statistics || (Array.isArray(charges.statistics) ? charges.statistics.length === 0 : Object.keys(charges.statistics).length === 0)) &&
+    (!charges?.open_charges?.items || charges.open_charges.items.length === 0) &&
+    (!charges?.closed_charges?.items || charges.closed_charges.items.length === 0);
+
+
   return (
     <div ref={containerRef} className={styles.container}>
       <div className={styles.header}>
@@ -222,105 +228,125 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
         </div>
       </div>
 
-      <section className={styles.statsGrid}>
-        <div className={`${styles.statCard} ${styles.blue}`}>
-          <div className={styles.statLabel}>Open Charges</div>
-          <div className={styles.statValue}>{charges?.summary?.open_count ?? "-"}</div>
-        </div>
-        <div className={`${styles.statCard} ${styles.red}`}>
-          <div className={styles.statLabel}>Open Charges Amount</div>
-          <div className={styles.statValue}>{charges?.summary?.open_amount ?? "-"}</div>
-        </div>
-        <div className={`${styles.statCard} ${styles.purple}`}>
-          <div className={styles.statLabel}>Closed Charges</div>
-          <div className={styles.statValue}>{charges?.summary?.closed_count ?? "-"}</div>
-        </div>
-        <div className={`${styles.statCard} ${styles.green}`}>
-          <div className={styles.statLabel}>Closed Charges Amount</div>
-          <div className={styles.statValue}>{charges?.summary?.closed_amount ?? "-"}</div>
-        </div>
-      </section>
+      {isEmpty ? (
+        <div className={styles.noDataStats}>Data not available.</div>
+      ) : (
+        <>
+          {(!charges?.summary || (Array.isArray(charges.summary) ? charges.summary.length === 0 : Object.keys(charges.summary).length === 0)) ? (
+            <div className={styles.noDataStats}>Data not available.</div>
+          ) : (
+        <section className={styles.statsGrid}>
+          <div className={`${styles.statCard} ${styles.blue}`}>
+            <div className={styles.statLabel}>Open Charges</div>
+            <div className={styles.statValue}>{charges?.summary?.open_count ?? "-"}</div>
+          </div>
+          <div className={`${styles.statCard} ${styles.red}`}>
+            <div className={styles.statLabel}>Open Charges Amount</div>
+            <div className={styles.statValue}>{charges?.summary?.open_amount ?? "-"}</div>
+          </div>
+          <div className={`${styles.statCard} ${styles.purple}`}>
+            <div className={styles.statLabel}>Closed Charges</div>
+            <div className={styles.statValue}>{charges?.summary?.closed_count ?? "-"}</div>
+          </div>
+          <div className={`${styles.statCard} ${styles.green}`}>
+            <div className={styles.statLabel}>Closed Charges Amount</div>
+            <div className={styles.statValue}>{charges?.summary?.closed_amount ?? "-"}</div>
+          </div>
+        </section>
+      )}
 
       <section className={styles.chartAndSummary}>
         <div className={styles.chartCard}>
           <h2 className={styles.cardTitle}>Open charges</h2>
           <div className={styles.chartWrapper}>
-            <ResponsiveContainer width={200} height={200}>
-              <PieChart>
-                <Tooltip
-                  formatter={(value, name) => {
-                    const total = openChartData.reduce((acc, curr) => acc + curr.value, 0);
-                    const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                    return [`${value.toLocaleString("en-IN")} Cr (${percent}%)`, name];
-                  }}
-                  contentStyle={{ borderRadius: '8px', border: '1px solid #E4E4E7', fontSize: '12px' }}
-                />
-                <Pie
-                  data={openChartData}
-                  dataKey="value"
-                  innerRadius={60}
-                  outerRadius={100}
-                  paddingAngle={0}
-                  startAngle={90}
-                  endAngle={-270}
-                  stroke="none"
-                >
-                  {openChartData.map((_, index) => (
-                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
+            {(!charges?.summary || (Array.isArray(charges.summary) ? charges.summary.length === 0 : Object.keys(charges.summary).length === 0)) ? (
+              <div className={styles.noDataChart}>Data not available.</div>
+            ) : (
+              <>
+                <ResponsiveContainer width={200} height={200}>
+                  <PieChart>
+                    <Tooltip
+                      formatter={(value, name) => {
+                        const total = openChartData.reduce((acc, curr) => acc + curr.value, 0);
+                        const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                        return [`${value.toLocaleString("en-IN")} Cr (${percent}%)`, name];
+                      }}
+                      contentStyle={{ borderRadius: '8px', border: '1px solid #E4E4E7', fontSize: '12px' }}
+                    />
+                    <Pie
+                      data={openChartData}
+                      dataKey="value"
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={0}
+                      startAngle={90}
+                      endAngle={-270}
+                      stroke="none"
+                    >
+                      {openChartData.map((_, index) => (
+                        <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
 
-            <div className={styles.chartLegend}>
-              <div className={styles.legendItem}>
-                <div className={styles.legendDot} style={{ backgroundColor: COLORS[0] }}></div>
-                <div style={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
-                  <span className={styles.legendText}>Open Charges:</span>
-                  <span className={styles.legendValue}>{charges?.summary?.open_amount ?? "-"}</span>
+                <div className={styles.chartLegend}>
+                  <div className={styles.legendItem}>
+                    <div className={styles.legendDot} style={{ backgroundColor: COLORS[0] }}></div>
+                    <div style={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
+                      <span className={styles.legendText}>Open Charges:</span>
+                      <span className={styles.legendValue}>{charges?.summary?.open_amount ?? "-"}</span>
+                    </div>
+                  </div>
+                  <div className={styles.legendItem}>
+                    <div className={styles.legendDot} style={{ backgroundColor: COLORS[1] }}></div>
+                    <div style={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
+                      <span className={styles.legendText}>Closed Charges:</span>
+                      <span className={styles.legendValue}>{charges?.summary?.closed_amount ?? "-"}</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className={styles.legendItem}>
-                <div className={styles.legendDot} style={{ backgroundColor: COLORS[1] }}></div>
-                <div style={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
-                  <span className={styles.legendText}>Closed Charges:</span>
-                  <span className={styles.legendValue}>{charges?.summary?.closed_amount ?? "-"}</span>
-                </div>
-              </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {(!charges?.statistics || (Array.isArray(charges.statistics) ? charges.statistics.length === 0 : Object.keys(charges.statistics).length === 0)) ? (
+          <div className={`${styles.summaryCard} ${styles.summaryCardAlt}`}>
+            <div className={styles.noDataStats}>Data not available.</div>
+          </div>
+        ) : (
+          <div className={`${styles.summaryCard} ${styles.summaryCardAlt}`}>
+            <div className={styles.summaryRow}>
+              <span>Total Open Charges</span>
+              <p className={styles.strong}>{charges?.statistics?.total_open_amount || "-"}</p>
+            </div>
+            <div className={styles.summaryRow}>
+              <span>Total Satised Charges</span>
+              <p className={styles.strong}>{charges?.statistics?.total_satisfied_amount ?? "-"}</p>
+            </div>
+            <div className={styles.summaryRow}>
+              <span>Total No. of Lender(s)</span>
+              <p className={styles.strong}>{charges?.statistics?.total_lenders ?? "-"}</p>
+            </div>
+            <div className={styles.summaryRow}>
+              <span>Top Lender</span>
+              <p className={styles.strong}>{charges?.statistics?.top_lender ?? "-"}</p>
+            </div>
+            <div className={styles.summaryRow}>
+              <span>Last Charge Activity</span>
+              <p className={styles.strong}>{charges?.statistics?.last_charge_activity ?? "-"}</p>
+            </div>
+            <div className={styles.summaryRow}>
+              <span>Last Charge Date</span>
+              <p className={styles.strong}>{charges?.statistics?.last_charge_date ?? "-"}</p>
+            </div>
+            <div className={styles.summaryRow}>
+              <span>Last Charge Amount</span>
+              <p className={styles.strong}>{charges?.statistics?.last_charge_amount ?? "-"}</p>
             </div>
           </div>
-        </div>
-        <div className={`${styles.summaryCard} ${styles.summaryCardAlt}`}>
-          <div className={styles.summaryRow}>
-            <span>Total Open Charges</span>
-            <p className={styles.strong}>{charges?.statistics?.total_open_amount || "-"}</p>
-          </div>
-          <div className={styles.summaryRow}>
-            <span>Total Satised Charges</span>
-            <p className={styles.strong}>{charges?.statistics?.total_satisfied_amount ?? "-"}</p>
-          </div>
-          <div className={styles.summaryRow}>
-            <span>Total No. of Lender(s)</span>
-            <p className={styles.strong}>{charges?.statistics?.total_lenders ?? "-"}</p>
-          </div>
-          <div className={styles.summaryRow}>
-            <span>Top Lender</span>
-            <p className={styles.strong}>{charges?.statistics?.top_lender ?? "-"}</p>
-          </div>
-          <div className={styles.summaryRow}>
-            <span>Last Charge Activity</span>
-            <p className={styles.strong}>{charges?.statistics?.last_charge_activity ?? "-"}</p>
-          </div>
-          <div className={styles.summaryRow}>
-            <span>Last Charge Date</span>
-            <p className={styles.strong}>{charges?.statistics?.last_charge_date ?? "-"}</p>
-          </div>
-          <div className={styles.summaryRow}>
-            <span>Last Charge Amount</span>
-            <p className={styles.strong}>{charges?.statistics?.last_charge_amount ?? "-"}</p>
-          </div>
-        </div>
-
+        )}
       </section>
 
       <section
@@ -352,7 +378,7 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5">No open charges found</td>
+                  <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>Data not available.</td>
                 </tr>
               )}
             </tbody>
@@ -446,15 +472,16 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
               </tr>
             </thead>
             <tbody>
-              {closedItems.map((item) => (
-                <tr key={item.charge_id}>
-                  <td>{item.charge_id}</td>
-                  <td>{item.lender}</td>
-                  <td>{item.amount_cr}</td>
-                  <td>{item.creation_date}</td>
-                  <td>{item.modification_date}</td>
-                  <td>{item.satisfaction_date}</td>
-                  {/* <td className={styles.actionCell}>
+              {closedItems.length > 0 ? (
+                closedItems.map((item) => (
+                  <tr key={item.charge_id}>
+                    <td>{item.charge_id}</td>
+                    <td>{item.lender}</td>
+                    <td>{item.amount_cr}</td>
+                    <td>{item.creation_date}</td>
+                    <td>{item.modification_date}</td>
+                    <td>{item.satisfaction_date}</td>
+                    {/* <td className={styles.actionCell}>
                     <div className={styles.actionIcon}>
                       <img
                         src="/icons/eye.svg"
@@ -464,8 +491,13 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
                       />
                     </div>
                   </td> */}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>Data not available.</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
@@ -538,7 +570,9 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
             </div>
           </div>
         </div>
-      </section >
-    </div >
+      </section>
+    </>
+  )}
+    </div>
   );
 }

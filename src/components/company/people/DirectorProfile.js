@@ -13,6 +13,21 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
   const { activeSubSection, setActiveSubSection, setActiveSection } = useCompanySection() || {};
   const [expandedNewsIds, setExpandedNewsIds] = useState({});
 
+  const parseTimelineDate = (dateStr) => {
+    if (!dateStr || dateStr === "-" || dateStr === "N/A") return new Date(0);
+    let date = new Date(dateStr);
+    if (!isNaN(date.getTime())) return date;
+    if (typeof dateStr === 'string' && dateStr.includes('/')) {
+      const parts = dateStr.split('/');
+      if (parts.length === 3) {
+        const [d, m, y] = parts;
+        date = new Date(`${y}-${m}-${d}`);
+        if (!isNaN(date.getTime())) return date;
+      }
+    }
+    return new Date(0);
+  };
+
   const toggleNewsExpand = (id) => {
     setExpandedNewsIds(prev => ({
       ...prev,
@@ -41,22 +56,7 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
   };
 
   const hasData = directors && directors.length > 0;
-  const directorsToUse = hasData ? directors : [
-    {
-      name: "Aman Singh",
-      designation: "Managing Director",
-      din_pan: "01234567",
-      director_type: directorTab === "current",
-      details: { profile_image: "-", din_status: "Active" }
-    },
-    {
-      name: "Rahul Verma",
-      designation: "CFO",
-      din_pan: "87654321",
-      director_type: directorTab === "current",
-      details: { profile_image: "-", din_status: "Active" }
-    }
-  ];
+  const directorsToUse = hasData ? directors : [];
 
   // Filter directors based on tab (current/past) and search
   const filteredDirectors = directorsToUse.filter((director) => {
@@ -88,7 +88,7 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
     director_type: director.director_type,
     details: {
       ...director.details,
-      qualifications: (director.qualifications || director.details?.qualifications || []).map(q => ({
+      qualifications: (director.qualifications?.length > 0 ? director.qualifications : (director.details?.qualifications || [])).map(q => ({
         icon: q.icon || "/images/placeholder.svg",
         title: q.certificate_in || q.title || "-",
         inst: q.institute_name || q.inst || "-",
@@ -96,17 +96,17 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
         yearfrom: q.year_from || q.yearfrom || "-",
         yearto: q.year_to || q.yearto || "-"
       })),
-      shareholding: (director.shareholding || director.details?.shareholding || []).map(s => ({
+      shareholding: (director.shareholding?.length > 0 ? director.shareholding : (director.details?.shareholding || [])).map(s => ({
         company_name: s.company_name || "-",
         share_percentage: s.shareholding_percentage || s.share_percentage || "-",
         nature_of_holding: s.nature || s.nature_of_holding || "-",
         company_log: s.company_log
       })),
-      career_timeline: director.career_timeline || director.details?.career_timeline || [],
-      negative_media: director.negative_media || director.details?.negative_media || [],
-      banking_default: director.banking_default_declarations || director.details?.banking_default || [],
-      regulatory_history: director.regulatory_compliance_history || director.details?.regulatory_history || [],
-      pep_sanctions: director.pep_sanctions_checks || director.details?.pep_sanctions || [],
+      career_timeline: director.career_timeline?.length > 0 ? director.career_timeline : (director.details?.career_timeline || []),
+      negative_media: director.negative_media?.length > 0 ? director.negative_media : (director.details?.negative_media || []),
+      banking_default: director.banking_default_declarations?.length > 0 ? director.banking_default_declarations : (director.details?.banking_default || []),
+      regulatory_history: director.regulatory_compliance_history?.length > 0 ? director.regulatory_compliance_history : (director.details?.regulatory_history || []),
+      pep_sanctions: director.pep_sanctions_checks?.length > 0 ? director.pep_sanctions_checks : (director.details?.pep_sanctions || []),
       risk_edd: director.risk_edd || director.details?.risk_edd || {},
       news: director.news || { news: [] }
     }
@@ -360,7 +360,7 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
                   ))
                 ) : (
                   <div className={styles.noData}>
-                    No {directorTab} directors found
+                    Data not available.
                   </div>
                 )}
               </div>
@@ -536,7 +536,7 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
                           {(!selectedDirector.details?.current_positions || selectedDirector.details.current_positions.length === 0) && (
                             <tr>
                               <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
-                                No current positions found
+                                Data not available.
                               </td>
                             </tr>
                           )}
@@ -567,7 +567,7 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
                           {(!selectedDirector.details?.past_positions || selectedDirector.details.past_positions.length === 0) && (
                             <tr>
                               <td colSpan="3" style={{ textAlign: 'center', padding: '20px' }}>
-                                No past positions found
+                                Data not available.
                               </td>
                             </tr>
                           )}
@@ -598,7 +598,7 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
                           {(!selectedDirector.details?.shareholding || selectedDirector.details.shareholding.length === 0) && (
                             <tr>
                               <td colSpan="3" style={{ textAlign: 'center', padding: '20px' }}>
-                                No shareholding found
+                                Data not available.
                               </td>
                             </tr>
                           )}
@@ -704,13 +704,21 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
                           </tr>
                         </thead>
                         <tbody>
-                          {section.rows.map((row, rowIndex) => (
-                            <tr key={rowIndex}>
-                              {Object.values(row).map((cell, cellIndex) => (
-                                <td key={cellIndex}>{renderCellContent(cell)}</td>
-                              ))}
+                          {section.rows.length > 0 ? (
+                            section.rows.map((row, rowIndex) => (
+                              <tr key={rowIndex}>
+                                {Object.values(row).map((cell, cellIndex) => (
+                                  <td key={cellIndex}>{renderCellContent(cell)}</td>
+                                ))}
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan={section.headers.length} style={{ textAlign: "center", padding: "20px" }}>
+                                Data not available.
+                              </td>
                             </tr>
-                          ))}
+                          )}
                         </tbody>
                       </table>
                     </div>
@@ -721,19 +729,35 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
                 <section className={styles.section}>
                   <h2 className={styles.sectionHeading}>Career Timeline</h2>
                   <div className={styles.timeline}>
-                    {selectedDirector.details?.career_timeline?.length > 0 ? (
-                      selectedDirector.details.career_timeline.map((item, idx) => (
-                        <TimelineItem
-                          key={idx}
-                          date={`${item.appointment_date || "-"} - ${item.cessation_date || "-"}`}
-                          name={item.company_name || "-"}
-                          role={`${item.designation || "-"} • ${item.tenure_years || "-"}`}
-                          active={item.status === "Active"}
-                        />
-                      ))
-                    ) : (
+                        {selectedDirector.details?.career_timeline?.length > 0 ? (
+                          [...(selectedDirector.details?.career_timeline || [])]
+                            .sort((a, b) => {
+                              const dateA = parseTimelineDate(a.appointment_date);
+                              const dateB = parseTimelineDate(b.appointment_date);
+                              if (dateA.getTime() === dateB.getTime()) {
+                                // If appointment dates are same/missing, sort by cessation date
+                                return parseTimelineDate(b.cessation_date) - parseTimelineDate(a.cessation_date);
+                              }
+                              return dateB - dateA;
+                            })
+                            .map((item, idx) => {
+                              const cleanTenure = (item.tenure && item.tenure !== "N/A")
+                                ? item.tenure.replace(/,/g, "")
+                                : "-";
+
+                              return (
+                                <TimelineItem
+                                  key={idx}
+                                  date={`${item.appointment_date || "-"} - ${item.status === "Active" ? "Present" : (item.cessation_date || "-")}`}
+                                  name={item.company_name || "-"}
+                                  role={`${item.designation || "-"} • ${cleanTenure}`}
+                                  active={item.status === "Active"}
+                                />
+                              );
+                            })
+                        ) : (
                       <p style={{ textAlign: "center", width: "100%", padding: "20px", color: "#666" }}>
-                        No career timeline found
+                        Data not available.
                       </p>
                     )}
                   </div>
@@ -756,7 +780,7 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
                       ))
                     ) : (
                       <p style={{ textAlign: "center", width: "100%", padding: "20px", color: "#666" }}>
-                        No qualifications found
+                        Data not available.
                       </p>
                     )}
 
@@ -792,7 +816,7 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
                       </>
                     ) : (
                       <p style={{ textAlign: "center", width: "100%", padding: "20px", color: "#666" }}>
-                        No news found for this director
+                        Data not available.
                       </p>
                     )}
                   </div>
@@ -806,7 +830,7 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
                   <line x1="17" y1="8" x2="23" y2="14" />
                   <line x1="23" y1="8" x2="17" y2="14" />
                 </svg>
-                <h2>No  Directors Found</h2>
+                <h2>Data not available.</h2>
                 <p>There are no {directorTab} Directors or KMPs found for this company.</p>
               </div>
             )}

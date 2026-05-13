@@ -1,10 +1,40 @@
+import { cookies } from 'next/headers';
 import styles from './StatsSection.module.css';
 
-export default function StatsSection() {
+export default async function StatsSection() {
+  let data = { companies: 0, cases: 0, directors: 0 };
+  let loadingError = false;
+
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value;
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/kpi`, {
+      headers: {
+        Authorization: token ? `Bearer ${token}` : ""
+      },
+      cache: "no-store"
+    });
+
+    if (res.ok) {
+      data = await res.json();
+    } else {
+      loadingError = true;
+    }
+  } catch (error) {
+    console.error("Failed to fetch KPI:", error);
+    loadingError = true;
+  }
+
+  const formatNumber = (num) => {
+    if (num === undefined || num === null) return "-";
+    return new Intl.NumberFormat("en-IN").format(num);
+  };
+
   const stats = [
-    { value: '20,011,525', label: 'New Predictions' },
-    { value: '45,098', label: 'New Insights' },
-    { value: '3,567', label: 'New Funding Rounds' }
+    { value: loadingError ? "-" : formatNumber(data.companies), label: 'Companies' },
+    { value: loadingError ? "-" : formatNumber(data.cases), label: 'Cases' },
+    { value: loadingError ? "-" : formatNumber(data.directors), label: 'Directors' }
   ];
 
   return (
