@@ -1350,7 +1350,7 @@ export const ReportDocument = ({
           ) : (
             <View style={styles.tableRow} wrap={false}>
               <View style={[styles.tableCol, { width: '100%', alignItems: 'center' }]}>
-                <Text style={styles.tableCell}>No data available for this section.</Text>
+                <Text style={styles.tableCell}>Data not available. for this section.</Text>
               </View>
             </View>
           )}

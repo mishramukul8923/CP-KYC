@@ -308,15 +308,12 @@ const ComplianceDetails = () => {
           setAuditorsRemarksConsolidatedAPI(data.auditors_remarks_consolidated_table);
         }
 
-        // 📝 COMMENT: Once CARO tables are added to the API response, uncomment and map them here
-        /*
         if (data.caro_standalone_table) {
-           setCaroStandaloneAPI(data.caro_standalone_table);
+          setCaroStandaloneAPI(data.caro_standalone_table);
         }
         if (data.caro_consolidated_table) {
-           setCaroConsolidatedAPI(data.caro_consolidated_table);
+          setCaroConsolidatedAPI(data.caro_consolidated_table);
         }
-        */
       } catch (err) {
         console.error("Failed to fetch auditor remarks:", err);
       } finally {
@@ -458,6 +455,12 @@ const ComplianceDetails = () => {
     );
   }
 
+  const isAllEmpty =
+    (!auditorsRemarksStandaloneAPI || !auditorsRemarksStandaloneAPI.rows?.length) &&
+    (!auditorsRemarksConsolidatedAPI || !auditorsRemarksConsolidatedAPI.rows?.length) &&
+    (!caroStandaloneAPI || !caroStandaloneAPI.rows?.length) &&
+    (!caroConsolidatedAPI || !caroConsolidatedAPI.rows?.length);
+
   return (
     <div className={styles.mainWrapper}>
       <div className={styles.container}>
@@ -475,6 +478,12 @@ const ComplianceDetails = () => {
 
           </div>
         </div>
+        {isAllEmpty ? (
+          <div style={{ textAlign: "center", padding: "40px", color: "#71717a", fontWeight: "500" }}>
+            Data not available.
+          </div>
+        ) : (
+          <>
         {/* Auditors' Remarks Standalone table */}
         <div id="Auditors' Remarks" className={styles.tableSection}>
           {" "}
@@ -497,17 +506,25 @@ const ComplianceDetails = () => {
 
               <tbody>
                 {auditorsRemarksStandaloneAPI ? (
-                  auditorsRemarksStandaloneAPI.rows?.map((row, idx) => (
-                    <tr key={idx}>
-                      <td className={styles.firstCol}>{row.row_label}</td>
-                      {auditorsRemarksStandaloneAPI.financial_year_columns?.map((col, i) => {
-                        const cell = row.financial_year_cells?.[col.key];
-                        return (
-                          <td key={i}>{cell?.value || "-"}</td>
-                        );
-                      })}
+                  auditorsRemarksStandaloneAPI.rows?.length > 0 ? (
+                    auditorsRemarksStandaloneAPI.rows.map((row, idx) => (
+                      <tr key={idx}>
+                        <td className={styles.firstCol}>{row.row_label}</td>
+                        {auditorsRemarksStandaloneAPI.financial_year_columns?.map((col, i) => {
+                          const cell = row.financial_year_cells?.[col.key];
+                          return (
+                            <td key={i}>{cell?.value || "-"}</td>
+                          );
+                        })}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={auditorsRemarksStandaloneAPI.financial_year_columns?.length + 1 || 1} style={{ textAlign: "center", padding: "20px" }}>
+                        Data not available.
+                      </td>
                     </tr>
-                  ))
+                  )
                 ) : (
                   auditorsRemarksStandalone.rows.map((row, idx) => (
                     <tr key={idx}>
@@ -545,17 +562,25 @@ const ComplianceDetails = () => {
 
               <tbody>
                 {auditorsRemarksConsolidatedAPI ? (
-                  auditorsRemarksConsolidatedAPI.rows?.map((row, idx) => (
-                    <tr key={idx}>
-                      <td className={styles.firstCol}>{row.row_label}</td>
-                      {auditorsRemarksConsolidatedAPI.financial_year_columns?.map((col, i) => {
-                        const cell = row.financial_year_cells?.[col.key];
-                        return (
-                          <td key={i}>{cell?.value || "-"}</td>
-                        );
-                      })}
+                  auditorsRemarksConsolidatedAPI.rows?.length > 0 ? (
+                    auditorsRemarksConsolidatedAPI.rows.map((row, idx) => (
+                      <tr key={idx}>
+                        <td className={styles.firstCol}>{row.row_label}</td>
+                        {auditorsRemarksConsolidatedAPI.financial_year_columns?.map((col, i) => {
+                          const cell = row.financial_year_cells?.[col.key];
+                          return (
+                            <td key={i}>{cell?.value || "-"}</td>
+                          );
+                        })}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={auditorsRemarksConsolidatedAPI.financial_year_columns?.length + 1 || 1} style={{ textAlign: "center", padding: "20px" }}>
+                        Data not available.
+                      </td>
                     </tr>
-                  ))
+                  )
                 ) : (
                   auditorsRemarksStandalone.rows.map((row, idx) => (
                     <tr key={idx}>
@@ -593,17 +618,25 @@ const ComplianceDetails = () => {
 
               <tbody>
                 {caroStandaloneAPI ? (
-                  caroStandaloneAPI.rows?.map((row, idx) => (
-                    <tr key={idx}>
-                      <td className={styles.firstCol}>{row.row_label}</td>
-                      {caroStandaloneAPI.financial_year_columns?.map((col, i) => {
-                        const cell = row.financial_year_cells?.[col.key];
-                        return (
-                          <td key={i}>{cell?.value || "-"}</td>
-                        );
-                      })}
+                  caroStandaloneAPI.rows?.length > 0 ? (
+                    caroStandaloneAPI.rows.map((row, idx) => (
+                      <tr key={idx}>
+                        <td className={styles.firstCol}>{row.row_label}</td>
+                        {caroStandaloneAPI.financial_year_columns?.map((col, i) => {
+                          const cell = row.financial_year_cells?.[col.key];
+                          return (
+                            <td key={i}>{cell?.value || "-"}</td>
+                          );
+                        })}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={caroStandaloneAPI.financial_year_columns?.length + 1 || 1} style={{ textAlign: "center", padding: "20px" }}>
+                        Data not available.
+                      </td>
                     </tr>
-                  ))
+                  )
                 ) : (
                   auditorsRemarksStandalone.rows.map((row, idx) => (
                     <tr key={idx}>
@@ -641,17 +674,25 @@ const ComplianceDetails = () => {
 
               <tbody>
                 {caroConsolidatedAPI ? (
-                  caroConsolidatedAPI.rows?.map((row, idx) => (
-                    <tr key={idx}>
-                      <td className={styles.firstCol}>{row.row_label}</td>
-                      {caroConsolidatedAPI.financial_year_columns?.map((col, i) => {
-                        const cell = row.financial_year_cells?.[col.key];
-                        return (
-                          <td key={i}>{cell?.value || "-"}</td>
-                        );
-                      })}
+                  caroConsolidatedAPI.rows?.length > 0 ? (
+                    caroConsolidatedAPI.rows.map((row, idx) => (
+                      <tr key={idx}>
+                        <td className={styles.firstCol}>{row.row_label}</td>
+                        {caroConsolidatedAPI.financial_year_columns?.map((col, i) => {
+                          const cell = row.financial_year_cells?.[col.key];
+                          return (
+                            <td key={i}>{cell?.value || "-"}</td>
+                          );
+                        })}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={caroConsolidatedAPI.financial_year_columns?.length + 1 || 1} style={{ textAlign: "center", padding: "20px" }}>
+                        Data not available.
+                      </td>
                     </tr>
-                  ))
+                  )
                 ) : (
                   auditorsRemarksStandalone.rows.map((row, idx) => (
                     <tr key={idx}>
@@ -666,6 +707,8 @@ const ComplianceDetails = () => {
             </table>
           </div>
         </div>
+      </>
+    )}
         {/* KPI SECTION */}.
         {/* phase 2  */}
         {/* <div id="gst" className={styles.kpiSectionContainer}>

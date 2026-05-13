@@ -80,7 +80,7 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
   }
 
   // if (!companyHighlights) {
-  //   return <div className={styles.container}>No data available</div>;
+  //   return <div className={styles.container}>Data not available.</div>;
   // }
 
   /* ================= SAFE DATA EXTRACTION ================= */

@@ -15,7 +15,7 @@ export default function InvestmentPage({ overseasInvestmentData }) {
     activity: item.major_activity || "-",
     equity: item.equity || "-",
     loan: item.loan || "-",
-    guarantee: item.guarantee_issued   || "-",
+    guarantee: item.guarantee_issued || "-",
     total: item.total || "-",
   })) : [];
 
@@ -62,7 +62,7 @@ export default function InvestmentPage({ overseasInvestmentData }) {
               ))
             ) : (
               <tr>
-                <td colSpan="9" style={{ textAlign: "center", padding: "20px" }}>No data available</td>
+                <td colSpan="9" style={{ textAlign: "center", padding: "20px" }}>Data not available.</td>
               </tr>
             )}
           </tbody>
@@ -76,12 +76,12 @@ export default function InvestmentPage({ overseasInvestmentData }) {
         <div className={styles.controls}>
           <div className={styles.rowsPerPage}>
             <span className={styles.rowsPerPageText}>Rows per page</span>
-            <RowsPerPage 
-              value={rowsPerPage} 
+            <RowsPerPage
+              value={rowsPerPage}
               onChange={(val) => {
                 setRowsPerPage(val);
                 setCurrentPage(1);
-              }} 
+              }}
             />
           </div>
           <div className={styles.pageNavigation}>
@@ -109,7 +109,7 @@ export default function InvestmentPage({ overseasInvestmentData }) {
                   className={styles.navIcon}
                 />
               </button>
-              <button 
+              <button
                 className={`${styles.navBtn} ${currentPage === totalPages || totalPages === 0 ? styles.navBtnDisabled : ""}`}
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages || totalPages === 0}
@@ -120,7 +120,7 @@ export default function InvestmentPage({ overseasInvestmentData }) {
                   className={styles.navIcon}
                 />
               </button>
-              <button 
+              <button
                 className={`${styles.navBtn} ${currentPage === totalPages || totalPages === 0 ? styles.navBtnDisabled : ""}`}
                 onClick={() => setCurrentPage(totalPages)}
                 disabled={currentPage === totalPages || totalPages === 0}
