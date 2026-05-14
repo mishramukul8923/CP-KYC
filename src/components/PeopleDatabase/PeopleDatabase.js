@@ -146,10 +146,10 @@ export default function PeopleDatabase({ onRowClick }) {
                     </div>
                   </th>
                   <th>Name</th>
-                  <th>Location</th>
-                  <th>Current Companies</th>
-                  <th>Previous Companies</th>
-                  <th>Sector</th>
+                  <th className={styles.fixedWidthLocation}>Location</th>
+                  <th className={styles.fixedWidthCompanies}>Current Companies</th>
+                  <th className={styles.fixedWidthCompanies}>Previous Companies</th>
+                  <th className={styles.fixedWidthCompanies}>Sector</th>
                 </tr>
               </thead>
               <tbody>
@@ -163,10 +163,10 @@ export default function PeopleDatabase({ onRowClick }) {
                         <div className={`${styles.skeleton} ${styles.skeletonAvatar}`}></div>
                         <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: "120px" }}></div>
                       </td>
-                      <td><div className={`${styles.skeleton} ${styles.skeletonText}`}></div></td>
-                      <td><div className={`${styles.skeleton} ${styles.skeletonText}`}></div></td>
-                      <td><div className={`${styles.skeleton} ${styles.skeletonText}`}></div></td>
-                      <td><div className={`${styles.skeleton} ${styles.skeletonText}`}></div></td>
+                      <td className={styles.fixedWidthLocation}><div className={`${styles.skeleton} ${styles.skeletonText}`}></div></td>
+                      <td className={styles.fixedWidthCompanies}><div className={`${styles.skeleton} ${styles.skeletonText}`}></div></td>
+                      <td className={styles.fixedWidthCompanies}><div className={`${styles.skeleton} ${styles.skeletonText}`}></div></td>
+                      <td className={styles.fixedWidthCompanies}><div className={`${styles.skeleton} ${styles.skeletonText}`}></div></td>
                     </tr>
                   ))
                 ) : error ? (
@@ -212,10 +212,26 @@ export default function PeopleDatabase({ onRowClick }) {
                         />
                         <span>{person.name}</span>
                       </td>
-                      <td>{person.location}</td>
-                      <td>{person.current}</td>
-                      <td>{person.previous}</td>
-                      <td>{person.sector}</td>
+                      <td className={styles.fixedWidthLocation}>
+                        <div className={styles.hiddenScroll}>
+                          {person.location}
+                        </div>
+                      </td>
+                      <td className={styles.fixedWidthCompanies}>
+                        <div className={styles.hiddenScroll}>
+                          {person.current}
+                        </div>
+                      </td>
+                      <td className={styles.fixedWidthCompanies}>
+                        <div className={styles.hiddenScroll}>
+                          {person.previous}
+                        </div>
+                      </td>
+                      <td className={styles.fixedWidthCompanies}>
+                        <div className={styles.hiddenScroll}>
+                          {person.sector}
+                        </div>
+                      </td>
                     </tr>
                   ))
                 )}
