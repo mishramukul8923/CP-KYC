@@ -1500,7 +1500,7 @@ export default function CompanyPage() {
         </div>
       )}
 
-      {/* Related Corporates */}
+      {/* Related Companies */}
       {activeSection === "relatedCorporates" && (
         <div id="relatedCorporates">
           <RelatedCorporates commonDirectorship={commonDirectorship}

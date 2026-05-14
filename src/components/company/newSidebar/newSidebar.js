@@ -84,7 +84,7 @@ const CompanyNewSidebar = () => {
     { id: "peerComparison", title: "Peer Comparison", isStandalone: true },
     {
       id: "relatedCorporates",
-      title: "Related Corporates",
+      title: "Related Companies",
       isStandalone: true,
     },
     {
