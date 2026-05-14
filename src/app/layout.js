@@ -300,20 +300,36 @@ export default function RootLayout({ children }) {
       if (e.key === "F12") {
         e.preventDefault();
       }
-      // Disable Ctrl+Shift+I / Cmd+Option+I
+      // Disable Ctrl+Shift+I / Cmd+Option+I (Inspect)
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "I" || e.key === "i")) {
         e.preventDefault();
       }
-      // Disable Ctrl+Shift+J / Cmd+Option+J
+      // Disable Ctrl+Shift+J / Cmd+Option+J (Console)
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "J" || e.key === "j")) {
         e.preventDefault();
       }
-      // Disable Ctrl+Shift+C / Cmd+Option+C
+      // Disable Ctrl+Shift+C / Cmd+Option+C (Elements)
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "C" || e.key === "c")) {
+        e.preventDefault();
+      }
+      // Disable Ctrl+Shift+K / Cmd+Option+K (Firefox Console)
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "K" || e.key === "k")) {
         e.preventDefault();
       }
       // Disable Ctrl+U / Cmd+Option+U (View Source)
       if ((e.ctrlKey || e.metaKey) && (e.key === "U" || e.key === "u")) {
+        e.preventDefault();
+      }
+      // Disable Ctrl+S / Cmd+S (Save Page)
+      if ((e.ctrlKey || e.metaKey) && (e.key === "S" || e.key === "s")) {
+        e.preventDefault();
+      }
+      // Disable Ctrl+P / Cmd+P (Print Page)
+      if ((e.ctrlKey || e.metaKey) && (e.key === "P" || e.key === "p")) {
+        e.preventDefault();
+      }
+      // Disable Shift+F10 (Context Menu)
+      if (e.shiftKey && e.key === "F10") {
         e.preventDefault();
       }
     };
@@ -325,6 +341,25 @@ export default function RootLayout({ children }) {
       document.removeEventListener("contextmenu", handleContextMenu);
       document.removeEventListener("keydown", handleKeyDown);
     };
+  }, []);
+
+  /* AGGRESSIVE DEVTOOLS PROTECTION (PRODUCTION ONLY) */
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "production") return;
+
+    const interval = setInterval(() => {
+      (function () {
+        try {
+          (function (function_constructor) {
+            if (function_constructor) {
+              (function_constructor('debugger')());
+            }
+          })(Function('return this')().constructor('debugger'));
+        } catch (e) { }
+      })();
+    }, 100);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
