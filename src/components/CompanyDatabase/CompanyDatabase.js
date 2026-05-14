@@ -38,8 +38,23 @@ export default function CompanyDatabase() {
   const [sortConfig, setSortConfig] = useState({ key: "market_cap", direction: "desc" });
 
   const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
+    if (!dateString || dateString === "-") return "";
+
+    // If already in DD/MM/YYYY, return as is
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) return dateString;
+
+    let date = new Date(dateString);
+
+    // Handle DD/MM/YYYY if new Date() fails
+    if (isNaN(date.getTime()) && typeof dateString === 'string' && dateString.includes('/')) {
+      const parts = dateString.split('/');
+      if (parts.length === 3) {
+        date = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+      }
+    }
+
+    if (isNaN(date.getTime())) return dateString;
+
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
@@ -517,7 +532,7 @@ export default function CompanyDatabase() {
                     src={sortConfig.key === "incorporation_date"
                       ? (sortConfig.direction === "asc" ? "/icons/arrow-down.svg" : "/icons/arrow-up.svg")
                       : "/icons/chevrons-up-down.svg"}
-                    alt=""
+                    alt="sort"
                     className={styles.sortIcon}
                   />
                 </div>
@@ -610,7 +625,7 @@ export default function CompanyDatabase() {
                       ? (Number(company.soc.replace(/,/g, "")) / 1000).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                       : "-"}
                   </td>
-                  <td>{company.incorporation_date || "-"}</td>
+                  <td>{formatDate(company.incorporation_date) || "-"}</td>
                   <td className={styles.fixedWidthCol}>
                     <div className={styles.hiddenScroll}>
                       {formatAddress(company.registered_address)}

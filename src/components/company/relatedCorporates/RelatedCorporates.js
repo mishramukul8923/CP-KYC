@@ -7,7 +7,7 @@ export default function RelatedCorporates({ commonDirectorship, loading, error }
     return (
       <div className={styles.container}>
         <div className={styles.header}>
-          <h1 className={styles.headerTitle}>Related Corporates</h1>
+          <h1 className={styles.headerTitle}>Related Companies</h1>
           <div className={styles.headerInfo}>
             <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100px' }} />
             <div className={styles.infoDivider}></div>
@@ -64,7 +64,7 @@ export default function RelatedCorporates({ commonDirectorship, loading, error }
       <div className={styles.container}>
         <div className={styles.header}>
           <h1 className={styles.headerTitle}>
-            Related Corporates
+            Related Companies
           </h1>
         </div>
         <p className={styles.notAvailable}>Data not available.</p>
@@ -79,7 +79,7 @@ export default function RelatedCorporates({ commonDirectorship, loading, error }
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.headerTitle}>Related Corporates</h1>
+        <h1 className={styles.headerTitle}>Related Companies</h1>
         <div className={styles.headerInfo}>
           <span className={styles.infoGroup}>
             <span className={styles.infoLabel}>Source:</span>
