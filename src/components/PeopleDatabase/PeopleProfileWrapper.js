@@ -70,7 +70,12 @@ const PeopleProfileWrapper = ({ din, onBack }) => {
             banking_default: data.banking_default_declarations || [],
             regulatory_history: data.regulatory_compliance_history || [],
             pep_sanctions: data.pep_sanctions_checks || [],
-            risk_edd: data.risk_edd || {},
+            risk_edd: (() => {
+              const raw = data.risk_edd;
+              if (!raw) return [];
+              if (Array.isArray(raw)) return raw;
+              return [raw];
+            })(),
             career_timeline: (data.career_timeline || []).map(c => ({
               company_name: c.company,
               designation: c.role,

@@ -11,7 +11,7 @@ export default function PeopleDatabase({ onRowClick }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
   const [totalPages, setTotalPages] = useState(0);
   const [totalPeople, setTotalPeople] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -259,6 +259,7 @@ export default function PeopleDatabase({ onRowClick }) {
                 <span className={styles.rowsPerPageText}>Rows per page</span>
                 <RowsPerPage
                   value={rowsPerPage}
+                  options={[20, 50, 100]}
                   onChange={(val) => {
                     setRowsPerPage(val);
                     setCurrentPage(1);

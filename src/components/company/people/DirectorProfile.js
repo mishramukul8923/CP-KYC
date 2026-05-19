@@ -133,7 +133,29 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
         nature_of_holding: s.nature || s.nature_of_holding || "-",
         company_log: s.company_log
       })),
-      career_timeline: director.career_timeline?.length > 0 ? director.career_timeline : (director.details?.career_timeline || []),
+      career_timeline: (director.career_timeline?.length > 0 ? director.career_timeline : (director.details?.career_timeline || [])).map(item => {
+        const appointment_date = item.appointment_date || item.from_date || "-";
+        const cessation_date = item.cessation_date || item.to_date || "-";
+
+        let status = "Inactive";
+        if (item.status) {
+          status = item.status;
+        } else if (item.is_current === true || item.is_current === "true") {
+          status = "Active";
+        } else if (cessation_date === "-" || cessation_date === "Present") {
+          status = "Active";
+        }
+
+        return {
+          company_name: item.company_name || item.company || "-",
+          designation: item.designation || item.role || "-",
+          appointment_date,
+          cessation_date,
+          status,
+          tenure: item.tenure && item.tenure !== "N/A" ? item.tenure : "N/A",
+          company_cin: item.company_cin || ""
+        };
+      }),
       negative_media: director.negative_media?.length > 0 ? director.negative_media : (director.details?.negative_media || []),
       banking_default: director.banking_default_declarations?.length > 0 ? director.banking_default_declarations : (director.details?.banking_default || []),
       regulatory_history: director.regulatory_compliance_history?.length > 0 ? director.regulatory_compliance_history : (director.details?.regulatory_history || []),
@@ -759,51 +781,51 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
                 {/* CAREER TIMELINE */}
                 <section className={styles.section}>
                   <h2 className={styles.sectionHeading}>Career Timeline</h2>
-                  <div className={styles.timeline}>
-                        {selectedDirector.details?.career_timeline?.length > 0 ? (
-                          [...(selectedDirector.details?.career_timeline || [])]
-                            .sort((a, b) => {
-                              // Prioritize Active status
-                              if (a.status === "Active" && b.status !== "Active") return -1;
-                              if (a.status !== "Active" && b.status === "Active") return 1;
+                  {selectedDirector.details?.career_timeline?.length > 0 ? (
+                    <div className={styles.timeline}>
+                      {[...(selectedDirector.details?.career_timeline || [])]
+                        .sort((a, b) => {
+                          // Prioritize Active status
+                          if (a.status === "Active" && b.status !== "Active") return -1;
+                          if (a.status !== "Active" && b.status === "Active") return 1;
 
-                              const dateA = parseTimelineDate(a.appointment_date);
-                              const dateB = parseTimelineDate(b.appointment_date);
-                              if (dateA.getTime() === dateB.getTime()) {
-                                // If dates are same, sort by cessation date descending
-                                return parseTimelineDate(b.cessation_date) - parseTimelineDate(a.cessation_date);
-                              }
-                              return dateB - dateA;
-                            })
-                            .map((item, idx) => {
-                              let cleanTenure = (item.tenure && item.tenure !== "N/A")
-                                ? item.tenure.replace(/,/g, "")
-                                : calculateTenure(item.appointment_date, item.cessation_date, item.status);
+                          const dateA = parseTimelineDate(a.appointment_date);
+                          const dateB = parseTimelineDate(b.appointment_date);
+                          if (dateA.getTime() === dateB.getTime()) {
+                            // If dates are same, sort by cessation date descending
+                            return parseTimelineDate(b.cessation_date) - parseTimelineDate(a.cessation_date);
+                          }
+                          return dateB - dateA;
+                        })
+                        .map((item, idx) => {
+                          let cleanTenure = (item.tenure && item.tenure !== "N/A")
+                            ? item.tenure.replace(/,/g, "")
+                            : calculateTenure(item.appointment_date, item.cessation_date, item.status);
 
-                              return (
-                                <TimelineItem
-                                  key={idx}
-                                  date={`${item.appointment_date || "-"} - ${item.status === "Active" ? "Present" : (item.cessation_date || "-")}`}
-                                  name={item.company_name || "-"}
-                                  role={`${item.designation || "-"} • ${cleanTenure}`}
-                                  active={item.status === "Active"}
-                                />
-                              );
-                            })
-                        ) : (
-                      <p style={{ textAlign: "center", width: "100%", padding: "20px", color: "#666" }}>
-                        Data not available.
-                      </p>
-                    )}
-                  </div>
+                          return (
+                            <TimelineItem
+                              key={idx}
+                              date={`${item.appointment_date || "-"} - ${item.status === "Active" ? "Present" : (item.cessation_date || "-")}`}
+                              name={item.company_name || "-"}
+                              role={`${item.designation || "-"} • ${cleanTenure}`}
+                              active={item.status === "Active"}
+                            />
+                          );
+                        })}
+                    </div>
+                  ) : (
+                    <p style={{ textAlign: "center", width: "100%", padding: "20px", color: "#666" }}>
+                      Data not available.
+                    </p>
+                  )}
                 </section>
 
                 {/* QUALIFICATIONS SECTION */}
                 <section className={styles.section}>
                   <h2 className={styles.sectionHeading}>Qualifications</h2>
-                  <div className={styles.qualList}>
-                    {selectedDirector.details?.qualifications?.length > 0 ? (
-                      selectedDirector.details.qualifications.map((item, idx) => (
+                  {selectedDirector.details?.qualifications?.length > 0 ? (
+                    <div className={styles.qualList}>
+                      {selectedDirector.details.qualifications.map((item, idx) => (
                         <QualificationItem
                           key={idx}
                           icon={item.icon || "/images/placeholder.svg"}
@@ -812,14 +834,13 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
                           spec={item.spec || "-"}
                           year={`${item.yearfrom || "-"} - ${item.yearto || "-"}`}
                         />
-                      ))
-                    ) : (
-                      <p style={{ textAlign: "center", width: "100%", padding: "20px", color: "#666" }}>
-                        Data not available.
-                      </p>
-                    )}
-
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p style={{ textAlign: "center", width: "100%", padding: "20px", color: "#666", border: "1px solid #E4E4E7", borderRadius: "20px" }}>
+                      Data not available.
+                    </p>
+                  )}
                 </section>
 
                 {/* DIRECTORS & LEADERSHIP NEWS SECTION */}
@@ -850,7 +871,7 @@ export default function DirectorProfile({ directors = [], companyName = "", hide
                         )}
                       </>
                     ) : (
-                      <p style={{ textAlign: "center", width: "100%", padding: "20px", color: "#666" }}>
+                      <p style={{ textAlign: "center", width: "100%", padding: "20px", color: "#666", border: "1px solid #E4E4E7", borderRadius: "20px" }}>
                         Data not available.
                       </p>
                     )}

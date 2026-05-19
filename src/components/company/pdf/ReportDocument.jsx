@@ -1921,9 +1921,40 @@ export const ReportDocument = ({
 
           {/* Sub-tables Arrays */}
           <View break>
-            {renderDynamicTable(d.career_timeline, "Career Timeline")}
+            {renderDynamicTable(
+              (d.career_timeline?.length > 0 ? d.career_timeline : (d.details?.career_timeline || [])).map(item => {
+                const appointment_date = item.appointment_date || item.from_date || "-";
+                const cessation_date = item.cessation_date || item.to_date || "-";
+                
+                let status = "Inactive";
+                if (item.status) {
+                  status = item.status;
+                } else if (item.is_current === true || item.is_current === "true") {
+                  status = "Active";
+                } else if (cessation_date === "-" || cessation_date === "Present") {
+                  status = "Active";
+                }
+
+                return {
+                  "Company Name": item.company_name || item.company || "-",
+                  "Designation": item.designation || item.role || "-",
+                  "Appointment Date": appointment_date,
+                  "Cessation Date": cessation_date,
+                  "Status": status
+                };
+              }),
+              "Career Timeline"
+            )}
           </View>
-          {renderDynamicTable(d.qualifications, "Qualifications")}
+          {renderDynamicTable(
+            (d.qualifications?.length > 0 ? d.qualifications : (d.details?.qualifications || [])).map(q => ({
+              "Title/Certificate": q.certificate_in || q.title || "-",
+              "Institute": q.institute_name || q.inst || "-",
+              "Specialization": q.specialization_in || q.spec || "-",
+              "Year": `${q.year_from || q.yearfrom || "-"} - ${q.year_to || q.yearto || "-"}`
+            })),
+            "Qualifications"
+          )}
 
           {d.details?.current_positions && renderDynamicTable(d.details.current_positions.map(p => ({
             "Company/LLP name": p.company_name || "-",
@@ -1955,6 +1986,20 @@ export const ReportDocument = ({
           {renderDynamicTable(d.banking_default_declarations, "Banking Default Declarations")}
           {renderDynamicTable(d.regulatory_compliance_history, "Regulatory Compliance History")}
           {renderDynamicTable(d.pep_sanctions_checks, "PEP & Sanctions Checks")}
+          {renderDynamicTable(
+            (() => {
+              const raw = d.risk_edd || d.details?.risk_edd;
+              if (!raw) return [];
+              const arr = Array.isArray(raw) ? raw : [raw];
+              return arr.map(item => ({
+                "Risk Category": item.risk_category || item.category || "-",
+                "EDD Required": item.edd_required || item.edd || "-",
+                "Key Risk Drivers": item.key_risk_drivers || item.drivers || "-",
+                "Last Reviewed": item.last_reviewed || item.date || "-"
+              }));
+            })(),
+            "Risk & EDD"
+          )}
 
           <View style={styles.watermarkContainer} fixed>
             <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
