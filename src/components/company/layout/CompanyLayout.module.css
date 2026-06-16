@@ -95,3 +95,81 @@
     gap: 16px;
   }
 }
+
+/* 404 Page Not Found Screen */
+.notFoundContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  width: 100%;
+  /* background: radial-gradient(circle at center, #ffffff 0%, #f8fafc 100%); */
+  text-align: center;
+  padding: 48px 24px;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+.notFoundCode {
+  font-size: 220px;
+  font-weight: 800;
+  color: #e2e8f0;
+  line-height: 1;
+  margin: 0;
+  letter-spacing: -0.05em;
+  user-select: none;
+}
+
+.notFoundTitle {
+  font-size: 40px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 16px 0 8px 0;
+  letter-spacing: -0.02em;
+}
+
+.notFoundMessage {
+  font-size: 16px;
+  color: #64748b;
+  max-width: 520px;
+  line-height: 1.6;
+  margin: 0 auto 32px auto;
+}
+
+.notFoundButton {
+  display: inline-block;
+  background-color: #041e42;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 12px 32px;
+  border-radius: 6px;
+  transition: background-color 0.2s, transform 0.1s;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(4, 30, 66, 0.2), 0 2px 4px -1px rgba(4, 30, 66, 0.1);
+}
+
+.notFoundButton:hover {
+  background-color: #0c2b54;
+}
+
+.notFoundButton:active {
+  transform: scale(0.98);
+}
+
+@media (max-width: 768px) {
+  .notFoundCode {
+    font-size: 150px;
+  }
+  .notFoundTitle {
+    font-size: 32px;
+  }
+  .notFoundMessage {
+    font-size: 14px;
+    max-width: 90%;
+  }
+}
+

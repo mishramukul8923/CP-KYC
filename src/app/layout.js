@@ -28,6 +28,7 @@ export default function RootLayout({ children }) {
   const [activeIndex, setActiveIndex] = useState(-1);
   const [user, setUser] = useState(null);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [noResults, setNoResults] = useState(false);
 
   const searchInputRef = useRef(null);
   const suggestionBoxRef = useRef(null);
@@ -38,6 +39,7 @@ export default function RootLayout({ children }) {
     if (isAuthPage || !companyName.trim()) {
       setSuggestions([]);
       setShowSuggestions(false);
+      setNoResults(false);
       return;
     }
 
@@ -50,14 +52,22 @@ export default function RootLayout({ children }) {
           }
         });
         const result = await res.json();
-        if (Array.isArray(result?.suggestions)) {
+        if (result && result.total === 0) {
+          setSuggestions([]);
+          setNoResults(true);
+          setShowSuggestions(true);
+        } else if (Array.isArray(result?.suggestions)) {
           setSuggestions(result.suggestions);
+          setNoResults(result.suggestions.length === 0);
           setShowSuggestions(true);
         } else {
           setSuggestions([]);
+          setNoResults(false);
         }
       } catch (err) {
         console.error("Suggestion fetch error:", err);
+        setSuggestions([]);
+        setNoResults(false);
       }
     }, 300);
 
@@ -72,6 +82,7 @@ export default function RootLayout({ children }) {
       setSuggestions([]);
       setShowSuggestions(false);
       setActiveIndex(-1);
+      setNoResults(false);
       suggestionRefs.current = [];
     } else {
       setShowSuggestions(false);
@@ -204,6 +215,7 @@ export default function RootLayout({ children }) {
   const handleInputChange = (value) => {
     setCompanyName(value);
     setActiveIndex(-1);
+    setNoResults(false);
   };
 
   /* CLICK SUGGESTION */
@@ -227,13 +239,14 @@ export default function RootLayout({ children }) {
 
     setShowSuggestions(false);
 
-    // If there are suggestions, select the first one automatically
+    // If there are suggestions, select the active one if highlighted, otherwise the first one
     if (suggestions.length > 0) {
-      handleSuggestionClick(suggestions[0].name);
+      const selectedName = activeIndex >= 0 && suggestions[activeIndex]
+        ? suggestions[activeIndex].name
+        : suggestions[0].name;
+      handleSuggestionClick(selectedName);
       return;
     }
-
-    router.push(`/company/${query.replaceAll(" ", "-").toLowerCase()}`);
   };
 
   /* SIDEBAR ACTIVE TAB */
@@ -413,21 +426,25 @@ export default function RootLayout({ children }) {
                         <div className={styles.shortcut}>⌘ K</div>
                       </form>
 
-                      {showSuggestions && suggestions.length > 0 && (
+                      {showSuggestions && (suggestions.length > 0 || noResults) && (
                         <div ref={suggestionBoxRef} className={styles.suggestionBox}>
-                          {suggestions.map((item, index) => (
-                            <div
-                              key={index}
-                              ref={(el) => (suggestionRefs.current[index] = el)}
-                              className={`${styles.suggestionItem} ${index === activeIndex ? styles.activeSuggestion : ""
-                                }`}
-                              onClick={() =>
-                                handleSuggestionClick(item.name)
-                              }
-                            >
-                              {item.name}
-                            </div>
-                          ))}
+                          {noResults ? (
+                            <div className={styles.noResultsItem}>Company not found</div>
+                          ) : (
+                            suggestions.map((item, index) => (
+                              <div
+                                key={index}
+                                ref={(el) => (suggestionRefs.current[index] = el)}
+                                className={`${styles.suggestionItem} ${index === activeIndex ? styles.activeSuggestion : ""
+                                  }`}
+                                onClick={() =>
+                                  handleSuggestionClick(item.name)
+                                }
+                              >
+                                {item.name}
+                              </div>
+                            ))
+                          )}
                         </div>
                       )}
                     </div>
