@@ -48,6 +48,19 @@ export default function CompanyLayout({ children }) {
   useEffect(() => {
     if (!companyName) return;
 
+    // Check if navigation was internal search
+    let isInternal = false;
+    if (typeof window !== "undefined") {
+      isInternal = sessionStorage.getItem("internalSearch") === "true";
+      sessionStorage.removeItem("internalSearch"); // Consume flag immediately
+    }
+
+    if (isInternal) {
+      setIsValidating(false);
+      setIsNotFound(false);
+      return;
+    }
+
     const validateCompany = async () => {
       try {
         setIsValidating(true);
@@ -143,9 +156,9 @@ export default function CompanyLayout({ children }) {
         <p className={styles.notFoundMessage}>
           Looks like this company doesn't exist in our records — or maybe we just haven't indexed this corner of the web yet.
         </p>
-        <Link href="/" className={styles.notFoundButton}>
+        <a href="/" className={styles.notFoundButton}>
           Back to Home
-        </Link>
+        </a>
       </div>
     );
   }

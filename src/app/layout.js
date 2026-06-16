@@ -224,6 +224,10 @@ export default function RootLayout({ children }) {
     setCompanyName(name);
     setShowSuggestions(false);
 
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("internalSearch", "true");
+    }
+
     router.push(`/company/${name.replaceAll(" ", "-").toLowerCase()}`);
   };
 

@@ -90,6 +90,10 @@ export default function HeroSection() {
     setCompanyName(name);
     setShowSuggestions(false);
 
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("internalSearch", "true");
+    }
+
     router.push(`/company/${name.replaceAll(" ", "-").toLowerCase()}`);
   };
 

@@ -602,7 +602,17 @@ export default function CompanyDatabase() {
                         unoptimized={true}
                       // priority
                       />
-                      <Link href={`/company/${(company.company_name || "").toLowerCase().replace(/\s+/g, "-")}`} className={styles.companyLink}>{company.company_name || "-"}</Link>
+                      <Link
+                        href={`/company/${(company.company_name || "").toLowerCase().replace(/\s+/g, "-")}`}
+                        onClick={() => {
+                          if (typeof window !== "undefined") {
+                            sessionStorage.setItem("internalSearch", "true");
+                          }
+                        }}
+                        className={styles.companyLink}
+                      >
+                        {company.company_name || "-"}
+                      </Link>
                       {company.company_class && company.company_class !== "-" && (
                         <span className={`${styles.companyClassTag} ${company.company_class.toLowerCase() === 'public' ? styles.tagPublic : styles.tagPrivate}`}>
                           {company.company_class}
