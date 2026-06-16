@@ -357,3 +357,10 @@ body {
 .activeSuggestion {
   background: #f3f4f6;
 }
+
+.noResultsItem {
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #64748b;
+  cursor: default;
+}

@@ -14,19 +14,15 @@ export default function HeroSection() {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [noResults, setNoResults] = useState(false);
 
-  const handleSearch = () => {
-    const query = companyName.trim();
-    if (!query) return;
-
-    router.push(`/company/${encodeURIComponent(query)}`);
-  };
 
   // Dynamic Suggestions Fetching
   useEffect(() => {
     if (!companyName.trim()) {
       setSuggestions([]);
       setShowSuggestions(false);
+      setNoResults(false);
       return;
     }
 
@@ -39,14 +35,22 @@ export default function HeroSection() {
           }
         });
         const result = await res.json();
-        if (Array.isArray(result?.suggestions)) {
+        if (result && result.total === 0) {
+          setSuggestions([]);
+          setNoResults(true);
+          setShowSuggestions(true);
+        } else if (Array.isArray(result?.suggestions)) {
           setSuggestions(result.suggestions);
+          setNoResults(result.suggestions.length === 0);
           setShowSuggestions(true);
         } else {
           setSuggestions([]);
+          setNoResults(false);
         }
       } catch (err) {
         console.error("Suggestion fetch error:", err);
+        setSuggestions([]);
+        setNoResults(false);
       }
     }, 300);
 
@@ -79,6 +83,7 @@ export default function HeroSection() {
   const handleInputChange = (value) => {
     setCompanyName(value);
     setActiveIndex(-1);
+    setNoResults(false);
   };
 
   const handleSuggestionClick = (name) => {
@@ -109,13 +114,14 @@ export default function HeroSection() {
 
     setShowSuggestions(false);
 
-    // If there are suggestions, select the first one automatically
+    // If there are suggestions, select the active one if highlighted, otherwise the first one
     if (suggestions.length > 0) {
-      handleSuggestionClick(suggestions[0].name);
+      const selectedName = activeIndex >= 0 && suggestions[activeIndex]
+        ? suggestions[activeIndex].name
+        : suggestions[0].name;
+      handleSuggestionClick(selectedName);
       return;
     }
-
-    router.push(`/company/${query.replaceAll(" ", "-").toLowerCase()}`);
   };
 
   // ⭐ AUTO SCROLL TO ACTIVE ITEM
@@ -176,19 +182,23 @@ export default function HeroSection() {
             </button>
           </form>
 
-          {showSuggestions && suggestions.length > 0 && (
+          {showSuggestions && (suggestions.length > 0 || noResults) && (
             <div className={styles.suggestionBox}>
-              {suggestions.map((item, index) => (
-                <div
-                  key={index}
-                  ref={(el) => (suggestionRefs.current[index] = el)}
-                  className={`${styles.suggestionItem} ${index === activeIndex ? styles.activeSuggestion : ""
-                    }`}
-                  onClick={() => handleSuggestionClick(item.name)}
-                >
-                  {item.name}
-                </div>
-              ))}
+              {noResults ? (
+                <div className={styles.noResultsItem}>Company not found</div>
+              ) : (
+                suggestions.map((item, index) => (
+                  <div
+                    key={index}
+                    ref={(el) => (suggestionRefs.current[index] = el)}
+                    className={`${styles.suggestionItem} ${index === activeIndex ? styles.activeSuggestion : ""
+                      }`}
+                    onClick={() => handleSuggestionClick(item.name)}
+                  >
+                    {item.name}
+                  </div>
+                ))
+              )}
             </div>
           )}
         </div>
