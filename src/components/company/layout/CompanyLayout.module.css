@@ -173,3 +173,16 @@
   }
 }
 
+.skeletonItem {
+  width: 100%;
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  animation: skeletonPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+
