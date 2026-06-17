@@ -363,6 +363,7 @@ const styles = StyleSheet.create({
 });
 
 export const ReportDocument = ({
+  selectedSections,
   companyData,
   alertsData,
   directorsData,
@@ -387,6 +388,18 @@ export const ReportDocument = ({
   auditorRemarksData,
   litigationData
 }) => {
+  const select = selectedSections || {
+    companyDetails: true,
+    alerts: true,
+    directorsKmp: true,
+    controlOwnership: true,
+    financials: true,
+    charges: true,
+    peerComparison: true,
+    relatedCorporates: true,
+    complianceDetails: true,
+    litigation: true,
+  };
   const ci = companyData?.company_information || {};
   const contact = companyData?.contact_details || {};
   const about = companyData?.about?.description || "No description available.";
@@ -1625,7 +1638,8 @@ export const ReportDocument = ({
   return (
     <Document>
       {/* Premium First Page */}
-      <Page size="A4" style={styles.page}>
+      {select.companyDetails && (
+        <Page size="A4" style={styles.page}>
         {renderCompactHeader()}
         <View style={[styles.letterheadContainer, { borderBottomWidth: 1, borderBottomColor: '#f1f1f1', paddingBottom: 15, width: '100%' }]}>
           <Image src="/icons/pdfLogocompanyWiki.png" style={{ width: 100 }} />
@@ -1713,9 +1727,10 @@ export const ReportDocument = ({
           </View>
         </View>
       </Page>
+      )}
 
       {/* Alerts Page (Moved to BEFORE Directors) */}
-      {(alerts.length > 0 || statutoryAlerts.length > 0 || auditorAlerts.length > 0 || litigationAlerts.length > 0) && (
+      {select.alerts && (alerts.length > 0 || statutoryAlerts.length > 0 || auditorAlerts.length > 0 || litigationAlerts.length > 0) && (
         <Page size="A4" style={styles.page}>
           {renderCompactHeader()}
           {/* Regulatory Alerts */}
@@ -1871,7 +1886,7 @@ export const ReportDocument = ({
       )}
 
       {/* Directors Overview Page */}
-      {allDirectors.length > 0 && (
+      {select.directorsKmp && allDirectors.length > 0 && (
         <Page size="A4" style={styles.page}>
           {renderCompactHeader()}
           <Text style={styles.heading2}>Directors & KMP Details</Text>
@@ -1896,7 +1911,7 @@ export const ReportDocument = ({
       )}
 
       {/* Individual Director Data Page(s) */}
-      {allDirectors.length > 0 && allDirectors.map((d, index) => (
+      {select.directorsKmp && allDirectors.length > 0 && allDirectors.map((d, index) => (
         <Page size="A4" style={styles.page} key={`dir-detail-${index}`}>
           <View style={[styles.header, { marginBottom: 5 }]}>
             <View style={styles.titleContainer}>
@@ -2008,9 +2023,11 @@ export const ReportDocument = ({
       ))}
 
       {/* Phase 3: Control & Ownership - Shareholding (Moved to after directors) */}
-      {shareholdingData && (
+      {((select.controlOwnership && shareholdingData) || (select.financials && financialHighlights)) && (
         <Page size="A4" style={styles.page}>
-          <Text style={[styles.title, { fontSize: 18, marginBottom: 0 }]}>Control & Ownership - Shareholding</Text>
+          {select.controlOwnership && shareholdingData && (
+            <>
+              <Text style={[styles.title, { fontSize: 18, marginBottom: 0 }]}>Control & Ownership - Shareholding</Text>
           <View style={{ textAlign: 'right', marginBottom: 10 }}>
             <Text style={{ fontSize: 8, color: '#6b7280' }}>Source: {formatValue(shareholdingData?.source ?? "-")}</Text>
             <Text style={{ fontSize: 8, color: '#6b7280' }}>Updated: {formatDateToIST(shareholdingData?.last_updated ?? "-")}</Text>
@@ -2133,9 +2150,11 @@ export const ReportDocument = ({
             }));
             return renderDynamicTable(mappedFii, `Foreign Institutional Investor`);
           })()}
+            </>
+          )}
 
           {/* Section 2: Security Allotment */}
-          {securityAllotmentData && (
+          {select.controlOwnership && securityAllotmentData && (
             <View style={{ marginTop: 20 }}>
               <Text style={[styles.heading2, { backgroundColor: 'transparent', color: '#000000', paddingLeft: 0 }]}>Securities Allotment</Text>
               {securityAllotmentData.overview && renderDictTable({
@@ -2169,7 +2188,7 @@ export const ReportDocument = ({
           )}
 
           {/* Section 3: Group Structure */}
-          {groupStructureData && (
+          {select.controlOwnership && groupStructureData && (
             <View style={{ marginTop: 20 }}>
               <Text style={[styles.heading2, { backgroundColor: 'transparent', color: '#000000', paddingLeft: 0 }]}>Group Structure</Text>
               {groupStructureData.summary && renderDictTable({
@@ -2200,7 +2219,7 @@ export const ReportDocument = ({
           )}
 
           {/* Section 4: Overseas Direct Investment (ODI) */}
-          {overseasInvestmentData && (
+          {select.controlOwnership && overseasInvestmentData && (
             <View style={{ marginTop: 20 }}>
               <Text style={[styles.heading2, { backgroundColor: 'transparent', color: '#000000', paddingLeft: 0 }]}>Overseas Direct Investment</Text>
               {overseasInvestmentData.summary && renderDictTable({
@@ -2228,7 +2247,7 @@ export const ReportDocument = ({
           )}
 
           {/* Phase 4: Financial Highlights */}
-          {financialHighlights && (
+          {select.financials && financialHighlights && (
             <View style={{ marginTop: 20 }}>
               <Text style={[styles.title, { fontSize: 16, marginBottom: 0 }]}>Financial Highlights</Text>
               <View style={{ textAlign: 'right' }}>
@@ -2318,7 +2337,7 @@ export const ReportDocument = ({
       )}
 
       {/* Phase 5: Landscape Balance Sheets */}
-      {(bsStandalone || bsConsolidated) && (
+      {select.financials && (bsStandalone || bsConsolidated) && (
         <Page size="A4" orientation="landscape" style={styles.page}>
           {renderCompactHeader()}
           {bsStandalone && renderBalanceSheetTable(bsStandalone, "Standalone")}
@@ -2383,7 +2402,7 @@ export const ReportDocument = ({
       )}
 
       {/* Phase 6: Charges Information (Portrait) */}
-      {chargesData && (
+      {select.charges && chargesData && (
         <Page size="A4" orientation="portrait" style={styles.page}>
           {renderCompactHeader()}
           {renderChargesSection(chargesData)}
@@ -2395,7 +2414,7 @@ export const ReportDocument = ({
       )}
 
       {/* Phase 7: Peer Comparison & Business Activity (Portrait) */}
-      {peerComparisonData && (
+      {select.peerComparison && peerComparisonData && (
         <Page size="A4" orientation="portrait" style={styles.page}>
           {renderCompactHeader()}
           {renderPeerComparisonSection(peerComparisonData)}
@@ -2407,17 +2426,19 @@ export const ReportDocument = ({
       )}
 
       {/* Phase 8: Compliance Details (Portrait) */}
-      <Page size="A4" orientation="portrait" style={styles.page}>
-        {renderCompactHeader()}
-        {renderComplianceSection(auditorRemarksData)}
+      {select.complianceDetails && (
+        <Page size="A4" orientation="portrait" style={styles.page}>
+          {renderCompactHeader()}
+          {renderComplianceSection(auditorRemarksData)}
 
-        <View style={styles.watermarkContainer} fixed>
-          <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
-        </View>
-      </Page>
+          <View style={styles.watermarkContainer} fixed>
+            <Image src="/icons/pdfLogocompanyWiki.png" style={styles.watermarkImage} />
+          </View>
+        </Page>
+      )}
 
       {/* Phase 9: Litigation (Portrait) */}
-      {litigationData && (
+      {select.litigation && litigationData && (
         <Page size="A4" orientation="portrait" style={styles.page}>
           {renderCompactHeader()}
           {renderLitigationSection(litigationData)}

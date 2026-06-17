@@ -130,7 +130,7 @@ const RISK_DATA = [
 ];
 
 const CompanyNewHeader = ({ companyData, loading }) => {
-  const { isVersionHistoryOpen, setVersionHistoryOpen, alertsData, setPdfDownloadTrigger, isGeneratingPdf, setIsGeneratingPdf } = useCompanySection();
+  const { isVersionHistoryOpen, setVersionHistoryOpen, alertsData, setPdfDownloadTrigger, isGeneratingPdf, setIsGeneratingPdf, isDownloadModalOpen, setIsDownloadModalOpen, setSelectedReportSections } = useCompanySection();
   const [isExpanded, setIsExpanded] = useState(false); // State to track expansion
   const router = useRouter();
 
@@ -183,6 +183,12 @@ const CompanyNewHeader = ({ companyData, loading }) => {
     document.addEventListener("mousedown", close);
     return () => document.removeEventListener("mousedown", close);
   }, []);
+
+  React.useEffect(() => {
+    if (!isGeneratingPdf) {
+      setIsDownloadModalOpen(false);
+    }
+  }, [isGeneratingPdf, setIsDownloadModalOpen]);
 
   return (
     <div className={styles.wrapper}>
@@ -290,7 +296,7 @@ const CompanyNewHeader = ({ companyData, loading }) => {
                           )}
                           <button
                             className={styles.dropdownItem}
-                            onClick={() => setPdfDownloadTrigger(prev => prev + 1)}
+                            onClick={() => setIsDownloadModalOpen(true)}
                             disabled={isGeneratingPdf}
                           >
                             {isGeneratingPdf ? "Generating PDF..." : "Download Report"}
@@ -556,8 +562,16 @@ const CompanyNewHeader = ({ companyData, loading }) => {
           </div>
         </div>
       )}
-      {/* Download Progress Modal */}
-      <DownloadModal isOpen={isGeneratingPdf} onClose={() => setIsGeneratingPdf(false)} />
+      {/* Download Progress & Selection Modal */}
+      <DownloadModal
+        isOpen={isDownloadModalOpen}
+        onClose={() => setIsDownloadModalOpen(false)}
+        isGenerating={isGeneratingPdf}
+        onExport={(selectedSections) => {
+          setSelectedReportSections(selectedSections);
+          setPdfDownloadTrigger(prev => prev + 1);
+        }}
+      />
       <ShareModal
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
