@@ -7,14 +7,14 @@ import { scrollToElementWithOffset } from "@/utils/scrollUtils";
 
 import { useCompanySection } from "@/components/company/context/CompanySectionContext";
 
-const CompanyNewSidebar = () => {
+const CompanyNewSidebar = ({ loading }) => {
   const {
     activeSection,
     activeSubSection,
     setActiveSection,
     setActiveSubSection,
     setScrollTrigger,
-  } = useCompanySection();
+  } = useCompanySection() || {};
 
   const [expandedSections, setExpandedSections] = useState({
     companyDetails: true,
@@ -186,6 +186,44 @@ const CompanyNewSidebar = () => {
     return () => clearTimeout(timer);
   }, [activeSection, menuData, setActiveSubSection]);
 
+  if (loading) {
+    return (
+      <aside className={styles.sidebar}>
+        <div className={styles.nav} style={{ paddingRight: "16px", marginTop: "16px" }}>
+          {/* Section 1 */}
+          <div className={styles.section} style={{ gap: "6px" }}>
+            <div className={styles.skeletonSidebarHeader} style={{ width: "85%" }} />
+            <div className={styles.skeletonSidebarItem} style={{ width: "60%", marginLeft: "24px" }} />
+            <div className={styles.skeletonSidebarItem} style={{ width: "70%", marginLeft: "24px" }} />
+            <div className={styles.skeletonSidebarItem} style={{ width: "65%", marginLeft: "24px" }} />
+            <div className={styles.skeletonSidebarItem} style={{ width: "75%", marginLeft: "24px" }} />
+          </div>
+          
+          {/* Section 2 */}
+          <div className={styles.skeletonSidebarHeader} style={{ width: "50%" }} />
+
+          {/* Section 3 */}
+          <div className={styles.skeletonSidebarHeader} style={{ width: "75%" }} />
+
+          {/* Section 4 */}
+          <div className={styles.section} style={{ gap: "6px" }}>
+            <div className={styles.skeletonSidebarHeader} style={{ width: "80%" }} />
+            <div className={styles.skeletonSidebarItem} style={{ width: "70%", marginLeft: "24px" }} />
+            <div className={styles.skeletonSidebarItem} style={{ width: "65%", marginLeft: "24px" }} />
+          </div>
+
+          {/* Section 5 */}
+          <div className={styles.section} style={{ gap: "6px" }}>
+            <div className={styles.skeletonSidebarHeader} style={{ width: "75%" }} />
+            <div className={styles.skeletonSidebarItem} style={{ width: "60%", marginLeft: "24px" }} />
+            <div className={styles.skeletonSidebarItem} style={{ width: "75%", marginLeft: "24px" }} />
+            <div className={styles.skeletonSidebarItem} style={{ width: "65%", marginLeft: "24px" }} />
+            <div className={styles.skeletonSidebarItem} style={{ width: "80%", marginLeft: "24px" }} />
+          </div>
+        </div>
+      </aside>
+    );
+  }
 
   return (
     <aside className={styles.sidebar}>

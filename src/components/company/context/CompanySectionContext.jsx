@@ -25,6 +25,7 @@ export function CompanySectionProvider({ children }) {
   const [pdfDownloadTrigger, setPdfDownloadTrigger] = useState(0);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [scrollTrigger, setScrollTrigger] = useState(0);
+  const [isCompanyValid, setIsCompanyValid] = useState(null); // null = validating, true = valid, false = invalid
 
   useEffect(() => {
     setActiveSection(sectionFromUrl);
@@ -72,6 +73,8 @@ export function CompanySectionProvider({ children }) {
         setCompanyLoading,
         companyError,
         setCompanyError,
+        isCompanyValid,
+        setIsCompanyValid,
       }}
     >
       {children}

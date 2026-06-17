@@ -195,3 +195,25 @@
     margin-left: 20px;
   }
 }
+
+.skeletonSidebarHeader {
+  height: 20px;
+  width: 90%;
+  background-color: #f1f5f9;
+  border-radius: 4px;
+  margin: 6px 8px;
+  animation: skeletonPulse 1.5s infinite ease-in-out;
+}
+
+.skeletonSidebarItem {
+  height: 16px;
+  background-color: #f8fafc;
+  border-radius: 4px;
+  margin: 4px 8px;
+  animation: skeletonPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

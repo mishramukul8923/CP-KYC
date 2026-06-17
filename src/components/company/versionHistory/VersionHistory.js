@@ -13,7 +13,7 @@ const getVariant = (type) => {
 };
 
 const VersionHistory = () => {
-  const { isVersionHistoryOpen, setVersionHistoryOpen } = useCompanySection();
+  const { isVersionHistoryOpen, setVersionHistoryOpen, isCompanyValid } = useCompanySection() || {};
   const params = useParams();
   const [historyData, setHistoryData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ const VersionHistory = () => {
   const companyName = params?.name ? decodeURIComponent(params.name).replaceAll("-", " ").toUpperCase() : "";
 
   useEffect(() => {
-    if (!companyName) return;
+    if (!companyName || isCompanyValid !== true) return;
 
     const fetchHistory = async () => {
       try {
@@ -65,7 +65,7 @@ const VersionHistory = () => {
     };
 
     fetchHistory();
-  }, [companyName]);
+  }, [companyName, isCompanyValid]);
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);

@@ -5,7 +5,7 @@ import styles from "@/components/company/layout/CompanyLayout.module.css";
 import CompanyNewHeader from "@/components/company/newHeader/newHeader";
 import CompanyStickyHeader from "@/components/company/newHeader/CompanyStickyHeader";
 import CompanyNewSidebar from "@/components/company/newSidebar/newSidebar";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import VersionHistory from "@/components/company/versionHistory/VersionHistory";
 import { useCompanySection } from "@/components/company/context/CompanySectionContext";
 import Link from "next/link";
@@ -18,10 +18,12 @@ export default function CompanyLayout({ children }) {
     litigationPage,
     companyData,
     companyLoading,
-    companyError
+    companyError,
+    setIsCompanyValid
   } = useCompanySection() || {};
   const [showStickyHeader, setShowStickyHeader] = useState(false);
   const params = useParams();
+  const router = useRouter();
   const rawCompanyName = (params.name.replaceAll("-", " ")).toUpperCase(); // from /company/dabur because route is [name]
   const [companyName, setCompanyName] = useState("");
   const [isValidating, setIsValidating] = useState(true);
@@ -42,7 +44,8 @@ export default function CompanyLayout({ children }) {
     if (!rawCompanyName) return;
     const companyNamee = decodeURIComponent(rawCompanyName);
     setCompanyName(companyNamee);
-  }, [rawCompanyName]);
+    if (setIsCompanyValid) setIsCompanyValid(null);
+  }, [rawCompanyName, setIsCompanyValid]);
 
   /* ================= VALIDATE COMPANY BY SUGGESTIONS ================= */
   useEffect(() => {
@@ -58,6 +61,7 @@ export default function CompanyLayout({ children }) {
     if (isInternal) {
       setIsValidating(false);
       setIsNotFound(false);
+      if (setIsCompanyValid) setIsCompanyValid(true);
       return;
     }
 
@@ -72,24 +76,48 @@ export default function CompanyLayout({ children }) {
         });
         if (!res.ok) {
           setIsNotFound(true);
+          if (setIsCompanyValid) setIsCompanyValid(false);
           return;
         }
         const result = await res.json();
-        if (result && result.total === 0) {
+        if (result && (result.total === 0 || !result.suggestions || result.suggestions.length === 0)) {
           setIsNotFound(true);
+          if (setIsCompanyValid) setIsCompanyValid(false);
         } else {
-          setIsNotFound(false);
+          // Check if there is an exact case-insensitive match in suggestions list
+          const exactMatch = result.suggestions.find(
+            (s) => s.name.toUpperCase() === companyName
+          );
+
+          if (exactMatch) {
+            setIsNotFound(false);
+            if (setIsCompanyValid) setIsCompanyValid(true);
+          } else {
+            // Auto-redirect to the first suggestion that came in suggestions
+            const firstSuggestionName = result.suggestions[0].name;
+            const firstSuggestionSlug = firstSuggestionName.replaceAll(" ", "-").toLowerCase();
+            const currentSlug = params.name.toLowerCase();
+
+            if (currentSlug !== firstSuggestionSlug) {
+              router.push(`/company/${firstSuggestionSlug}`);
+              return;
+            }
+
+            setIsNotFound(false);
+            if (setIsCompanyValid) setIsCompanyValid(true);
+          }
         }
       } catch (err) {
         console.error("Validation error:", err);
         setIsNotFound(true);
+        if (setIsCompanyValid) setIsCompanyValid(false);
       } finally {
         setIsValidating(false);
       }
     };
 
     validateCompany();
-  }, [companyName]);
+  }, [companyName, setIsCompanyValid]);
 
   /* ================= GET ALERTS DATA ================= */
   useEffect(() => {
@@ -127,27 +155,6 @@ export default function CompanyLayout({ children }) {
     getAlerts();
   }, [companyName, setAlertsData, setAlertsLoading, setAlertsError, litigationPage, isNotFound, isValidating]);
 
-  if (isValidating) {
-    return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
-        <div style={{
-          width: "40px",
-          height: "40px",
-          border: "4px solid rgba(4, 30, 66, 0.1)",
-          borderTop: "4px solid rgba(4, 30, 66, 1)",
-          borderRadius: "50%",
-          animation: "spin 1s linear infinite"
-        }} />
-        <style dangerouslySetInnerHTML={{__html: `
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}} />
-      </div>
-    );
-  }
-
   if (isNotFound) {
     return (
       <div className={styles.notFoundContainer}>
@@ -156,9 +163,12 @@ export default function CompanyLayout({ children }) {
         <p className={styles.notFoundMessage}>
           Looks like this company doesn't exist in our records — or maybe we just haven't indexed this corner of the web yet.
         </p>
-        <a href="/" className={styles.notFoundButton}>
+        <Link
+          href="/"
+          className={styles.notFoundButton}
+        >
           Back to Home
-        </a>
+        </Link>
       </div>
     );
   }
@@ -166,20 +176,29 @@ export default function CompanyLayout({ children }) {
   return (
     <>
       {/* 🔹 Compact sticky header */}
-      <CompanyStickyHeader visible={showStickyHeader} companyData={companyData} loading={companyLoading} />
+      <CompanyStickyHeader visible={showStickyHeader} companyData={companyData} loading={companyLoading || isValidating} />
 
       <div className={styles.container}>
         {/* 🔹 Full header */}
-        <CompanyNewHeader companyData={companyData} loading={companyLoading} />
+        <CompanyNewHeader companyData={companyData} loading={companyLoading || isValidating} />
 
         {/* Sidebar + Content */}
         <div className={styles.contentWrapper}>
           <div className={styles.contentRow}>
             <aside className={styles.sidebar}>
-              <CompanyNewSidebar />
+              <CompanyNewSidebar loading={isValidating} />
             </aside>
 
-            <main className={styles.main}>{children}</main>
+            <main className={styles.main}>
+              {isValidating ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
+                  <div className={styles.skeletonItem} style={{ height: '200px' }} />
+                  <div className={styles.skeletonItem} style={{ height: '350px' }} />
+                </div>
+              ) : (
+                children
+              )}
+            </main>
           </div>
         </div>
       </div>
