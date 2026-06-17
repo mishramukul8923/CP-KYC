@@ -32,11 +32,11 @@ const CompanyOverview = ({ companyData, loading, error }) => {
       <div className={styles.header}>
         <h1 className={styles.title}>Company Details</h1>
         <div className={styles.metaInfo}>
-          <div className={styles.metaItem}>
+          {/* <div className={styles.metaItem}>
             <span className={styles.metaLabel}>Source:</span>
             <span className={styles.metaValue}>{companyData?.header?.source || "-"}</span>
           </div>
-          <div className={styles.divider}></div>
+          <div className={styles.divider}></div> */}
           <div className={styles.metaItem}>
             <span className={styles.metaLabel}>Last Updated:</span>
             <span className={styles.metaValueText}>{formatDateToIST(companyData?.header?.last_updated) || "-"}</span>

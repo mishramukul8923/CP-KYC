@@ -31,17 +31,17 @@ const DirectorsSection = ({ directorsData, directorsLoading, directorsError }) =
         <div className={styles.headerInfo}>
           {directorsLoading || !directorsData ? (
             <>
-              <div className={`${styles.skeleton} ${styles.skeletonHeaderInfo}`} />
-              <div className={styles.infoDivider}></div>
+              {/* <div className={`${styles.skeleton} ${styles.skeletonHeaderInfo}`} />
+              <div className={styles.infoDivider}></div> */}
               <div className={`${styles.skeleton} ${styles.skeletonHeaderInfo}`} />
             </>
           ) : (
             <>
-              <span className={styles.infoGroup}>
+              {/* <span className={styles.infoGroup}>
                 <span className={styles.infoLabel}>Source:</span>
                 <span className={styles.infoValue}>{directorsData?.summary?.source || "-"}</span>
               </span>
-              <span className={styles.infoDivider}></span>
+              <span className={styles.infoDivider}></span> */}
               <span className={styles.infoGroup}>
                 <span className={styles.infoLabel}>Last Updated:</span>
                 <span className={styles.infoValue}>{formatDateToIST(directorsData?.summary?.last_updated) || "-"}</span>

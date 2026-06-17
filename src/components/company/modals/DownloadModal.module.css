@@ -17,7 +17,7 @@
   background: white;
   width: 100%;
   max-width: 720px;
-  height: 444px;
+  /* height: 444px; */
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 24px 48px -12px rgba(16, 24, 40, 0.18);
@@ -26,7 +26,7 @@
 }
 
 .modalHeader {
-  padding: 24px;
+  padding: 16px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -43,7 +43,8 @@
 
 .modalTitle {
   font-size: 20px;
-  line-height: 28px;
+  margin-top: auto;
+  line-height: 36px;
   font-weight: 600;
   color: #1d2939;
   margin: 0;
@@ -79,14 +80,29 @@
 }
 
 .selectionView {
-  padding: 24px;
+  padding: 16px 32px 20px 32px;
+}
+
+.selectionSubtitle {
+  font-size: 15px;
+  line-height: 22px;
+  color: #667085;
+  margin: 0 0 16px 0;
+  font-weight: 400;
+  text-align: left;
+}
+
+.subtitleDivider {
+  height: 1px;
+  background-color: #f2f4f7;
+  margin-bottom: 16px;
 }
 
 .actionLinks {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .linkBtn {
@@ -123,7 +139,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px 20px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .checkboxContainer {
@@ -186,7 +202,7 @@
 
 .footer {
   border-top: 1px solid #f2f4f7;
-  padding-top: 24px;
+  padding-top: 16px;
   display: flex;
   justify-content: center;
 }
