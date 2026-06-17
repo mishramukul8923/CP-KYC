@@ -200,8 +200,8 @@ const LigilationDetails = ({
           <div className={styles.header}>
             <h2 className={styles.title}>Litigation</h2>
             <div className={styles.sourceRow}>
-              <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100px' }} />
-              <div className={styles.divider}></div>
+              {/* <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100px' }} />
+              <div className={styles.divider}></div> */}
               <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '150px' }} />
             </div>
           </div>
@@ -238,9 +238,9 @@ const LigilationDetails = ({
         <div className={styles.header}>
           <h2 className={styles.title}>{data?.summaryCardsSection?.sectionTitle || "Litigation"}</h2>
           <div className={styles.sourceRow}>
-            <span className={styles.sourceLabel}>Source:</span>
+            {/* <span className={styles.sourceLabel}>Source:</span>
             <span className={styles.sourceValue}>{data?.source || "-"}</span>
-            <span className={styles.divider}></span>
+            <span className={styles.divider}></span> */}
             <span className={styles.updatedText}>
               <span> Last Updated:</span>
               {formatDateToIST(data?.lastUpdated || "-")}

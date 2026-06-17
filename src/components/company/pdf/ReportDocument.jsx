@@ -1049,7 +1049,7 @@ export const ReportDocument = ({
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
           <Text style={[styles.title, { fontSize: 18, marginBottom: 0 }]}>Peer Comparison & Business Activity</Text>
           <View style={{ textAlign: 'right' }}>
-            <Text style={{ fontSize: 8, color: '#6b7280' }}>Source: {formatValue(data.source)}</Text>
+            {/* <Text style={{ fontSize: 8, color: '#6b7280' }}>Source: {formatValue(data.source)}</Text> */}
             <Text style={{ fontSize: 8, color: '#6b7280' }}>Updated: {formatDateToIST(data.last_updated)}</Text>
           </View>
         </View>
@@ -1293,7 +1293,7 @@ export const ReportDocument = ({
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
           <Text style={[styles.title, { fontSize: 18, marginBottom: 0 }]}>Compliance Details</Text>
           <View style={{ textAlign: 'right' }}>
-            <Text style={{ fontSize: 8, color: '#6b7280' }}>Source: {formatValue(data?.source || "-")}</Text>
+            {/* <Text style={{ fontSize: 8, color: '#6b7280' }}>Source: {formatValue(data?.source || "-")}</Text> */}
             <Text style={{ fontSize: 8, color: '#6b7280' }}>Updated: {(formatDateToIST(data?.last_updated)) || "-"}</Text>
           </View>
         </View>
@@ -1722,7 +1722,7 @@ export const ReportDocument = ({
         {/* Footer Info */}
         <View style={{ marginTop: 'auto', borderTopWidth: 1, borderTopColor: '#f1f1f1', paddingTop: 10 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ fontSize: 8, color: '#9ca3af' }}>Source: {formatValue(headerInfo.source) || "-"}</Text>
+            {/* <Text style={{ fontSize: 8, color: '#9ca3af' }}>Source: {formatValue(headerInfo.source) || "-"}</Text> */}
             <Text style={{ fontSize: 8, color: '#9ca3af' }}>Last Updated: {formatDateToIST(headerInfo.last_updated) || "-"}</Text>
           </View>
         </View>
@@ -2029,7 +2029,7 @@ export const ReportDocument = ({
             <>
               <Text style={[styles.title, { fontSize: 18, marginBottom: 0 }]}>Control & Ownership - Shareholding</Text>
           <View style={{ textAlign: 'right', marginBottom: 10 }}>
-            <Text style={{ fontSize: 8, color: '#6b7280' }}>Source: {formatValue(shareholdingData?.source ?? "-")}</Text>
+            {/* <Text style={{ fontSize: 8, color: '#6b7280' }}>Source: {formatValue(shareholdingData?.source ?? "-")}</Text> */}
             <Text style={{ fontSize: 8, color: '#6b7280' }}>Updated: {formatDateToIST(shareholdingData?.last_updated ?? "-")}</Text>
           </View>
 
@@ -2251,7 +2251,7 @@ export const ReportDocument = ({
             <View style={{ marginTop: 20 }}>
               <Text style={[styles.title, { fontSize: 16, marginBottom: 0 }]}>Financial Highlights</Text>
               <View style={{ textAlign: 'right' }}>
-                <Text style={{ fontSize: 8, color: '#6b7280' }}>Source: {formatValue(headerInfo.source)}</Text>
+                {/* <Text style={{ fontSize: 8, color: '#6b7280' }}>Source: {formatValue(headerInfo.source)}</Text> */}
                 <Text style={{ fontSize: 8, color: '#6b7280' }}>Updated: {formatDateToIST(headerInfo.last_updated)}</Text>
               </View>
 

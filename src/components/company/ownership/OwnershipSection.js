@@ -206,11 +206,11 @@ const OwnershipSection = ({
       <div className={styles.header}>
         <h1 className={styles.headerTitle}>Control & Ownership</h1>
         <div className={styles.headerInfo}>
-          <span className={styles.infoGroup}>
+          {/* <span className={styles.infoGroup}>
             <span className={styles.infoLabel}>Source:</span>
             <span className={styles.infoValue}>{shareholdingData?.source || "-"}</span>
           </span>
-          <span className={styles.infoDivider}></span>
+          <span className={styles.infoDivider}></span> */}
           <span className={styles.infoGroup}>
             <span className={styles.infoLabel}>Last Updated:</span>
             <span className={styles.infoValue}>{formatDateToIST(shareholdingData?.last_updated) || "-"}</span>

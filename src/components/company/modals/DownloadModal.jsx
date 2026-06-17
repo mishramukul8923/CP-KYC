@@ -96,11 +96,11 @@ const DownloadModal = ({ isOpen, onClose, isGenerating, onExport }) => {
             <h2 className={styles.modalTitle}>
               {isGenerating ? "Company Report Generation" : "Download Report"}
             </h2>
-            <p className={styles.modalSubTitle}>
-              {isGenerating 
-                ? "Processing Company data report" 
-                : "Select sections to include in your report"}
-            </p>
+            {isGenerating && (
+              <p className={styles.modalSubTitle}>
+                Processing Company data report
+              </p>
+            )}
           </div>
           <button className={styles.closeBtn} onClick={onClose}>
             <X size={20} />
@@ -125,6 +125,12 @@ const DownloadModal = ({ isOpen, onClose, isGenerating, onExport }) => {
           </div>
         ) : (
           <div className={styles.selectionView}>
+            {/* SUBTITLE */}
+            <p className={styles.selectionSubtitle}>
+              Select sections to include in your report
+            </p>
+            <div className={styles.subtitleDivider}></div>
+
             {/* ACTION LINKS */}
             <div className={styles.actionLinks}>
               <button className={styles.linkBtn} onClick={handleSelectAll}>

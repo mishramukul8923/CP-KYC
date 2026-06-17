@@ -9,8 +9,8 @@ export default function RelatedCorporates({ commonDirectorship, loading, error }
         <div className={styles.header}>
           <h1 className={styles.headerTitle}>Related Companies</h1>
           <div className={styles.headerInfo}>
-            <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100px' }} />
-            <div className={styles.infoDivider}></div>
+            {/* <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100px' }} />
+            <div className={styles.infoDivider}></div> */}
             <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '150px' }} />
           </div>
         </div>
@@ -81,11 +81,11 @@ export default function RelatedCorporates({ commonDirectorship, loading, error }
       <div className={styles.header}>
         <h1 className={styles.headerTitle}>Related Companies</h1>
         <div className={styles.headerInfo}>
-          <span className={styles.infoGroup}>
+          {/* <span className={styles.infoGroup}>
             <span className={styles.infoLabel}>Source:</span>
             <span className={styles.infoValue}>{commonDirectorship?.source || '-'}</span>
           </span>
-          <span className={styles.infoDivider}></span>
+          <span className={styles.infoDivider}></span> */}
           <span className={styles.infoGroup}>
             <span className={styles.infoLabel}>Last Updated:</span>
             <span className={styles.infoValue}>{formatDateToIST(commonDirectorship?.last_updated) || "-"}</span>

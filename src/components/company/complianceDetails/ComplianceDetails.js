@@ -438,8 +438,8 @@ const ComplianceDetails = () => {
           <div className={styles.header}>
             <h2 className={styles.title}>Compliance Details</h2>
             <div className={styles.sourceRow}>
-              <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100px' }} />
-              <div className={styles.divider}></div>
+              {/* <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '100px' }} />
+              <div className={styles.divider}></div> */}
               <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '150px' }} />
             </div>
           </div>
@@ -467,9 +467,9 @@ const ComplianceDetails = () => {
         <div className={styles.header}>
           <h2 className={styles.title}>Compliance Details</h2>
           <div className={styles.sourceRow}>
-            <span className={styles.sourceLabel}>Source:</span>
+            {/* <span className={styles.sourceLabel}>Source:</span>
             <span className={styles.sourceValue}>{auditorRemarksData?.source || "MCA"}</span>
-            <span className={styles.divider}></span>
+            <span className={styles.divider}></span> */}
             <span className={styles.updatedText}>
               <span> Last Updated:</span>
               {formatDateToIST(auditorRemarksData?.last_updated || "-")}

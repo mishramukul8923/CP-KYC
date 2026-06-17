@@ -26,11 +26,11 @@ export default function AlertsTabs({ activeTab, setActiveTab, alertsData  }) {
       <div className={styles.header}>
         <h1 className={styles.headerTitle}>Alerts</h1>
         <div className={styles.headerInfo}>
-          <span className={styles.infoGroup}>
+          {/* <span className={styles.infoGroup}>
             <span className={styles.infoLabel}>Source:</span>
             <span className={styles.infoValue}>{alertsData?.source || "-"}</span>
           </span>
-          <span className={styles.infoDivider}></span>
+          <span className={styles.infoDivider}></span> */}
           <span className={styles.infoGroup}>
             <span className={styles.infoLabel}>Last Updated:</span>
             <span className={styles.infoValue}>{formatDateToIST(alertsData?.last_updated)|| "-"}</span>

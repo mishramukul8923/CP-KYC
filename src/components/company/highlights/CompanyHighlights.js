@@ -14,11 +14,11 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
         <div className={styles.header}>
           <h2 className={styles.headerTitle}>Company Highlights</h2>
           <div className={styles.headerInfo}>
-            <div className={styles.infoGroup}>
+            {/* <div className={styles.infoGroup}>
               <span className={styles.infoLabel}>Source:</span>
               <div className={`${styles.skeleton}`} style={{ width: '40px', height: '20px' }} />
             </div>
-            <span className={styles.infoDivider}></span>
+            <span className={styles.infoDivider}></span> */}
             <div className={styles.infoGroup}>
               <span className={styles.infoLabel}>Last Updated:</span>
               <div className={`${styles.skeleton}`} style={{ width: '120px', height: '20px' }} />
@@ -156,17 +156,17 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
         <div className={styles.headerInfo}>
           {loading || !companyHighlights ? (
             <>
-              <div className={`${styles.skeleton} ${styles.skeletonStatValue}`} style={{ width: '150px' }} />
-              <div className={styles.infoDivider}></div>
+              {/* <div className={`${styles.skeleton} ${styles.skeletonStatValue}`} style={{ width: '150px' }} />
+              <div className={styles.infoDivider}></div> */}
               <div className={`${styles.skeleton} ${styles.skeletonStatValue}`} style={{ width: '150px' }} />
             </>
           ) : (
             <>
-              <span className={styles.infoGroup}>
+              {/* <span className={styles.infoGroup}>
                 <span className={styles.infoLabel}>Source:</span>
                 <span className={styles.infoValue}>{companyHighlights?.source}</span>
               </span>
-              <span className={styles.infoDivider}></span>
+              <span className={styles.infoDivider}></span> */}
               <span className={styles.infoGroup}>
                 <span className={styles.infoLabel}>Last Updated:</span>
                 <span className={styles.infoValue}>{formatDateToIST(companyHighlights?.last_updated) || "-"}</span>

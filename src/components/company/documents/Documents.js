@@ -573,13 +573,13 @@ const Documents = ({ companyName }) => {
         <div className={styles.header}>
           <h2 className={styles.title}>Documents</h2>
           <div className={styles.sourceRow}>
-            <span className={styles.sourceLabel}>Source:</span>
+            {/* <span className={styles.sourceLabel}>Source:</span>
             {mcaHeaderInfo.source === "-" ? (
               <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '80px', height: '14px' }} />
             ) : (
               <span className={styles.sourceValue}>{mcaHeaderInfo.source}</span>
             )}
-            <span className={styles.divider}></span>
+            <span className={styles.divider}></span> */}
             <span className={styles.updatedText}>
               <span> Last Updated:</span>
               {mcaHeaderInfo.lastUpdated === "-" ? (
