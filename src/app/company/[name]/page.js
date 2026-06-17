@@ -97,7 +97,7 @@ export default function CompanyPage() {
   const [directorsError, setDirectorsError] = useState(null);
 
   // Consume Alerts and PDF trigggers from shared context
-  const { alertsData, alertsLoading, alertsError, pdfDownloadTrigger, setIsGeneratingPdf } = useCompanySection();
+  const { alertsData, alertsLoading, alertsError, pdfDownloadTrigger, setIsGeneratingPdf, selectedReportSections } = useCompanySection();
   const lastHandledTrigger = useRef(pdfDownloadTrigger);
 
 
@@ -224,228 +224,253 @@ export default function CompanyPage() {
           let standalone = bsStandalone;
           let consolidated = bsConsolidated;
 
-          const fetchBS = async (type) => {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/balance-sheet?type=${type}`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
-            );
-            return await response.json();
-          };
+          if (selectedReportSections?.financials) {
+            const fetchBS = async (type) => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/balance-sheet?type=${type}`,
+                { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+              );
+              return await response.json();
+            };
 
-          if (!standalone) {
-            try { standalone = await fetchBS("Standalone"); setBsStandalone(standalone); } catch (e) { console.error(e); }
-          }
-          if (!consolidated) {
-            try { consolidated = await fetchBS("Consolidated"); setBsConsolidated(consolidated); } catch (e) { console.error(e); }
+            if (!standalone) {
+              try { standalone = await fetchBS("Standalone"); setBsStandalone(standalone); } catch (e) { console.error(e); }
+            }
+            if (!consolidated) {
+              try { consolidated = await fetchBS("Consolidated"); setBsConsolidated(consolidated); } catch (e) { console.error(e); }
+            }
           }
 
           // Fetch Standalone and Consolidated P&L if not already present
           let pnlStan = pnlStandalone;
           let pnlCons = pnlConsolidated;
 
-          const fetchPNL = async (type) => {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/profit-loss?type=${type}`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
-            );
-            return await response.json();
-          };
+          if (selectedReportSections?.financials) {
+            const fetchPNL = async (type) => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/profit-loss?type=${type}`,
+                { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+              );
+              return await response.json();
+            };
 
-          if (!pnlStan) {
-            try { pnlStan = await fetchPNL("Standalone"); setPnlStandalone(pnlStan); } catch (e) { console.error(e); }
-          }
-          if (!pnlCons) {
-            try { pnlCons = await fetchPNL("Consolidated"); setPnlConsolidated(pnlCons); } catch (e) { console.error(e); }
+            if (!pnlStan) {
+              try { pnlStan = await fetchPNL("Standalone"); setPnlStandalone(pnlStan); } catch (e) { console.error(e); }
+            }
+            if (!pnlCons) {
+              try { pnlCons = await fetchPNL("Consolidated"); setPnlConsolidated(pnlCons); } catch (e) { console.error(e); }
+            }
           }
 
           // Fetch Standalone and Consolidated Cash Flow if not already present
           let cfStan = cfStandalone;
           let cfCons = cfConsolidated;
 
-          const fetchCF = async (type) => {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/cash-flow?type=${type}`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" }, accept: 'application/json' }
-            );
-            return await response.json();
-          };
+          if (selectedReportSections?.financials) {
+            const fetchCF = async (type) => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/cash-flow?type=${type}`,
+                { headers: { Authorization: token ? `Bearer ${token}` : "" }, accept: 'application/json' }
+              );
+              return await response.json();
+            };
 
-          if (!cfStan) {
-            try { cfStan = await fetchCF("Standalone"); setCfStandalone(cfStan); } catch (e) { console.error(e); }
-          }
-          if (!cfCons) {
-            try { cfCons = await fetchCF("Consolidated"); setCfConsolidated(cfCons); } catch (e) { console.error(e); }
+            if (!cfStan) {
+              try { cfStan = await fetchCF("Standalone"); setCfStandalone(cfStan); } catch (e) { console.error(e); }
+            }
+            if (!cfCons) {
+              try { cfCons = await fetchCF("Consolidated"); setCfConsolidated(cfCons); } catch (e) { console.error(e); }
+            }
           }
 
           // Fetch Standalone and Consolidated Ratios if not already present
           let ratioStan = ratioStandalone;
           let ratioCons = ratioConsolidated;
 
-          const fetchRatio = async (type) => {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/ratios?type=${type}`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
-            );
-            return await response.json();
-          };
+          if (selectedReportSections?.financials) {
+            const fetchRatio = async (type) => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/ratios?type=${type}`,
+                { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+              );
+              return await response.json();
+            };
 
-          if (!ratioStan) {
-            try { ratioStan = await fetchRatio("Standalone"); setRatioStandalone(ratioStan); } catch (e) { console.error(e); }
-          }
-          if (!ratioCons) {
-            try { ratioCons = await fetchRatio("Consolidated"); setRatioConsolidated(ratioCons); } catch (e) { console.error(e); }
+            if (!ratioStan) {
+              try { ratioStan = await fetchRatio("Standalone"); setRatioStandalone(ratioStan); } catch (e) { console.error(e); }
+            }
+            if (!ratioCons) {
+              try { ratioCons = await fetchRatio("Consolidated"); setRatioConsolidated(ratioCons); } catch (e) { console.error(e); }
+            }
           }
 
           // Fetch Standalone and Consolidated Auditors if not already present
           let audStan = audStandalone;
           let audCons = audConsolidated;
 
-          const fetchAud = async (type) => {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/auditors?type=${type}&limit=1000`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
-            );
-            return await response.json();
-          };
+          if (selectedReportSections?.financials) {
+            const fetchAud = async (type) => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/auditors?type=${type}&limit=1000`,
+                { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+              );
+              return await response.json();
+            };
 
-          try {
-            const standData = await fetchAud("Standalone");
-            audStan = standData?.auditors || [];
-            setAudStandalone(audStan);
-          } catch (e) { console.error("Error fetching standalone auditors for PDF:", e); }
+            try {
+              const standData = await fetchAud("Standalone");
+              audStan = standData?.auditors || [];
+              setAudStandalone(audStan);
+            } catch (e) { console.error("Error fetching standalone auditors for PDF:", e); }
 
-          try {
-            const consData = await fetchAud("Consolidated");
-            audCons = consData?.auditors || [];
-            setAudConsolidated(audCons);
-          } catch (e) { console.error("Error fetching consolidated auditors for PDF:", e); }
+            try {
+              const consData = await fetchAud("Consolidated");
+              audCons = consData?.auditors || [];
+              setAudConsolidated(audCons);
+            } catch (e) { console.error("Error fetching consolidated auditors for PDF:", e); }
+          }
 
           // Fetch Directors with limit 1000
           let directors = directorsData;
-          const fetchDirectors = async () => {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/directors-detailed?limit=1000`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
-            );
-            return await response.json();
-          };
-          try { directors = await fetchDirectors(); setDirectorsData(directors); } catch (e) { console.error(e); }
+          if (selectedReportSections?.directorsKmp) {
+            const fetchDirectors = async () => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/directors-detailed?limit=1000`,
+                { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+              );
+              return await response.json();
+            };
+            try { directors = await fetchDirectors(); setDirectorsData(directors); } catch (e) { console.error(e); }
+          }
 
           // Fetch Shareholding with limit 1000
           let shareholding = shareholdingData;
-          const fetchShareholding = async () => {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/shareholding?limit=1000`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
-            );
-            return await response.json();
-          };
-          try { shareholding = await fetchShareholding(); setShareholdingData(shareholding); } catch (e) { console.error(e); }
-
-          // Fetch Security Allotment with limit 1000
           let securityAllotment = securityAllotmentData;
-          const fetchSecurityAllotment = async () => {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/security-allotment?page=1&per_page=1000`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
-            );
-            return await response.json();
-          };
-          try { securityAllotment = await fetchSecurityAllotment(); setSecurityAllotmentData(securityAllotment); } catch (e) { console.error(e); }
-
-          // Fetch Group Structure with limit 1000
           let groupStructure = groupStructureData;
-          const fetchGroupStructure = async () => {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/group-structure?page=1&per_page=1000`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
-            );
-            return await response.json();
-          };
-          try { groupStructure = await fetchGroupStructure(); setGroupStructureData(groupStructure); } catch (e) { console.error(e); }
-
-          // Fetch Overseas Investment with limit 1000
           let overseasInvestment = overseasInvestmentData;
-          const fetchOverseasInvestment = async () => {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/overseas-direct-investment?limit=1000`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
-            );
-            return await response.json();
-          };
-          try { overseasInvestment = await fetchOverseasInvestment(); setOverseasInvestmentData(overseasInvestment); } catch (e) { console.error(e); }
+
+          if (selectedReportSections?.controlOwnership) {
+            const fetchShareholding = async () => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/shareholding?limit=1000`,
+                { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+              );
+              return await response.json();
+            };
+            try { shareholding = await fetchShareholding(); setShareholdingData(shareholding); } catch (e) { console.error(e); }
+
+            // Fetch Security Allotment with limit 1000
+            const fetchSecurityAllotment = async () => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/security-allotment?page=1&per_page=1000`,
+                { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+              );
+              return await response.json();
+            };
+            try { securityAllotment = await fetchSecurityAllotment(); setSecurityAllotmentData(securityAllotment); } catch (e) { console.error(e); }
+
+            // Fetch Group Structure with limit 1000
+            const fetchGroupStructure = async () => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/group-structure?page=1&per_page=1000`,
+                { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+              );
+              return await response.json();
+            };
+            try { groupStructure = await fetchGroupStructure(); setGroupStructureData(groupStructure); } catch (e) { console.error(e); }
+
+            // Fetch Overseas Investment with limit 1000
+            const fetchOverseasInvestment = async () => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/control-ownership/overseas-direct-investment?limit=1000`,
+                { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+              );
+              return await response.json();
+            };
+            try { overseasInvestment = await fetchOverseasInvestment(); setOverseasInvestmentData(overseasInvestment); } catch (e) { console.error(e); }
+          }
 
           // Fetch Charges with limit 1000 for the report
           let charges = chargesData;
-          const fetchChargesLimit = 1000;
+          if (selectedReportSections?.charges) {
+            const fetchChargesLimit = 1000;
 
-          const fetchCharges = async () => {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/charges?open_page=1&closed_page=1&limit=${fetchChargesLimit}`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
-            );
-            return await response.json();
-          };
+            const fetchCharges = async () => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/charges?open_page=1&closed_page=1&limit=${fetchChargesLimit}`,
+                { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+              );
+              return await response.json();
+            };
 
-          try {
-            charges = await fetchCharges();
-            setChargesData(charges);
-          } catch (e) { console.error("Error fetching charges for PDF:", e); }
+            try {
+              charges = await fetchCharges();
+              setChargesData(charges);
+            } catch (e) { console.error("Error fetching charges for PDF:", e); }
+          }
 
           // Fetch Peer Comparison with per_page 1000 for the report
           let peerComparison = peerComparisonData;
-          const fetchPeers = async () => {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/peer-comparison?page=1&per_page=100`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
-            );
-            return await response.json();
-          };
-          try {
-            peerComparison = await fetchPeers();
-            setPeerComparisonData(peerComparison);
-          } catch (e) { console.error("Error fetching peer comparison for PDF:", e); }
+          if (selectedReportSections?.peerComparison) {
+            const fetchPeers = async () => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${companyNameEncoded}/peer-comparison?page=1&per_page=100`,
+                { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+              );
+              return await response.json();
+            };
+            try {
+              peerComparison = await fetchPeers();
+              setPeerComparisonData(peerComparison);
+            } catch (e) { console.error("Error fetching peer comparison for PDF:", e); }
+          }
 
           // Fetch Auditor Remarks for the report
           let auditorRemarks = null;
-          const fetchAuditorRemarksRepo = async () => {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/compliance-details/auditors-remark`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
-            );
-            return await response.json();
-          };
-          try {
-            auditorRemarks = await fetchAuditorRemarksRepo();
-            setAuditorRemarksData(auditorRemarks);
-          } catch (e) { console.error("Error fetching auditor remarks for PDF:", e); }
+          if (selectedReportSections?.complianceDetails) {
+            const fetchAuditorRemarksRepo = async () => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/compliance-details/auditors-remark`,
+                { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+              );
+              return await response.json();
+            };
+            try {
+              auditorRemarks = await fetchAuditorRemarksRepo();
+              setAuditorRemarksData(auditorRemarks);
+            } catch (e) { console.error("Error fetching auditor remarks for PDF:", e); }
+          }
 
           // Fetch Alerts data for the report with size 1000
           let finalAlertsData = alertsData;
-          const fetchAlerts = async () => {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/alerts?page=1&size=1000`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
-            );
-            return await response.json();
-          };
-          try {
-            finalAlertsData = await fetchAlerts();
-          } catch (e) { console.error("Error fetching alerts for PDF:", e); }
+          if (selectedReportSections?.alerts) {
+            const fetchAlerts = async () => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/alerts?page=1&size=1000`,
+                { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+              );
+              return await response.json();
+            };
+            try {
+              finalAlertsData = await fetchAlerts();
+            } catch (e) { console.error("Error fetching alerts for PDF:", e); }
+          }
 
           // Fetch Litigation data for the report
           let litigation = litigationData;
-          const fetchLitigation = async () => {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/litigation?pending_against_page=1&pending_against_size=200&pending_by_page=1&pending_by_size=200&disposed_against_page=1&disposed_against_size=200&disposed_by_page=1&disposed_by_size=200`,
-              { headers: { Authorization: token ? `Bearer ${token}` : "" } }
-            );
-            return await response.json();
-          };
-          try {
-            litigation = await fetchLitigation();
-            setLitigationData(litigation);
-          } catch (e) { console.error("Error fetching litigation for PDF:", e); }
+          if (selectedReportSections?.litigation) {
+            const fetchLitigation = async () => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/company/${companyNameEncoded}/litigation?pending_against_page=1&pending_against_size=200&pending_by_page=1&pending_by_size=200&disposed_against_page=1&disposed_against_size=200&disposed_by_page=1&disposed_by_size=200`,
+                { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+              );
+              return await response.json();
+            };
+            try {
+              litigation = await fetchLitigation();
+              setLitigationData(litigation);
+            } catch (e) { console.error("Error fetching litigation for PDF:", e); }
+          }
 
           // Small delay to allow state and UI to settle
           await new Promise(resolve => setTimeout(resolve, 800));
@@ -466,6 +491,7 @@ export default function CompanyPage() {
           const { default: ReportDocument } = await import("@/components/company/pdf/ReportDocument");
 
           const blob = await pdf(<ReportDocument
+            selectedSections={selectedReportSections}
             companyData={processedCompanyData}
             alertsData={finalAlertsData}
             directorsData={directors}

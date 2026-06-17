@@ -10,7 +10,7 @@ import ShareModal from "../modals/ShareModal";
 
 
 export default function CompanyStickyHeader({ visible, companyData, loading }) {
-  const { isVersionHistoryOpen, setVersionHistoryOpen, alertsData, isGeneratingPdf, setPdfDownloadTrigger } = useCompanySection() || {};
+  const { isVersionHistoryOpen, setVersionHistoryOpen, alertsData, isGeneratingPdf, setPdfDownloadTrigger, setIsDownloadModalOpen } = useCompanySection() || {};
   const actionsRef = useRef(null);
   const router = useRouter();
 
@@ -204,7 +204,7 @@ export default function CompanyStickyHeader({ visible, companyData, loading }) {
                       {/* <button className={styles.dropdownItem}>View Company</button> */}
                       <button
                         className={styles.dropdownItem}
-                        onClick={() => setPdfDownloadTrigger(prev => prev + 1)}
+                        onClick={() => setIsDownloadModalOpen(true)}
                         disabled={isGeneratingPdf}
                       >
                         {isGeneratingPdf ? "Generating PDF..." : "Download Report"}

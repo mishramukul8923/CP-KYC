@@ -24,6 +24,8 @@ export function CompanySectionProvider({ children }) {
   const [companyError, setCompanyError] = useState(null);
   const [pdfDownloadTrigger, setPdfDownloadTrigger] = useState(0);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  const [selectedReportSections, setSelectedReportSections] = useState(null);
   const [scrollTrigger, setScrollTrigger] = useState(0);
   const [isCompanyValid, setIsCompanyValid] = useState(null); // null = validating, true = valid, false = invalid
 
@@ -67,6 +69,10 @@ export function CompanySectionProvider({ children }) {
         setPdfDownloadTrigger,
         isGeneratingPdf,
         setIsGeneratingPdf,
+        isDownloadModalOpen,
+        setIsDownloadModalOpen,
+        selectedReportSections,
+        setSelectedReportSections,
         companyData,
         setCompanyData,
         companyLoading,
