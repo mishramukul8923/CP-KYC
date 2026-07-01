@@ -62,3 +62,37 @@
   color: rgba(107, 114, 128, 1);
   margin: 0;
 }
+
+.skeletonNumber {
+  height: 44px;
+  width: 120px;
+  border-radius: 6px;
+  margin: 0 auto;
+}
+
+.skeletonLabel {
+  height: 24px;
+  width: 80px;
+  border-radius: 4px;
+  margin: 0 auto;
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    #f3f4f6 25%,
+    #e5e7eb 50%,
+    #f3f4f6 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
