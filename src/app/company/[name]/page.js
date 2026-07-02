@@ -3,34 +3,31 @@ import { useRef, useEffect, useState } from "react";
 import { useCompanySection } from "@/components/company/context/CompanySectionContext";
 import { scrollToElementWithOffset } from "@/utils/scrollUtils";
 import { convertWebpToPng } from "@/utils/imageUtils";
+import dynamic from "next/dynamic";
+import { useParams } from "next/navigation";
 
-
+// Static imports (Immediate above-the-fold content)
 import CompanyOverview from "@/components/company/overview/CompanyOverview";
 import CompanyDetails from "@/components/company/details/CompanyDetails";
 import NameHistory from "@/components/company/history/NameHistory";
 import ContactAddressSection from "@/components/company/contact/ContactAddressSection";
-import CompanyNews from "@/components/company/news/CompanyNews";
 
-import CompanyHighlights from "@/components/company/highlights/CompanyHighlights";
-import FinancialHighlights from "@/components/company/financials/FinancialHighlights";
-import CompanyCharts from "@/components/company/charts/CompanyCharts";
-import ProductDetails from "@/components/company/productDetails/ProductDetails";
-
-import DirectorsSection from "@/components/company/people/DirectorsSection";
-import OwnershipSection from "@/components/company/ownership/OwnershipSection";
-import FinancialHighlightsDetails from "@/components/company/financialHighlights/FinancialHighlightsDetails";
-import LigilationDetails from "@/components/company/ligilation/LigilationDetails";
-import Documents from "@/components/company/documents/Documents";
-
-import ChargesPage from "@/components/company/charges/Charges";
-import PeerComparison from "@/components/company/peerComparison/PeerComparison";
-import RelatedCorporates from "@/components/company/relatedCorporates/RelatedCorporates";
-import ComplianceDetails from "@/components/company/complianceDetails/ComplianceDetails";
-
-
-
-import AlertsContainer from "@/components/company/alerts/AlertsContainer";
-import { useParams } from "next/navigation";
+// Dynamic imports (Heavy / deferred subcomponents)
+const CompanyNews = dynamic(() => import("@/components/company/news/CompanyNews"), { ssr: false });
+const CompanyHighlights = dynamic(() => import("@/components/company/highlights/CompanyHighlights"), { ssr: false });
+const FinancialHighlights = dynamic(() => import("@/components/company/financials/FinancialHighlights"), { ssr: false });
+const CompanyCharts = dynamic(() => import("@/components/company/charts/CompanyCharts"), { ssr: false });
+const ProductDetails = dynamic(() => import("@/components/company/productDetails/ProductDetails"), { ssr: false });
+const DirectorsSection = dynamic(() => import("@/components/company/people/DirectorsSection"), { ssr: false });
+const OwnershipSection = dynamic(() => import("@/components/company/ownership/OwnershipSection"), { ssr: false });
+const FinancialHighlightsDetails = dynamic(() => import("@/components/company/financialHighlights/FinancialHighlightsDetails"), { ssr: false });
+const LigilationDetails = dynamic(() => import("@/components/company/ligilation/LigilationDetails"), { ssr: false });
+const Documents = dynamic(() => import("@/components/company/documents/Documents"), { ssr: false });
+const ChargesPage = dynamic(() => import("@/components/company/charges/Charges"), { ssr: false });
+const PeerComparison = dynamic(() => import("@/components/company/peerComparison/PeerComparison"), { ssr: false });
+const RelatedCorporates = dynamic(() => import("@/components/company/relatedCorporates/RelatedCorporates"), { ssr: false });
+const ComplianceDetails = dynamic(() => import("@/components/company/complianceDetails/ComplianceDetails"), { ssr: false });
+const AlertsContainer = dynamic(() => import("@/components/company/alerts/AlertsContainer"), { ssr: false });
 
 export default function CompanyPage() {
   const {
@@ -105,11 +102,11 @@ export default function CompanyPage() {
   const [auditorsLoading, setAuditorsLoading] = useState(true);
   const [auditorsError, setAuditorsError] = useState(null);
   const [audType, setAudType] = useState("Standalone");
-  const [audStandalone, setAudStandalone] = useState([]);
-  const [audConsolidated, setAudConsolidated] = useState([]);
+  const [audStandalone, setAudStandalone] = useState(null);
+  const [audConsolidated, setAudConsolidated] = useState(null);
 
   // Derived state for existing components
-  const auditorsData = audType === "Standalone" ? audStandalone : audConsolidated;
+  const auditorsData = (audType === "Standalone" ? audStandalone : audConsolidated) || [];
 
   // Balance Sheet Details
   const [balanceSheetLoading, setBalanceSheetLoading] = useState(true);
@@ -192,6 +189,37 @@ export default function CompanyPage() {
   const contactRef = useRef(null);
   const newsRef = useRef(null);
 
+  // Section Activity Check Indicators (to prevent initial eager fetching of invisible tabs)
+  const isFinancialsActive = activeSection === "companyHighlights" || activeSection === "financials";
+  const isOwnershipActive = activeSection === "controlOwnership";
+  const isDirectorsActive = activeSection === "directorsKmp";
+  const isChargesActive = activeSection === "charges";
+  const isPeerActive = activeSection === "peerComparison" || activeSection === "companyHighlights";
+  const isRelatedActive = activeSection === "relatedCorporates";
+  const isLitigationActive = activeSection === "litigation";
+  const isHighlightsActive = activeSection === "companyHighlights" || activeSection === "controlOwnership";
+
+  // Pagination caching Refs
+  const lastHighlightsPageRef = useRef(null);
+  const lastHighlightsLimitRef = useRef(null);
+  const lastChargesOpenPageRef = useRef(null);
+  const lastChargesClosedPageRef = useRef(null);
+  const lastChargesLimitRef = useRef(null);
+  const lastAllotmentPageRef = useRef(null);
+  const lastAllotmentLimitRef = useRef(null);
+  const lastGroupPageRef = useRef(null);
+  const lastGroupLimitRef = useRef(null);
+  const lastPeerPageRef = useRef(null);
+  const lastPeerLimitRef = useRef(null);
+  const lastPaPageRef = useRef(null);
+  const lastPaSizeRef = useRef(null);
+  const lastPbPageRef = useRef(null);
+  const lastPbSizeRef = useRef(null);
+  const lastDaPageRef = useRef(null);
+  const lastDaSizeRef = useRef(null);
+  const lastDbPageRef = useRef(null);
+  const lastDbSizeRef = useRef(null);
+
   /* ================= SET COMPANY NAME ================= */
 
   useEffect(() => {
@@ -205,6 +233,86 @@ export default function CompanyPage() {
     if (companyName) {
       window.scrollTo({ top: 0, behavior: "instant" });
     }
+  }, [companyName]);
+
+  // Reset all states and pagination refs when company name changes (to prevent stale cached data when navigating to other companies)
+  useEffect(() => {
+    if (!companyName) return;
+
+    // Clear data states
+    setPnlStandalone(null);
+    setPnlConsolidated(null);
+    setFinancialHighlights(null);
+    setRevenueProfitTrend(null);
+    setCommonDirectorship(null);
+    setCompanyHighlights(null);
+    setChargesData(null);
+    setDirectorsData(null);
+    setSecurityAllotmentData(null);
+    setGroupStructureData(null);
+    setOverseasInvestmentData(null);
+    setShareholdingData(null);
+    setAudStandalone(null);
+    setAudConsolidated(null);
+    setPeerComparisonData(null);
+    setLitigationData(null);
+    setBsStandalone(null);
+    setBsConsolidated(null);
+    setRatioStandalone(null);
+    setRatioConsolidated(null);
+
+    // Reset loading states
+    setPnlLoading(true);
+    setFinancialLoading(true);
+    setTrendLoading(true);
+    setDirectorshipLoading(true);
+    setHighlightsLoading(true);
+    setChargesLoading(true);
+    setDirectorsLoading(true);
+    setSecurityAllotmentLoading(false);
+    setGroupStructureLoading(false);
+    setOverseasInvestmentLoading(false);
+    setShareholdingLoading(false);
+    setAuditorsLoading(true);
+    setPeerComparisonLoading(false);
+    setLitigationLoading(false);
+    setBalanceSheetLoading(true);
+    setCashFlowLoading(false);
+    setRatiosLoading(false);
+
+    // Reset pagination states
+    setHighlightsPage(1);
+    setOpenPage(1);
+    setClosedPage(1);
+    setAllotmentPage(1);
+    setGroupPage(1);
+    setPeerPage(1);
+    setPaPage(1);
+    setPbPage(1);
+    setDaPage(1);
+    setDbPage(1);
+
+    // Reset pagination refs
+    lastHighlightsPageRef.current = null;
+    lastHighlightsLimitRef.current = null;
+    lastChargesOpenPageRef.current = null;
+    lastChargesClosedPageRef.current = null;
+    lastChargesLimitRef.current = null;
+    lastAllotmentPageRef.current = null;
+    lastAllotmentLimitRef.current = null;
+    lastGroupPageRef.current = null;
+    lastGroupLimitRef.current = null;
+    lastPeerPageRef.current = null;
+    lastPeerLimitRef.current = null;
+    lastPaPageRef.current = null;
+    lastPaSizeRef.current = null;
+    lastPbPageRef.current = null;
+    lastPbSizeRef.current = null;
+    lastDaPageRef.current = null;
+    lastDaSizeRef.current = null;
+    lastDbPageRef.current = null;
+    lastDbSizeRef.current = null;
+
   }, [companyName]);
 
 
@@ -587,7 +695,9 @@ export default function CompanyPage() {
   /* ================= PROFIT & LOSS ================= */
 
   useEffect(() => {
-    if (!companyName) return;
+    if (!companyName || !isFinancialsActive) return;
+    if (pnlViewType === "Standalone" && pnlStandalone) return;
+    if (pnlViewType === "Consolidated" && pnlConsolidated) return;
 
     const fetchPnlData = async () => {
       const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financials/${encodeURIComponent(companyName)}/profit-loss?type=${pnlViewType}`;
@@ -621,12 +731,13 @@ export default function CompanyPage() {
     };
 
     fetchPnlData();
-  }, [companyName, pnlViewType]);
+  }, [companyName, pnlViewType, isFinancialsActive, pnlStandalone, pnlConsolidated]);
 
   /* ================= FINANCIAL HIGHLIGHTS ================= */
 
   useEffect(() => {
-    if (!companyName) return;
+    if (!companyName || !isFinancialsActive) return;
+    if (financialHighlights) return;
 
     const getFinancialHighlights = async () => {
       try {
@@ -670,12 +781,13 @@ export default function CompanyPage() {
     };
 
     getFinancialHighlights();
-  }, [companyName]);
+  }, [companyName, isFinancialsActive, financialHighlights]);
 
   /* ================= REVENUE & PROFIT TREND ================= */
   // Used in FinancialHighlightsDetails and FinancialHighlights
   useEffect(() => {
-    if (!companyName) return;
+    if (!companyName || !isFinancialsActive) return;
+    if (revenueProfitTrend) return;
 
     const getRevenueProfitTrend = async () => {
       try {
@@ -718,12 +830,13 @@ export default function CompanyPage() {
     };
 
     getRevenueProfitTrend();
-  }, [companyName]);
+  }, [companyName, isFinancialsActive, revenueProfitTrend]);
 
   /* ================= COMMON DIRECTORSHIP ================= */
   // Used in RelatedCorporates
   useEffect(() => {
-    if (!companyName) return;
+    if (!companyName || !isRelatedActive) return;
+    if (commonDirectorship) return;
 
     const getCommonDirectorship = async () => {
       try {
@@ -764,12 +877,14 @@ export default function CompanyPage() {
     };
 
     getCommonDirectorship();
-  }, [companyName]);
+  }, [companyName, isRelatedActive, commonDirectorship]);
 
   /* ================= GET CASH FLOW DATA ================= */
   // Used in FinancialHighlightsDetails and FinancialHighlights
   useEffect(() => {
-    if (!companyName) return;
+    if (!companyName || !isFinancialsActive) return;
+    if (cfType === "Standalone" && cfStandalone) return;
+    if (cfType === "Consolidated" && cfConsolidated) return;
 
     const getCashFlowData = async () => {
       try {
@@ -804,12 +919,13 @@ export default function CompanyPage() {
     };
 
     getCashFlowData();
-  }, [companyName, cfType]);
+  }, [companyName, cfType, isFinancialsActive, cfStandalone, cfConsolidated]);
 
   /* ================= COMPANY HIGHLIGHTS (PAGINATED) ================= */
   // Used in CompanyHighlights and OwnershipSection
   useEffect(() => {
-    if (!companyName) return;
+    if (!companyName || !isHighlightsActive) return;
+    if (companyHighlights && lastHighlightsPageRef.current === highlightsPage && lastHighlightsLimitRef.current === highlightsLimit) return;
 
     const fetchCompanyHighlights = async () => {
       try {
@@ -850,7 +966,8 @@ export default function CompanyPage() {
         }
 
         setCompanyHighlights(data);
-
+        lastHighlightsPageRef.current = highlightsPage;
+        lastHighlightsLimitRef.current = highlightsLimit;
       } catch (err) {
         console.log("Highlights API Error:", err);
         setHighlightsError(err.message);
@@ -861,13 +978,17 @@ export default function CompanyPage() {
     };
 
     fetchCompanyHighlights();
-  }, [companyName, highlightsPage, highlightsLimit]);
+  }, [companyName, highlightsPage, highlightsLimit, isHighlightsActive, companyHighlights]);
 
 
   /* ================= COMPANY CHARGES (PAGINATED) ================= */
   // Used in ChargesPage
   useEffect(() => {
-    if (!companyName) return;
+    if (!companyName || !isChargesActive) return;
+    if (chargesData &&
+        lastChargesOpenPageRef.current === openPage &&
+        lastChargesClosedPageRef.current === closedPage &&
+        lastChargesLimitRef.current === chargesLimit) return;
 
     const fetchCharges = async () => {
       try {
@@ -902,7 +1023,9 @@ export default function CompanyPage() {
         }
 
         setChargesData(data);
-
+        lastChargesOpenPageRef.current = openPage;
+        lastChargesClosedPageRef.current = closedPage;
+        lastChargesLimitRef.current = chargesLimit;
       } catch (err) {
         console.log("Charges API Error:", err);
         setChargesError(err.message);
@@ -912,13 +1035,14 @@ export default function CompanyPage() {
     };
 
     fetchCharges();
-  }, [companyName, openPage, closedPage, chargesLimit]);
+  }, [companyName, openPage, closedPage, chargesLimit, isChargesActive, chargesData]);
 
 
   /* ================= DIRECTORS & KMPS ================= */
   // Used in DirectorsSection (which renders DirectorProfile)
   useEffect(() => {
-    if (!companyName) return;
+    if (!companyName || !isDirectorsActive) return;
+    if (directorsData) return;
 
     const getDirectors = async () => {
       try {
@@ -964,12 +1088,15 @@ export default function CompanyPage() {
     };
 
     getDirectors();
-  }, [companyName]);
+  }, [companyName, isDirectorsActive, directorsData]);
 
 
   /* ================= SECURITY ALLOTMENT DETAILS ================= */
   useEffect(() => {
-    if (!companyName) return;
+    if (!companyName || !isOwnershipActive) return;
+    if (securityAllotmentData &&
+        lastAllotmentPageRef.current === allotmentPage &&
+        lastAllotmentLimitRef.current === allotmentLimit) return;
 
     const getSecurityAllotment = async () => {
       try {
@@ -992,6 +1119,8 @@ export default function CompanyPage() {
 
         const data = await response.json();
         setSecurityAllotmentData(data);
+        lastAllotmentPageRef.current = allotmentPage;
+        lastAllotmentLimitRef.current = allotmentLimit;
       } catch (error) {
         setSecurityAllotmentError(error.message);
       } finally {
@@ -1000,11 +1129,14 @@ export default function CompanyPage() {
     };
 
     getSecurityAllotment();
-  }, [companyName, allotmentPage, allotmentLimit]);
+  }, [companyName, allotmentPage, allotmentLimit, isOwnershipActive, securityAllotmentData]);
 
   /* ================= GROUP STRUCTURE DETAILS ================= */
   useEffect(() => {
-    if (!companyName) return;
+    if (!companyName || !isOwnershipActive) return;
+    if (groupStructureData &&
+        lastGroupPageRef.current === groupPage &&
+        lastGroupLimitRef.current === groupLimit) return;
 
     const getGroupStructure = async () => {
       try {
@@ -1027,6 +1159,8 @@ export default function CompanyPage() {
 
         const data = await response.json();
         setGroupStructureData(data);
+        lastGroupPageRef.current = groupPage;
+        lastGroupLimitRef.current = groupLimit;
       } catch (error) {
         setGroupStructureError(error.message);
       } finally {
@@ -1035,11 +1169,12 @@ export default function CompanyPage() {
     };
 
     getGroupStructure();
-  }, [companyName, groupPage, groupLimit]);
+  }, [companyName, groupPage, groupLimit, isOwnershipActive, groupStructureData]);
 
   /* ================= OVERSEAS DIRECT INVESTMENT DETAILS ================= */
   useEffect(() => {
-    if (!companyName) return;
+    if (!companyName || !isOwnershipActive) return;
+    if (overseasInvestmentData) return;
 
     const getOverseasInvestment = async () => {
       try {
@@ -1070,10 +1205,11 @@ export default function CompanyPage() {
     };
 
     getOverseasInvestment();
-  }, [companyName]);
+  }, [companyName, isOwnershipActive, overseasInvestmentData]);
   // Used in OwnershipSection
   useEffect(() => {
-    if (!companyName) return;
+    if (!companyName || !isOwnershipActive) return;
+    if (shareholdingData) return;
 
     const getShareholdingData = async () => {
       try {
@@ -1119,12 +1255,14 @@ export default function CompanyPage() {
     };
 
     getShareholdingData();
-  }, [companyName]);
+  }, [companyName, isOwnershipActive, shareholdingData]);
 
   /* ================= AUDITORS DETAILS ================= */
   // Used in FinancialHighlightsDetails and FinancialHighlights
   useEffect(() => {
-    if (!companyName || !audType) return;
+    if (!companyName || !audType || !isFinancialsActive) return;
+    if (audType === "Standalone" && audStandalone !== null) return;
+    if (audType === "Consolidated" && audConsolidated !== null) return;
 
     const getAuditorsData = async () => {
       try {
@@ -1155,11 +1293,14 @@ export default function CompanyPage() {
     };
 
     getAuditorsData();
-  }, [companyName, audType]);
+  }, [companyName, audType, isFinancialsActive, audStandalone, audConsolidated]);
 
   /* ================= PEER COMPARISON ================= */
   useEffect(() => {
-    if (!companyName) return;
+    if (!companyName || !isPeerActive) return;
+    if (peerComparisonData &&
+        lastPeerPageRef.current === peerPage &&
+        lastPeerLimitRef.current === peerLimit) return;
 
     const fetchPeerComparison = async () => {
       try {
@@ -1194,6 +1335,8 @@ export default function CompanyPage() {
         }
 
         setPeerComparisonData(data);
+        lastPeerPageRef.current = peerPage;
+        lastPeerLimitRef.current = peerLimit;
       } catch (err) {
         console.log("Peer Comparison API Error:", err);
         setPeerComparisonError(err.message);
@@ -1203,12 +1346,21 @@ export default function CompanyPage() {
     };
 
     fetchPeerComparison();
-  }, [companyName, peerPage, peerLimit]);
+  }, [companyName, peerPage, peerLimit, isPeerActive, peerComparisonData]);
 
   /* ================= LITIGATION DETAILS ================= */
 
   useEffect(() => {
-    if (!companyName) return;
+    if (!companyName || !isLitigationActive) return;
+    if (litigationData &&
+        lastPaPageRef.current === paPage &&
+        lastPaSizeRef.current === paSize &&
+        lastPbPageRef.current === pbPage &&
+        lastPbSizeRef.current === pbSize &&
+        lastDaPageRef.current === daPage &&
+        lastDaSizeRef.current === daSize &&
+        lastDbPageRef.current === dbPage &&
+        lastDbSizeRef.current === dbSize) return;
 
     const fetchLitigationData = async () => {
       try {
@@ -1242,6 +1394,14 @@ export default function CompanyPage() {
         }
 
         setLitigationData(data);
+        lastPaPageRef.current = paPage;
+        lastPaSizeRef.current = paSize;
+        lastPbPageRef.current = pbPage;
+        lastPbSizeRef.current = pbSize;
+        lastDaPageRef.current = daPage;
+        lastDaSizeRef.current = daSize;
+        lastDbPageRef.current = dbPage;
+        lastDbSizeRef.current = dbSize;
       } catch (err) {
         console.log("Litigation API Error:", err);
         setLitigationError(err.message);
@@ -1251,12 +1411,14 @@ export default function CompanyPage() {
     };
 
     fetchLitigationData();
-  }, [companyName, paPage, paSize, pbPage, pbSize, daPage, daSize, dbPage, dbSize]);
+  }, [companyName, paPage, paSize, pbPage, pbSize, daPage, daSize, dbPage, dbSize, isLitigationActive, litigationData]);
 
   /* ================= BALANCE SHEET DETAILS ================= */
   // Used in FinancialHighlightsDetails and FinancialHighlights
   useEffect(() => {
-    if (!companyName || !bsType) return;
+    if (!companyName || !bsType || !isFinancialsActive) return;
+    if (bsType === "Standalone" && bsStandalone) return;
+    if (bsType === "Consolidated" && bsConsolidated) return;
 
     const getBalanceSheet = async () => {
       try {
@@ -1285,12 +1447,14 @@ export default function CompanyPage() {
     };
 
     getBalanceSheet();
-  }, [companyName, bsType]);
+  }, [companyName, bsType, isFinancialsActive, bsStandalone, bsConsolidated]);
 
   /* ================= RATIOS DETAILS ================= */
   // Used in FinancialHighlightsDetails and FinancialHighlights
   useEffect(() => {
-    if (!companyName || !ratiosType) return;
+    if (!companyName || !ratiosType || !isFinancialsActive) return;
+    if (ratiosType === "Standalone" && ratioStandalone) return;
+    if (ratiosType === "Consolidated" && ratioConsolidated) return;
 
     const getRatiosData = async () => {
       try {
@@ -1325,7 +1489,7 @@ export default function CompanyPage() {
     };
 
     getRatiosData();
-  }, [companyName, ratiosType]);
+  }, [companyName, ratiosType, isFinancialsActive, ratioStandalone, ratioConsolidated]);
 
 
   /* 🔥 Scroll when sidebar sub-item changes */
