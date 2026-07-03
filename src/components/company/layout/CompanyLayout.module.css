@@ -17,6 +17,8 @@
 /* Sidebar + Main layout */
 .contentWrapper {
   width: 100%;
+  max-width: 1632px;
+  margin: 0 auto;
   padding: 24px 0;   /* vertical only */
 }
 
@@ -29,7 +31,6 @@
 /* CENTERED CONTAINER — HAS PADDING */
 .contentRow {
   display: flex;
-  max-width: 1632px;
   margin: 0 auto;
   gap: 32px;
 
