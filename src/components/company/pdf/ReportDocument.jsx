@@ -1343,7 +1343,7 @@ export const ReportDocument = ({
           {tableData.tableTitle || "Litigation Table"}
         </Text>
         <View style={styles.table}>
-          <View style={[styles.tableRow, { backgroundColor: '#f9fafb' }]} wrap={false}>
+          <View style={[styles.tableRow, { backgroundColor: '#f9fafb' }]} fixed>
             {columns.map((col, i) => (
               <View key={i} style={[styles.tableColHeader, { width: colWidth }]}>
                 <Text style={styles.tableCellHeader}>{col.label}</Text>
@@ -1391,7 +1391,7 @@ export const ReportDocument = ({
         {renderLitigationKPIs(kpis)}
 
         {sections.map((sec, idx) => (
-          <View key={idx} wrap={false}>
+          <View key={idx}>
             {renderLitigationTable(data[sec.key])}
           </View>
         ))}
