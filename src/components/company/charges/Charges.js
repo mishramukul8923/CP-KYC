@@ -36,7 +36,7 @@ export default function ChargesPage({ charges, loading, error, openPage, closedP
       default:
         break;
     }
-  }, [activeSubSection, scrollTrigger]);
+  }, [scrollTrigger]);
 
   if (loading) {
     return (
