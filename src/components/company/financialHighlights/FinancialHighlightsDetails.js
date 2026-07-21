@@ -48,6 +48,9 @@ const FinancialHighlightsDetails = ({
   setRatiosType
 }) => {
 
+  const [activeChartSlide, setActiveChartSlide] = React.useState('latest');
+  const { setActiveSection } = useCompanySection();
+
   // Remove early return to allow partial data rendering
 
   if ((financialLoading && !financialError) || (revenueLoading && !revenueError)) {
@@ -230,29 +233,202 @@ const FinancialHighlightsDetails = ({
   //   { year: "2025", revenue: 7800, profit: 3200 },
   // ];
 
-  const chartData = (revenueProfitTrend?.trend || [])
+  const getChartParams = (data) => {
+    if (!data || data.length === 0) return null;
+    
+    // Revenue Axis Calculations
+    const revenueValues = data.map(d => d.revenue);
+    const maxRev = Math.max(...revenueValues, 0);
+    const domainMaxRev = Math.ceil((maxRev * 1.1) / 100) * 100 || 500;
+
+    // Profit Axis Calculations
+    const profitValues = data.map(d => d.profit);
+    const minProf = Math.min(...profitValues, 0);
+    const maxProf = Math.max(...profitValues, 0);
+    const domainMaxProf = Math.ceil((maxProf * 1.1) / 10) * 10 || 50;
+
+    let domainMinRev = 0;
+    let domainMinProf = 0;
+
+    if (minProf < 0) {
+      // Profit has negative values
+      domainMinProf = Math.floor((minProf * 1.1) / 10) * 10 || -10;
+      // Align the zero line of revenue with profit
+      domainMinRev = domainMaxRev * (domainMinProf / domainMaxProf);
+    }
+
+    // Calculate ticks
+    const rangeRev = domainMaxRev - domainMinRev;
+    const stepRev = rangeRev / 5;
+    const ticksRev = Array.from({ length: 6 }, (_, i) => Math.round(domainMinRev + i * stepRev));
+
+    const rangeProf = domainMaxProf - domainMinProf;
+    const stepProf = rangeProf / 5;
+    const ticksProf = Array.from({ length: 6 }, (_, i) => Math.round(domainMinProf + i * stepProf));
+
+    const longestLabelLengthLeft = ticksRev.reduce((max, tick) => {
+      const label = `${formatIndianNumber(tick)} cr`;
+      return label.length > max ? label.length : max;
+    }, 0);
+    const dynamicYAxisWidthLeft = Math.max(80, longestLabelLengthLeft * 8.5 + 10);
+
+    const longestLabelLengthRight = ticksProf.reduce((max, tick) => {
+      const label = `${formatIndianNumber(tick)} cr`;
+      return label.length > max ? label.length : max;
+    }, 0);
+    const dynamicYAxisWidthRight = Math.max(80, longestLabelLengthRight * 8.5 + 10);
+
+    return {
+      domainMaxRev,
+      domainMinRev,
+      ticksRev,
+      dynamicYAxisWidthLeft,
+      domainMaxProf,
+      domainMinProf,
+      ticksProf,
+      dynamicYAxisWidthRight
+    };
+  };
+
+  const allChartData = (revenueProfitTrend?.trend || [])
     .filter((item) => item.year !== "TTM" && item.year !== "isExpandable")
-    .map((item) => ({
-      year: item.year,
-      revenue: Number(item.revenue_cr ?? item.Revenue ?? item.revenue ?? 0),
-      profit: Number(item.profit_cr ?? item.Profit ?? item.profit ?? 0),
-    }))
-    .reverse();
+    .map((item) => {
+      const match = String(item.year).match(/\d+/);
+      const yearNum = match ? parseInt(match[0], 10) : 0;
+      return {
+        year: item.year,
+        revenue: Number(item.revenue_cr ?? item.Revenue ?? item.revenue ?? 0),
+        profit: Number(item.profit_cr ?? item.Profit ?? item.profit ?? 0),
+        yearNum,
+      };
+    })
+    .sort((a, b) => b.yearNum - a.yearNum);
 
-  const allValues = chartData.flatMap(d => [d.revenue, d.profit]);
-  const minVal = Math.min(...allValues, 0);
-  const maxVal = Math.max(...allValues, 0);
+  const hasSplitCharts = allChartData.length > 10;
+  const chartDataLatest = hasSplitCharts
+    ? allChartData.slice(0, 10).sort((a, b) => a.yearNum - b.yearNum)
+    : allChartData.sort((a, b) => a.yearNum - b.yearNum);
 
-  // Buffer and rounding for domain
-  const domainMax = Math.ceil((maxVal * 1.1) / 100) * 100 || 500;
-  const domainMin = minVal < 0 ? Math.floor((minVal * 1.1) / 100) * 100 : 0;
+  const chartDataOlder = hasSplitCharts
+    ? allChartData.slice(10).sort((a, b) => a.yearNum - b.yearNum)
+    : [];
 
-  // Calculate a clean step that covers the range with roughly 6 ticks
-  const range = domainMax - domainMin;
-  const step = Math.ceil(range / 5 / 10) * 10 || 100;
-  const dynamicTicks = Array.from({ length: 6 }, (_, i) => domainMin + i * step);
+  const latestParams = getChartParams(chartDataLatest);
+  const olderParams = getChartParams(chartDataOlder);
 
-  const { setActiveSection } = useCompanySection();
+  const renderSingleChart = (data, params, subtitle) => {
+    if (!data || data.length === 0 || !params) return null;
+    return (
+      <div style={{ marginBottom: "30px", width: "100%" }}>
+        {subtitle && (
+          <h4 style={{ fontSize: "14px", fontWeight: "600", color: "#4B5563", marginBottom: "12px", paddingLeft: "10px" }}>
+            {subtitle}
+          </h4>
+        )}
+        <div className={styles.chartWrapper}>
+          <div className={styles.scrollX}>
+            <div style={{ minWidth: `${Math.max(data.length * 80, 500)}px`, height: "100%" }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={data}
+                  margin={{ top: 20, right: 5, left: 5, bottom: 0 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="5 5"
+                    vertical={false}
+                    stroke="#E5E7EB"
+                  />
+                  <XAxis
+                    dataKey="year"
+                    axisLine={{ stroke: "rgba(229, 231, 235, 1)" }}
+                    tickLine={false}
+                    tick={{
+                      fill: "rgba(113, 113, 122, 1)",
+                      fontSize: 14,
+                      fontWeight: 500,
+                    }}
+                    dy={6}
+                  />
+                  <YAxis
+                    yAxisId="left"
+                    orientation="left"
+                    width={params.dynamicYAxisWidthLeft + 25}
+                    axisLine={{ stroke: "rgba(229, 231, 235, 1)" }}
+                    tickLine={false}
+                    tickMargin={20}
+                    tick={{
+                      fill: "rgba(55, 65, 81, 1)",
+                      fontSize: 14,
+                      fontWeight: 500,
+                    }}
+                    tickFormatter={(value) => `${formatIndianNumber(value)} cr`}
+                    domain={[params.domainMinRev, params.domainMaxRev]}
+                    ticks={params.ticksRev}
+                    label={{
+                      value: "Revenue",
+                      angle: -90,
+                      position: "insideLeft",
+                      style: {
+                        textAnchor: "middle",
+                        fill: "rgba(113, 113, 122, 1)",
+                        fontSize: 14,
+                        fontWeight: 500,
+                      }
+                    }}
+                  />
+                  <YAxis
+                    yAxisId="right"
+                    orientation="right"
+                    width={params.dynamicYAxisWidthRight + 25}
+                    axisLine={{ stroke: "rgba(229, 231, 235, 1)" }}
+                    tickLine={false}
+                    tickMargin={20}
+                    tick={{
+                      fill: "rgba(55, 65, 81, 1)",
+                      fontSize: 14,
+                      fontWeight: 500,
+                    }}
+                    tickFormatter={(value) => `${formatIndianNumber(value)} cr`}
+                    domain={[params.domainMinProf, params.domainMaxProf]}
+                    ticks={params.ticksProf}
+                    label={{
+                      value: "Profit",
+                      angle: 90,
+                      position: "insideRight",
+                      style: {
+                        textAnchor: "middle",
+                        fill: "rgba(113, 113, 122, 1)",
+                        fontSize: 14,
+                        fontWeight: 500,
+                      }
+                    }}
+                  />
+                  <Tooltip
+                    cursor={{ fill: "transparent" }}
+                    formatter={(value, name) => [`${formatIndianNumber(value)} cr`, name.charAt(0).toUpperCase() + name.slice(1)]}
+                  />
+                  <Bar
+                    yAxisId="left"
+                    dataKey="revenue"
+                    fill="rgba(59, 130, 246, 1)"
+                    radius={[20, 20, 0, 0]}
+                    barSize={32.73}
+                  />
+                  <Bar
+                    yAxisId="right"
+                    dataKey="profit"
+                    fill="rgba(34, 197, 94, 1)"
+                    radius={[20, 20, 0, 0]}
+                    barSize={32.73}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className={styles.mainWrapper}>
@@ -330,77 +506,67 @@ const FinancialHighlightsDetails = ({
         <div className={styles.chartSection}>
           <div className={styles.chartHeader}>
             <h3 className={styles.chartTitle}>Revenue & Profit Trend</h3>
-            <div className={styles.customLegend}>
-              <div className={styles.legendItem}>
-                <span className={styles.blueDot}></span> Revenue
-              </div>
-              <div className={styles.legendDivider}></div>
-              <div className={styles.legendItem}>
-                <span className={styles.greenDot}></span> Profit
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              {hasSplitCharts && (
+                <div style={{ display: 'flex', gap: '4px', backgroundColor: '#F3F4F6', padding: '3px', borderRadius: '20px' }}>
+                  <button
+                    onClick={() => setActiveChartSlide('latest')}
+                    style={{
+                      padding: '6px 14px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      borderRadius: '16px',
+                      border: 'none',
+                      backgroundColor: activeChartSlide === 'latest' ? '#3B82F6' : 'transparent',
+                      color: activeChartSlide === 'latest' ? '#FFFFFF' : '#4B5563',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    Latest 10 Years
+                  </button>
+                  <button
+                    onClick={() => setActiveChartSlide('older')}
+                    style={{
+                      padding: '6px 14px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      borderRadius: '16px',
+                      border: 'none',
+                      backgroundColor: activeChartSlide === 'older' ? '#3B82F6' : 'transparent',
+                      color: activeChartSlide === 'older' ? '#FFFFFF' : '#4B5563',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    Older Years
+                  </button>
+                </div>
+              )}
+              <div className={styles.customLegend}>
+                <div className={styles.legendItem}>
+                  <span className={styles.blueDot}></span> Revenue
+                </div>
+                <div className={styles.legendDivider}></div>
+                <div className={styles.legendItem}>
+                  <span className={styles.greenDot}></span> Profit
+                </div>
               </div>
             </div>
           </div>
           <div className={styles.chartContainer}>
-            {chartData.length > 0 ? (
-              <div className={styles.chartWrapper}>
-                <div className={styles.scrollX}>
-                  <div style={{ minWidth: `${Math.max(chartData.length * 80, 500)}px`, height: "100%" }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart
-                        data={chartData}
-                        margin={{ top: 20, right: 10, left: 2, bottom: 0 }}
-                      >
-                        {/* Added strokeDasharray="5 5" for the dotted horizontal lines shown in design */}
-                        <CartesianGrid
-                          strokeDasharray="5 5"
-                          vertical={false}
-                          stroke="#E5E7EB"
-                        />
-                        <XAxis
-                          dataKey="year"
-                          axisLine={{ stroke: "rgba(229, 231, 235, 1)" }}
-                          tickLine={false}
-                          tick={{
-                            fill: "rgba(113, 113, 122, 1)",
-                            fontSize: 14,
-                            fontWeight: 500,
-                          }}
-                          dy={6}
-                        />
-                        <YAxis
-                          width={90}
-                          axisLine={{ stroke: "rgba(229, 231, 235, 1)" }}
-                          tickLine={false}
-                          tick={{
-                            fill: "rgba(55, 65, 81, 1)",
-                            fontSize: 14,
-                            fontWeight: 500,
-                          }}
-                          tickFormatter={(value) => `${formatIndianNumber(value)} cr`}
-                          domain={[domainMin, domainMax]}
-                          ticks={dynamicTicks}
-                        />
-                        <Tooltip
-                          cursor={{ fill: "transparent" }}
-                          formatter={(value, name) => [`${formatIndianNumber(value)} cr`, name.charAt(0).toUpperCase() + name.slice(1)]}
-                        />
-                        <Bar
-                          dataKey="revenue"
-                          fill="rgba(59, 130, 246, 1)"
-                          radius={[20, 20, 0, 0]}
-                          barSize={32.73}
-                        />
-                        <Bar
-                          dataKey="profit"
-                          fill="rgba(34, 197, 94, 1)"
-                          radius={[20, 20, 0, 0]}
-                          barSize={32.73}
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              </div>
+            {allChartData.length > 0 ? (
+              <>
+                {hasSplitCharts ? (
+                  activeChartSlide === 'latest' ? (
+                    renderSingleChart(chartDataLatest, latestParams)
+                  ) : (
+                    renderSingleChart(chartDataOlder, olderParams)
+                  )
+                ) : (
+                  renderSingleChart(chartDataLatest, latestParams)
+                )}
+              </>
             ) : (
               <div className={styles.noDataMessage}>No revenue and profit trend available</div>
             )}
