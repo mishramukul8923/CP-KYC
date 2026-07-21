@@ -410,7 +410,12 @@ export const ReportDocument = ({
   const auditorAlerts = alertsData?.auditors || [];
   const litigationAlerts = Array.isArray(alertsData?.litigations?.detailed_cases?.items) ? alertsData.litigations.detailed_cases.items : [];
   const litigationSummaryCards = alertsData?.litigations?.summary_cards || {};
-  const litigationSummaryTable = Array.isArray(alertsData?.litigations?.summary_table) ? alertsData.litigations.summary_table : [];
+  const rawLitigationSummaryTable = Array.isArray(alertsData?.litigations?.summary_table) ? alertsData.litigations.summary_table : [];
+  const hasNclt = rawLitigationSummaryTable.some(item => item?.court_type?.trim().toUpperCase() === "NCLT");
+  const hasNcltNclat = rawLitigationSummaryTable.some(item => item?.court_type?.toUpperCase().replace(/\s+/g, "") === "NCLT/NCLAT");
+  const litigationSummaryTable = (hasNclt && hasNcltNclat)
+    ? rawLitigationSummaryTable.filter(item => item?.court_type?.trim().toUpperCase() !== "NCLT")
+    : rawLitigationSummaryTable;
 
   const allDirectors = directorsData?.directors || [];
   const currentDirectors = allDirectors.filter(d => !d.cessation_date || d.cessation_date === '-');
@@ -1527,30 +1532,52 @@ export const ReportDocument = ({
 
     const width = 500;
     const height = 180;
-    const padding = { top: 20, right: 20, bottom: 30, left: 60 };
+    const padding = { top: 20, right: 60, bottom: 30, left: 60 };
     const chartWidth = width - padding.left - padding.right;
     const chartHeight = height - padding.top - padding.bottom;
 
-    // Find max value for scaling
-    const maxVal = Math.max(...cleanData.map(d => Math.max(d.revenue_cr, d.profit_cr)), 1);
-    const scale = chartHeight / maxVal;
+    // Revenue calculations
+    const maxRev = Math.max(...cleanData.map(d => d.revenue_cr), 0);
+    const domainMaxRev = Math.ceil((maxRev * 1.1) / 100) * 100 || 500;
+
+    // Profit calculations
+    const minProf = Math.min(...cleanData.map(d => d.profit_cr), 0);
+    const maxProf = Math.max(...cleanData.map(d => d.profit_cr), 0);
+    const domainMaxProf = Math.ceil((maxProf * 1.1) / 10) * 10 || 50;
+
+    let domainMinRev = 0;
+    let domainMinProf = 0;
+
+    if (minProf < 0) {
+      domainMinProf = Math.floor((minProf * 1.1) / 10) * 10 || -10;
+      domainMinRev = domainMaxRev * (domainMinProf / domainMaxProf);
+    }
+
+    const rangeRev = domainMaxRev - domainMinRev;
+    const scaleRev = chartHeight / rangeRev;
+
+    const rangeProf = domainMaxProf - domainMinProf;
+    const scaleProf = chartHeight / rangeProf;
+
+    const ticksRev = Array.from({ length: 6 }, (_, i) => Math.round(domainMinRev + (i * rangeRev) / 5));
+    const ticksProf = Array.from({ length: 6 }, (_, i) => Math.round(domainMinProf + (i * rangeProf) / 5));
+
+    const yZeroRev = padding.top + chartHeight - ((0 - domainMinRev) * scaleRev);
 
     const barGroupWidth = chartWidth / cleanData.length;
     const barWidth = barGroupWidth * 0.35;
-
-    // Generate Y-axis ticks (5 ticks)
-    const ticks = [0, 0.25, 0.5, 0.75, 1].map(p => Math.round(maxVal * p));
 
     return (
       <View style={[styles.section, { marginTop: 10, alignItems: 'center' }]}>
         <Text style={[styles.title, { fontSize: 16, marginBottom: 0 }]}>Revenue & Profit Trend Chart (Cr)</Text>
         <Svg width={width} height={height}>
-          {/* Grid Lines */}
-          {ticks.map((t, i) => {
-            const yPos = height - padding.bottom - (t * scale);
+          {/* Grid Lines & Ticks */}
+          {ticksRev.map((tRev, i) => {
+            const yPos = padding.top + chartHeight - ((tRev - domainMinRev) * scaleRev);
             if (isNaN(yPos)) return null;
             return (
               <G key={`grid-${i}`}>
+                {/* Horizontal grid line */}
                 <Line
                   x1={padding.left}
                   y1={yPos}
@@ -1560,29 +1587,65 @@ export const ReportDocument = ({
                   strokeWidth={1}
                   strokeDasharray="4 4"
                 />
+                {/* Left Y Axis Tick Label */}
                 <Text
                   x={padding.left - 5}
                   y={yPos + 3}
                   style={{ fontSize: 8, textAnchor: 'end', fill: '#6b7280' }}
                 >
-                  {t.toLocaleString()}
+                  {tRev.toLocaleString()}
+                </Text>
+                {/* Right Y Axis Tick Label */}
+                <Text
+                  x={width - padding.right + 5}
+                  y={yPos + 3}
+                  style={{ fontSize: 8, textAnchor: 'start', fill: '#6b7280' }}
+                >
+                  {ticksProf[i].toLocaleString()}
                 </Text>
               </G>
             );
           })}
 
+          {/* Left Axis Title */}
+          <Text
+            x={15}
+            y={padding.top + chartHeight / 2}
+            style={{ fontSize: 8, fill: '#6b7280', textAnchor: 'middle' }}
+            transform={`rotate(-90, 15, ${padding.top + chartHeight / 2})`}
+          >
+            Revenue (Cr)
+          </Text>
+
+          {/* Right Axis Title */}
+          <Text
+            x={width - 15}
+            y={padding.top + chartHeight / 2}
+            style={{ fontSize: 8, fill: '#6b7280', textAnchor: 'middle' }}
+            transform={`rotate(90, ${width - 15}, ${padding.top + chartHeight / 2})`}
+          >
+            Profit (Cr)
+          </Text>
+
           {/* Bars */}
           {cleanData.map((d, i) => {
             const xBase = padding.left + (i * barGroupWidth) + (barGroupWidth * 0.15);
-            const revHeight = (d.revenue_cr || 0) * scale;
-            const profHeight = (d.profit_cr || 0) * scale;
+            
+            const revVal = d.revenue_cr || 0;
+            const profVal = d.profit_cr || 0;
+
+            const revHeight = Math.abs(revVal * scaleRev);
+            const revY = revVal >= 0 ? yZeroRev - revHeight : yZeroRev;
+
+            const profHeight = Math.abs(profVal * scaleProf);
+            const profY = profVal >= 0 ? yZeroRev - profHeight : yZeroRev;
 
             return (
               <G key={`bars-${i}`}>
                 {/* Revenue Bar (Blue) */}
                 <Rect
                   x={xBase}
-                  y={height - padding.bottom - revHeight}
+                  y={revY}
                   width={barWidth}
                   height={revHeight}
                   fill="#3b82f6"
@@ -1590,7 +1653,7 @@ export const ReportDocument = ({
                 {/* Profit Bar (Green) */}
                 <Rect
                   x={xBase + barWidth + 2}
-                  y={height - padding.bottom - profHeight}
+                  y={profY}
                   width={barWidth}
                   height={profHeight}
                   fill="#22c55e"
@@ -1607,15 +1670,22 @@ export const ReportDocument = ({
             );
           })}
 
-          {/* Axes */}
+          {/* Zero baseline line */}
           <Line
-            x1={padding.left} y1={height - padding.bottom}
-            x2={width - padding.right} y2={height - padding.bottom}
+            x1={padding.left} y1={yZeroRev}
+            x2={width - padding.right} y2={yZeroRev}
             stroke="#9ca3af" strokeWidth={1}
           />
+          {/* Left Axis Line */}
           <Line
             x1={padding.left} y1={padding.top}
             x2={padding.left} y2={height - padding.bottom}
+            stroke="#9ca3af" strokeWidth={1}
+          />
+          {/* Right Axis Line */}
+          <Line
+            x1={width - padding.right} y1={padding.top}
+            x2={width - padding.right} y2={height - padding.bottom}
             stroke="#9ca3af" strokeWidth={1}
           />
         </Svg>
@@ -2307,19 +2377,24 @@ export const ReportDocument = ({
                 <View wrap={false}>
                   {(() => {
                     // Filter out TTM and reverse to show latest years first
-                    const filteredTrend = [...revenueProfitTrend.trend]
-                      .filter(t => t.year && t.year.toUpperCase() !== 'TTM')
-                      .reverse();
+                    const cleanTrend = [...revenueProfitTrend.trend]
+                      .filter(t => t.year && t.year.toUpperCase() !== 'TTM' && t.year !== 'isExpandable' && t.year !== 'isExpanded')
+                      .map(t => {
+                        const match = String(t.year).match(/\d+/);
+                        const yearNum = match ? parseInt(match[0], 10) : 0;
+                        return { ...t, yearNum };
+                      })
+                      .sort((a, b) => a.yearNum - b.yearNum);
 
-                    const mappedTrend = filteredTrend.map(t => ({
+                    const mappedTrend = [...cleanTrend].reverse().map(t => ({
                       "Year": formatValue(t.year),
-                      "Revenue (Cr)": t.revenue_cr !== undefined ? t.revenue_cr.toLocaleString('en-IN') : "-",
-                      "Profit (Cr)": t.profit_cr !== undefined ? t.profit_cr.toLocaleString('en-IN') : "-"
+                      "Revenue (Cr)": t.revenue_cr !== undefined && t.revenue_cr !== null ? t.revenue_cr.toLocaleString('en-IN') : "-",
+                      "Profit (Cr)": t.profit_cr !== undefined && t.profit_cr !== null ? t.profit_cr.toLocaleString('en-IN') : "-"
                     }));
 
                     return (
                       <>
-                        {renderBarChart(filteredTrend)}
+                        {renderBarChart(cleanTrend)}
                         {renderDynamicTable(mappedTrend, "Annual Financial Performance")}
                       </>
                     );

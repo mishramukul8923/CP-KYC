@@ -338,8 +338,8 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
                 </tr>
               </thead>
               <tbody>
-                {openCharges.length > 0 ? (openCharges.map((charge) => (
-                  <tr key={charge.charge_id}>
+                {openCharges.length > 0 ? (openCharges.map((charge, idx) => (
+                  <tr key={`open-${idx}-${charge.charge_id}`}>
                     <td>{charge.charge_id}</td>
                     <td>{charge.lender}</td>
                     <td>{charge.amount_cr || "-"}</td>
@@ -421,8 +421,8 @@ const CompanyHighlights = ({ companyHighlights, page, limit, loading, error, set
               </thead>
               <tbody>
                 {closedCharges.length > 0 ? (
-                  closedCharges.map((charge) => (
-                    <tr key={charge.charge_id}>
+                  closedCharges.map((charge, idx) => (
+                    <tr key={`closed-${idx}-${charge.charge_id}`}>
                       <td>{charge.charge_id}</td>
                       <td>{charge.lender}</td>
                       <td>{charge.amount_cr || "-"}</td>

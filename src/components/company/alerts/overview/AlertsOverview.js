@@ -131,7 +131,14 @@ export default function AlertsOverview({ alertsData, alertsLoading, alertsError 
     pages: detailedCases.pages || 1
   };
 
-  const litigationSummaryTableRows = (litigationData.summary_table || []).map(item => ({
+  const rawSummaryTable = litigationData.summary_table || [];
+  const hasNclt = rawSummaryTable.some(item => item?.court_type?.trim().toUpperCase() === "NCLT");
+  const hasNcltNclat = rawSummaryTable.some(item => item?.court_type?.toUpperCase().replace(/\s+/g, "") === "NCLT/NCLAT");
+  const filteredSummaryTable = (hasNclt && hasNcltNclat)
+    ? rawSummaryTable.filter(item => item?.court_type?.trim().toUpperCase() !== "NCLT")
+    : rawSummaryTable;
+
+  const litigationSummaryTableRows = filteredSummaryTable.map(item => ({
     type: item.court_type ?? "-",
     by: item.cases_filed_by ?? "-",
     ag: item.cases_against ?? "-",
