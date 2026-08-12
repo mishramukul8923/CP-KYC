@@ -281,7 +281,7 @@ const CompanyCharts = ({ businessActivity, peerComparisonData, loading, layout =
       {peerComparisonData && (
         <section className={styles.section} style={{ marginTop: '24px' }}>
           <h2 className={styles.sectionTitle}>Peer Comparison</h2>
-          <div className={styles.card} style={{ padding: '24px' }}>
+          <div className={styles.card} style={{ padding: '0px' }}>
             <div className={styles.barChartContainer}>
               <ResponsiveContainer width="100%" height={380}>
                 <BarChart

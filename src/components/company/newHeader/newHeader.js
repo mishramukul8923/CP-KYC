@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./newHeader.module.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Download, Share2 } from "lucide-react";
 import { formatDateToIST } from "@/utils/dateFormatter";
 import { useCompanySection } from "../context/CompanySectionContext";
 import ShareModal from "../modals/ShareModal";
@@ -160,29 +161,7 @@ const CompanyNewHeader = ({ companyData, loading }) => {
   const fullAddress = companyData?.contact_details?.registered_address || "-";
 
   const toggleExpand = () => setIsExpanded(!isExpanded);
-  const [actionsOpen, setActionsOpen] = useState(false);
-  const [actionsDirection, setActionsDirection] = useState("down");
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const actionsRef = React.useRef(null);
-  const toggleActions = () => {
-    if (!actionsRef.current) return;
-
-    const rect = actionsRef.current.getBoundingClientRect();
-    const dropdownHeight = 160;
-    const spaceBelow = window.innerHeight - rect.bottom;
-
-    setActionsDirection(spaceBelow > dropdownHeight ? "down" : "up");
-    setActionsOpen((prev) => !prev);
-  };
-  React.useEffect(() => {
-    const close = (e) => {
-      if (!actionsRef.current?.contains(e.target)) {
-        setActionsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
-  }, []);
 
   React.useEffect(() => {
     if (!isGeneratingPdf) {
@@ -268,48 +247,22 @@ const CompanyNewHeader = ({ companyData, loading }) => {
                       />
                       Refresh Company
                     </button>
-                    <div ref={actionsRef} className={styles.actionsWrapper}>
-                      <button
-                        className={styles.actionsButton}
-                        onClick={toggleActions}
-                      >
-                        Actions
-                        <img
-                          src="/icons/chevron-down.svg"
-                          alt=""
-                          className={`${styles.chevronDown} ${actionsOpen ? styles.rotated : ""
-                            }`}
-                        />
-                      </button>
+                    <button
+                      className={styles.actionsButton}
+                      onClick={() => setIsDownloadModalOpen(true)}
+                      disabled={isGeneratingPdf}
+                    >
+                      <Download size={18} />
+                      {isGeneratingPdf ? "Generating PDF..." : "Download Report"}
+                    </button>
 
-                      {actionsOpen && (
-                        <div
-                          className={`${styles.actionsDropdown} ${actionsDirection === "up"
-                            ? styles.dropdownUp
-                            : styles.dropdownDown
-                            }`}
-                        >
-                          {isVersionHistoryOpen && (
-                            <button className={`${styles.dropdownItem} ${styles.showOn1200}`} onClick={() => window.location.reload()}>
-                              Refresh Company
-                            </button>
-                          )}
-                          <button
-                            className={styles.dropdownItem}
-                            onClick={() => setIsDownloadModalOpen(true)}
-                            disabled={isGeneratingPdf}
-                          >
-                            {isGeneratingPdf ? "Generating PDF..." : "Download Report"}
-                          </button>
-                          <button
-                            className={styles.dropdownItem}
-                            onClick={() => setIsShareModalOpen(true)}
-                          >
-                            Share
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    <button
+                      className={styles.saveButton}
+                      onClick={() => setIsShareModalOpen(true)}
+                    >
+                      <Share2 size={18} />
+                      Share
+                    </button>
                   </>
                 )}
               </div>
@@ -484,14 +437,14 @@ const CompanyNewHeader = ({ companyData, loading }) => {
                 </div>
               </div>
               <div className={styles.contentSectionBottomRight}>
-                <div className={styles.lastUpdated}>
+                {/* <div className={styles.lastUpdated}>
                   <span>Last Updated:</span>{" "}
                   {loading ? (
                     <div className={`${styles.skeleton} ${styles.skeletonMeta}`} style={{ width: '100px' }} />
                   ) : (
                     <strong>{formatDateToIST(companyData?.header?.last_updated)}</strong>
                   )}
-                </div>
+                </div> */}
               </div>
 
 

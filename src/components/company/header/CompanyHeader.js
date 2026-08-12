@@ -143,10 +143,10 @@ const CompanyHeader = () => {
               />
             </button>
           </div>
-          <div className={styles.lastUpdated}>
+          {/* <div className={styles.lastUpdated}>
             <span>Last Updated:</span>{" "}
             <strong>{formatDateToIST(companyData?.header?.last_updated) || "-"}</strong>
-          </div>
+          </div> */}
         </div>
       </div>
     </header>

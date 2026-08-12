@@ -103,6 +103,9 @@ export default function RootLayout({ children }) {
       } catch (e) {
         setUser(null);
       }
+    } else {
+      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax";
+      setUser(null);
     }
   }, [pathname]);
 
@@ -469,7 +472,13 @@ export default function RootLayout({ children }) {
                         )}
                       </div>
                     ) : (
-                      <Link href="/login" className={styles.loginBtn}>
+                      <Link
+                        href="/login"
+                        className={styles.loginBtn}
+                        onClick={() => {
+                          document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax";
+                        }}
+                      >
                         Login
                       </Link>
                     )}
