@@ -5,6 +5,7 @@
   border: 1px solid #f3f4f6;
   max-width: 580px;
   width: 100%;
+  position: relative;
   user-select: none;
   font-family: inherit;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -14,6 +15,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: absolute;
+  top: 10px;
+  left: 1rem;
+  right: 1rem;
+
   margin-bottom: 0.5rem;
   padding: 0 0.5rem;
 }
@@ -154,7 +160,7 @@
 
 .dayCell {
   position: relative;
-  padding: 0.5rem 0;
+  padding: 1px 0;
   transition: all 0.2s;
 }
 

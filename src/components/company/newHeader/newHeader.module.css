@@ -263,8 +263,9 @@
     height: 100%;
 }
 
-.actionsButton:hover {
-    /* background-color: rgb(14, 160, 68); */
+.actionsButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 /* ===== ACTIONS DROPDOWN ===== */

@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import styles from './StatsSection.module.css';
 
 export default async function StatsSection() {
@@ -16,12 +17,21 @@ export default async function StatsSection() {
       cache: "no-store"
     });
 
+    if (res.status === 401) {
+      cookieStore.delete("token");
+      redirect('/login');
+    }
+
     if (res.ok) {
       data = await res.json();
     } else {
       loadingError = true;
     }
   } catch (error) {
+    if (error?.digest?.startsWith('NEXT_REDIRECT')) {
+      throw error;
+    }
+
     console.error("Failed to fetch KPI:", error);
     loadingError = true;
   }

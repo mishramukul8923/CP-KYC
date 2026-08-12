@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "./CompanyStickyHeader.module.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Download, Share2 } from "lucide-react";
 import { useCompanySection } from "../context/CompanySectionContext";
 import DownloadModal from "../modals/DownloadModal";
 import ShareModal from "../modals/ShareModal";
@@ -11,38 +12,13 @@ import ShareModal from "../modals/ShareModal";
 
 export default function CompanyStickyHeader({ visible, companyData, loading }) {
   const { isVersionHistoryOpen, setVersionHistoryOpen, alertsData, isGeneratingPdf, setPdfDownloadTrigger, setIsDownloadModalOpen } = useCompanySection() || {};
-  const actionsRef = useRef(null);
   const router = useRouter();
 
-  const [actionsOpen, setActionsOpen] = useState(false);
-  const [actionsDirection, setActionsDirection] = useState("down");
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const slug = companyData?.company_information?.legal_name
     ?.toLowerCase()
     .replaceAll(" ", "-");
-
-  const toggleActions = () => {
-    if (!actionsRef.current) return;
-
-    const rect = actionsRef.current.getBoundingClientRect();
-    const dropdownHeight = 160;
-    const spaceBelow = window.innerHeight - rect.bottom;
-
-    setActionsDirection(spaceBelow > dropdownHeight ? "down" : "up");
-    setActionsOpen((prev) => !prev);
-  };
-
-  useEffect(() => {
-    const handleOutsideClick = (e) => {
-      if (!actionsRef.current?.contains(e.target)) {
-        setActionsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, []);
 
   const getTruncatedText = (text, limit = 30) => {
     if (!text) return { display: "-", full: "-" };
@@ -182,42 +158,22 @@ export default function CompanyStickyHeader({ visible, companyData, loading }) {
                   Refresh Company
                 </button>
 
-                <div ref={actionsRef} className={styles.actionsWrapper}>
-                  <button className={styles.actionsButton} onClick={toggleActions}>
-                    Actions
-                    <img
-                      src="/icons/chevron-down.svg"
-                      alt=""
-                      className={`${styles.chevronDown} ${actionsOpen ? styles.rotated : ""}`}
-                    />
-                  </button>
+                <button
+                  className={styles.actionsButton}
+                  onClick={() => setIsDownloadModalOpen && setIsDownloadModalOpen(true)}
+                  disabled={isGeneratingPdf}
+                >
+                  <Download size={18} />
+                  {isGeneratingPdf ? "Generating PDF..." : "Download Report"}
+                </button>
 
-                  {actionsOpen && (
-                    <div
-                      className={`${styles.actionsDropdown} ${actionsDirection === "up" ? styles.dropdownUp : styles.dropdownDown}`}
-                    >
-                      {isVersionHistoryOpen && (
-                        <button className={`${styles.dropdownItem} ${styles.showOn1200}`} onClick={() => window.location.reload()}>
-                          Refresh Company
-                        </button>
-                      )}
-                      {/* <button className={styles.dropdownItem}>View Company</button> */}
-                      <button
-                        className={styles.dropdownItem}
-                        onClick={() => setIsDownloadModalOpen(true)}
-                        disabled={isGeneratingPdf}
-                      >
-                        {isGeneratingPdf ? "Generating PDF..." : "Download Report"}
-                      </button>
-                      <button
-                        className={styles.dropdownItem}
-                        onClick={() => setIsShareModalOpen(true)}
-                      >
-                        Share
-                      </button>
-                    </div>
-                  )}
-                </div>
+                <button
+                  className={styles.saveButton}
+                  onClick={() => setIsShareModalOpen(true)}
+                >
+                  <Share2 size={18} />
+                  Share
+                </button>
               </>
             )}
           </div>
