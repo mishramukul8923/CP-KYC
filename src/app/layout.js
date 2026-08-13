@@ -46,7 +46,8 @@ export default function RootLayout({ children }) {
     const timer = setTimeout(async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://cpkycapi.webninjaz.com/api/search/suggestions?q=${encodeURIComponent(companyName)}&limit=40`, {
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+        const res = await fetch(`${apiBaseUrl}/api/search/suggestions?q=${encodeURIComponent(companyName)}&limit=40`, {
           headers: {
             "Authorization": token ? `Bearer ${token}` : ""
           }
@@ -119,7 +120,7 @@ export default function RootLayout({ children }) {
     router.push("/login");
   }, [router]);
 
-  // Global 401 interceptor
+  // Global 401 and 403 HTTP status code interceptor: logs user out and redirects to login page when token is expired or unauthorized/forbidden
   useEffect(() => {
     const originalFetch = window.fetch;
     let isRedirecting = false;
@@ -128,15 +129,20 @@ export default function RootLayout({ children }) {
       try {
         const response = await originalFetch(...args);
 
-        if (response.status === 401 && !isRedirecting) {
+        // Check if response returns 401 (Unauthorized) or 403 (Forbidden / Token Expired) status code
+        if ((response.status === 401 || response.status === 403) && !isRedirecting) {
           const url = args[0] instanceof Request ? args[0].url : args[0];
-          const isInternalApi = typeof url === 'string' && (url.includes(process.env.NEXT_PUBLIC_API_BASE_URL) || url.startsWith("/"));
+          const isInternalApi = typeof url === 'string' && (
+            (process.env.NEXT_PUBLIC_API_BASE_URL && url.includes(process.env.NEXT_PUBLIC_API_BASE_URL)) ||
+            url.startsWith("/")
+          );
           const isAuthPage = ["/login", "/signup", "/forgot-password"].includes(window.location.pathname);
 
           if (isInternalApi && !isAuthPage) {
             isRedirecting = true;
+            // Clear local user storage/session state and navigate to login page
             handleLogout();
-            toast.error("Session expired. Please login again.");
+            toast.error("Session expired or access forbidden. Please login again.");
           }
         }
         return response;
