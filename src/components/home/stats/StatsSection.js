@@ -17,7 +17,7 @@ export default async function StatsSection() {
       cache: "no-store"
     });
 
-    if (res.status === 401) {
+    if (res.status === 401 || res.status === 403) {
       cookieStore.delete("token");
       redirect('/login');
     }
